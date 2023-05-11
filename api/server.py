@@ -38,7 +38,7 @@ def image_uri(filename):
 def get_images():
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
-        cursor.execute(f"SELECT id, img, caption FROM cartoon WHERE valid = 1 LIMIT 800;")
+        cursor.execute(f"SELECT id, img, caption FROM cartoon WHERE valid = 1 LIMIT 100;")
     results = cursor.fetchall()
     results = [{"caption": result["caption"], "id": result["id"], "img": get_img_pth(result["img"])} for result in results]
     return jsonify(results)
@@ -65,7 +65,17 @@ def imageDone(img_id):
     with connection.cursor() as cursor:
         cursor.execute(f"UPDATE cartoon SET valid = 2 WHERE id = {img_id};")
         connection.commit()
-    return "delete image"
+    return ""
+
+@app.route('/handleSubmit/<img_ids>', methods=['GET', "POST"])
+def handleSubmit(img_ids):
+    id_list = [int(x) for x in img_ids.split("-")]
+    query = "UPDATE cartoon SET valid = 2 WHERE id IN ({})".format(",".join(str(x) for x in id_list))
+    connection = connect_to_mysql()
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        connection.commit()
+    return ""
 
 
 

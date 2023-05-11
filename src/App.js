@@ -7,22 +7,14 @@ import './App.css';
 
 function ImageGrid() {
   const [images, setImages] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const imagesPerPage = 80;
-  const totalPages = Math.ceil(images.length / imagesPerPage);
 
   useEffect(() => {
     axios.get('/get_images').then(res => {
-      console.log(res)
       setImages(res.data);
     });
   }, []);
 
-  const startIndex = (currentPage - 1) * imagesPerPage;
-  const endIndex = startIndex + imagesPerPage;
 
-  const currentImages = images.slice(startIndex, endIndex);
   const handleDelete = id => {
     axios.post('/detele_image/' + id).then(() => {
       setImages(images.filter(image => image.id !== id));
@@ -32,6 +24,14 @@ function ImageGrid() {
     axios.post('/imageDone/' + id).then(() => {
       setImages(images.filter(image => image.id !== id));
     });
+  };
+
+  const handleSubmit = images => {
+    const ids = images.map(image => image.id);
+    const joinedIds = ids.join('-');
+    axios.post('/handleSubmit/' + joinedIds)
+    window.location.reload();
+    
   };
 
   const handleCaptionChange = (id, newCaption) => {
@@ -49,37 +49,32 @@ function ImageGrid() {
     // update caption in database
     axios.post('/changeCaption/' + id + '/' + newCaption)
   };
-
-  const pageButtons = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageButtons.push(
-      <button class="btn btn-danger m-2" classkey={i} onClick={() => setCurrentPage(i)}>
-        {i}
-      </button>
-    );
-  }
+  const firstImageId = images.length > 0 ? images[0].id : null;
 
   return (
     <>
-      <div class="header">
-        <h1>Header</h1>
-        <p>My supercool header</p>
+      <div class="header p-5">
+        <h1>CARTOON-VQA</h1>
       </div>
-
+      <div class="text-center">
+      
+        <h3> You  have already cleaned up {firstImageId} images</h3>
+      </div>
       <div className="image-grid">
-        {currentImages.map(image => (
+        {images.map(image => (
           <div key={image.id} className="image-container">
-            <div class="card" style={{width: "620px", height:"450px"}}>
-              <img key={image.id} class="m-2" src={image.img} alt={image.name}/>
+            <div class="card" style={{width: "620px", height:"550px"}}>
+              <img key={image.id} class="m-2" src={image.img} alt={image.name}
+              onDoubleClick={() => handleDelete(image.id)}/>
               <div class="card-body text-justify">
                 <h5 class="card-title text-center">
                 <div class="btn-group">
-                <button class="btn btn-danger m-2" 
+                <button class="btn btn-danger btn-lg m-2" 
                 onClick={() => handleDelete(image.id)}> Bad! </button>
-                <button class="btn btn-primary m-2"
-                onClick={() => handleDone(image.id)}> Good! </button>
+
                 </div>
                 </h5>
+                <p>{image.caption}</p>
                 {/*
                   <Form.Control
                     as="textarea"
@@ -93,9 +88,11 @@ function ImageGrid() {
           </div>
         ))}
       </div>
-      <div className="pagination justify-content-center mt-4 mb-4">
-        {pageButtons}
+      <div class="text-center">
+        <button class="btn btn-primary btn-lg m-2" 
+        onClick={() => handleSubmit(images)}> Submit! </button>
       </div>
+      
     </>
   );
 }

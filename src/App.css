@@ -36,3 +36,57 @@
     transform: rotate(360deg);
   }
 }
+
+.header{
+  padding: 10px;
+  text-align: center;
+  background: #1abc9c;
+  color: white;
+  font-size: 30px;
+}
+
+.container {
+  padding: 50px 5px 5px; /* 20px top padding, 30px left and right padding, 0 bottom padding */
+}
+
+img {
+  width: 600px;
+  height: 600px;
+}
+.container {
+  overflow: hidden; /* clear the float */
+}
+.column {
+  width: 50%; /* set each column to half the container width */
+  float: left; /* float the columns left */
+}
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 9%;
+  padding-right: 3%;
+
+}
+
+.image-container {
+  padding: 4px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.image-button {
+  display: block;
+  margin-top: 4px;
+}
+.caption-input {
+  width: 80%;
+  padding: 6px;
+  font-size: 16px;
+  border: none;
+  border-radius: 3px;
+  background-color: #f2f2f2;
+  margin-top: 8px;
+}

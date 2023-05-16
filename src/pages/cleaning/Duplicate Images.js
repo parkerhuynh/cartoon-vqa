@@ -84,8 +84,9 @@ function App() {
     };
   
   const handleDone = (center_id) => {
-    axios.post('/doneduplicate/' + center_id)
+    axios.post('/doneduplicate/' + center_id);
     axios.get('/duplicate_images/' + inputValue).then(res => {
+      console.log(res.data)
       setSubImages(res.data.sub_imgs);
       setCenterImage(res.data.center_image);
     })

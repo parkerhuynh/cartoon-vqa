@@ -120,14 +120,17 @@ def convert_text_to_list(text):
 
     return data
 
-@app.route('/duplicate_images', methods=['GET', "POST"])
-def duplicate_images():
+@app.route('/duplicate_images/<user_id>', methods=['GET', "POST"])
+def duplicate_images(user_id):
+    user_id = int(user_id)
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
-        cursor.execute(f"SELECT id, img, valid, sub_imgs  FROM cartoon WHERE duplicate = 0 AND valid = 2 LIMIT 1;")
+        cursor.execute(f"SELECT id, img, valid, sub_imgs  FROM cartoon WHERE duplicate = 0 AND valid = 2 AND id > {((user_id-1)*1000)} AND id < {(user_id*1000)} LIMIT 1;")
     results = cursor.fetchall()
     cursor.close()
-
+    if len(results) == 0:
+        return "None"
+    
     with connection.cursor() as cursor2:
         cursor2.execute(f"SELECT id  FROM cartoon WHERE duplicate > 99999 AND duplicate <> 0;")
     dup_images = cursor2.fetchall()
@@ -171,7 +174,6 @@ def deleteSubDuplicateImages(img_id, sub_id):
     return ""
 @app.route('/doneduplicate/<img_id>', methods=['GET', "POST"])
 def doneduplicate(img_id):
-    print(img_id)
     query = f"UPDATE cartoon SET duplicate = {int(img_id)} WHERE id = {img_id};"
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
@@ -179,6 +181,17 @@ def doneduplicate(img_id):
         connection.commit()
     return ""
 
+@app.route('/status', methods=['GET', "POST"])
+def status():
+    connection = connect_to_mysql()
+    with connection.cursor() as cursor:
+        cursor.execute(f"SELECT * FROM cartoon;")
+    dataset = pd.DataFrame(cursor.fetchall())
+    cursor.close()
+    invalid_image = len(dataset[dataset["valid"] == 0])
+    duplicate = len(dataset[dataset["duplicate"] > 99999])
+    result = {"Total": len(dataset), "invalid": invalid_image, "valid": len(dataset) - invalid_image, "duplicate": duplicate}
+    return jsonify(result)
 
 
 if __name__ == "__main__":

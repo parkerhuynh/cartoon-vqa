@@ -7,6 +7,7 @@ import CleanProcess from"./pages/cleaning/Cleaning Process";
 import InvalidImages from"./pages/cleaning/Invalid Images";
 import ValidImages from"./pages/cleaning/Valid Images";
 import DupImages from"./pages/cleaning/Duplicate Images";
+import Status from"./pages/cleaning/Status";
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="invalidimages" element={<InvalidImages />} />
           <Route path="validimages" element={<ValidImages />} />
           <Route path="dupimages" element={<DupImages />} />
+          <Route path="status" element={<Status />} />
         </Route>
       </Routes>
     </BrowserRouter>

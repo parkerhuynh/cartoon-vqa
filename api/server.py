@@ -181,6 +181,17 @@ def doneduplicate(img_id):
         connection.commit()
     return ""
 
+@app.route('/status', methods=['GET', "POST"])
+def status():
+    connection = connect_to_mysql()
+    with connection.cursor() as cursor:
+        cursor.execute(f"SELECT * FROM cartoon;")
+    dataset = pd.DataFrame(cursor.fetchall())
+    cursor.close()
+    invalid_image = len(dataset[dataset["valid"] == 0])
+    duplicate = len(dataset[dataset["duplicate"] > 99999])
+    result = {"Total": len(dataset), "invalid": invalid_image, "valid": len(dataset) - invalid_image, "duplicate": duplicate}
+    return jsonify(result)
 
 
 if __name__ == "__main__":

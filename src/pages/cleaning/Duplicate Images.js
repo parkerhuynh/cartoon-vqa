@@ -108,7 +108,7 @@ function App() {
         <>
         <div class="card" style={{width: "600px", height:"550px", margin: "0 auto", float: "none", "margin-bottom": "4px"}}>
           <img style={{width: "450x", height:"490px"}} key={CenterImage.id} src={CenterImage.img} alt={"sub_image"}/>.
-          <p>Image ID: {CenterImage.id}</p>
+          <p class="text-center">Image ID: {CenterImage.id}</p>
           <div class="card-body text-center">
           {CenterImage.valid === 2 ? (
             <button class="btn btn-danger btn-lg m-2"
@@ -121,14 +121,14 @@ function App() {
             <p class="card-text" style={{color: "red"}}>Double click to delete photos similar to the one above.</p>
         </div> 
       </div>
-      <div className="image-grid">
+      <div className="image-grid" >
         {Subimages.map(sub_image => (
           <div>
             <div key={sub_image.id} className="image-container">
               <div class="card" style={{width: "500px", height:"380px"}}>
-              <img key={sub_image.id} class="m-2" src={sub_image.img} alt={"sub_image"} style={{width: "450px", height:"360px"}}
+              <img key={sub_image.id} class="m-2" src={sub_image.img} alt={"sub_image"} style={{width: "480px", height:"360px"}}
                 onDoubleClick={() => handleSubImageDelete(CenterImage.id, sub_image.id)}/>
-              <p>Image ID: {sub_image.id}</p>
+              <p class="text-center">Image ID: {sub_image.id}</p>
               </div>
               <div class="card-body text-center">
               {sub_image.valid === 2 ? (
@@ -151,8 +151,6 @@ function App() {
       ) : (null)}
       {showParagraphs ? (null
       ) :(<p style={{color: "red"}} class="text-center m-4">Invalid value</p>)}
-      {Warning ? (<p style={{color: "red"}} class="text-center m-4">Done!</p>
-      ) :(null)}
     </div>
   );
 }

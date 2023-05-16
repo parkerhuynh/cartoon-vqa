@@ -31,7 +31,7 @@ const Layout = () => {
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="#action/3.4">Caption Processing</NavDropdown.Item>
               </NavDropdown>
-
+              <Navbar.Brand href="/status">Status</Navbar.Brand>
               <Navbar.Brand href="/download">Download</Navbar.Brand>
             </Nav>
           </Navbar.Collapse>

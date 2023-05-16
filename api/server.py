@@ -179,6 +179,7 @@ def doneduplicate(img_id):
     with connection.cursor() as cursor:
         cursor.execute(query)
         connection.commit()
+    return ""
 
 @app.route('/status', methods=['GET', "POST"])
 def status():

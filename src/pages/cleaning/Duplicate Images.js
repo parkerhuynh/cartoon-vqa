@@ -84,12 +84,11 @@ function App() {
     };
   
   const handleDone = (center_id) => {
-    axios.post('/doneduplicate/' + center_id).then(
-      axios.get('/duplicate_images/' + inputValue).then(res => {
-        setSubImages(res.data.sub_imgs);
-        setCenterImage(res.data.center_image);
-      })
-    )
+    axios.post('/doneduplicate/' + center_id)
+    axios.get('/duplicate_images/' + inputValue).then(res => {
+      setSubImages(res.data.sub_imgs);
+      setCenterImage(res.data.center_image);
+    })
     };
 
   return (

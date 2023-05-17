@@ -51,7 +51,7 @@ def valid_images():
     with connection.cursor() as cursor:
         cursor.execute(f"SELECT id, img FROM cartoon  WHERE valid = 2 AND duplicate < 99999 ORDER BY RAND() LIMIT 40;")
     results = cursor.fetchall()
-    results = [{"id": result["id"], "img": get_img_pth(result["img"])} for result in results]
+    results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"]))} for result in results]
     
     return jsonify(results)
 
@@ -128,13 +128,13 @@ def duplicate_images(user_id):
     cursor2.close()
     dup_images = [d['id'] for d in dup_images]
 
-    results_1 = {"center_image": {"id": results[0]["id"], "img":  get_img_pth(results[0]["img"]), "valid":  results[0]["valid"]}}
+    results_1 = {"center_image": {"id": results[0]["id"], "img":  image_uri(get_img_pth(results[0]["img"])), "valid":  results[0]["valid"]}}
     sub_images = convert_text_to_list(results[0]["sub_imgs"])
     sub_images_filter = []
     i = 0
     for sub_image in sub_images:
         if int(sub_image['id']) not in dup_images:
-            sub_image["img"] = get_img_pth(sub_image["img"])
+            sub_image["img"] = image_uri(get_img_pth(sub_image["img"]))
             with connection.cursor() as cursor3:
                 cursor3.execute(f"SELECT valid FROM cartoon WHERE id = {sub_image['id']}")
             valid_value = cursor3.fetchall()

@@ -158,7 +158,7 @@ def duplicate_images(user_id):
                 else:
                     sub_images_filter.append(sub_image)
                     i+=1
-        if i == 5:
+        if i == 19:
             break
         
     results_1["sub_imgs"] = sub_images_filter

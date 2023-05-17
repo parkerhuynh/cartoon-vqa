@@ -40,7 +40,7 @@ def get_images():
 def harmful_images():
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
-        cursor.execute(f"SELECT id, img FROM cartoon WHERE valid = 0;")
+        cursor.execute(f"SELECT id, img FROM cartoon WHERE valid = 0 limit 40;")
     results = cursor.fetchall()
     results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"]))} for result in results]
     return jsonify(results)
@@ -49,7 +49,7 @@ def harmful_images():
 def valid_images():
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
-        cursor.execute(f"SELECT id, img FROM cartoon  WHERE valid = 2 AND duplicate < 99999 ORDER BY RAND() LIMIT 200;")
+        cursor.execute(f"SELECT id, img FROM cartoon  WHERE valid = 2 AND duplicate < 99999 ORDER BY RAND() LIMIT 40;")
     results = cursor.fetchall()
     results = [{"id": result["id"], "img": get_img_pth(result["img"])} for result in results]
     

@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 
 def get_img_pth(img_id):
-    img_dic = "../data/images/"
+    img_dic = "../images/"
     ss = img_id[:3]
     image_path = img_dic + ss + "/" + img_id + ".jpg"
     return image_path
@@ -24,12 +24,6 @@ def get_img_pth(img_id):
 def image_uri(filename):
     image_data = open(filename, "rb").read()
     return "data:image/jpg;base64," + base64.b64encode(image_data).decode()
-
-def get_img_pth(img_id):
-    img_dic = "/images/"
-    ss = img_id[:3]
-    image_path = img_dic + ss + "/" + img_id + ".jpg"
-    return image_path
 
 def image_uri(filename):
     image_data = open(filename, "rb").read()

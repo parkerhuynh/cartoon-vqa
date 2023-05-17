@@ -32,7 +32,7 @@ def get_images():
     with connection.cursor() as cursor:
         cursor.execute(f"SELECT id, img FROM cartoon WHERE valid = 1 LIMIT 100;")
     results = cursor.fetchall()
-    results = [{ "id": result["id"], "img": mage_uri(get_img_pth(result["img"]))} for result in results]
+    results = [{ "id": result["id"], "img": image_uri(get_img_pth(result["img"]))} for result in results]
     
     return jsonify(results)
 
@@ -42,7 +42,7 @@ def harmful_images():
     with connection.cursor() as cursor:
         cursor.execute(f"SELECT id, img FROM cartoon WHERE valid = 0;")
     results = cursor.fetchall()
-    results = [{"id": result["id"], "img": mage_uri(get_img_pth(result["img"]))} for result in results]
+    results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"]))} for result in results]
     return jsonify(results)
 
 @app.route('/valid_images', methods=['GET', "POST"])

@@ -103,11 +103,11 @@ function App() {
       setInvalidInput(false)
     };
   return (
-    <div>
+    <div >
       <h5 class="text-center m-2" style={{color: "red"}}>Remove Duplicate Images</h5>
-      <div class="container-fluid ">
-        <div class='row'>
-          <div class='col-4 bg-light'>
+      <div class="container-fluid">
+        <div class='row border border-dark border-5' style={{height: "1000px"}}>
+          <div class='col-3 border-end border-dark border-5' >
             <div>
               <form class="text-center m-2" onSubmit={handleSubmit}>
                 <input
@@ -163,7 +163,7 @@ function App() {
               ):(null)}
             </div>
           </div>
-          <div class='col-8 bg-secondary'>
+          <div class='col-9'>
             {showParagraphs ? (
               <>
                 {status && CenterImage == 0 ? (null
@@ -203,21 +203,6 @@ function App() {
         </div>
 
       </div>
-      <div>
-      </div>
-  
-      {invalidInput ? (
-          <div class="text-center m-0" style={{color: "red"}}> 
-            <h5>You have entered an invalid value.</h5>
-          </div>
-        ):(null)}
-        {inputGuide ? (
-          <div class="text-center m-0"> 
-            <p class="m-0">Please enter a number from 1 to 40 to load the image.</p>
-            <p class="m-0">Eg: if you enter the number 1, you will process the first 1000 images.</p>
-            <p class="m-0">Eg: if you enter the number 2, you will process images from the 1000th to the 2000th.</p>
-          </div>
-        ):(null)}
     </div>
     
   );

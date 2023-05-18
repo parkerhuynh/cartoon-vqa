@@ -183,7 +183,7 @@ function App() {
         {inputGuide ? (
           <div class="text-center m-4" style={{color: "red"}}> 
             <h5>Please enter a number from 1 to 40 to load the image.</h5>
-            <h5>Eg: if you enter the number 1, you will process the first 1000 pictures.</h5>
+            <h5>Eg: if you enter the number 1, you will process the first 1000 images.</h5>
             <h5>Eg: if you enter the number 2, you will process images from the 1000th to the 2000th.</h5>
           </div>
         ):(null)}

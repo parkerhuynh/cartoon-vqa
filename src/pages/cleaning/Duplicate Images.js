@@ -132,7 +132,7 @@ function App() {
               {showParagraphs ? (
                 <>
                   {status && CenterImage == 0 ? (
-                    <div class="m-1">
+                    <div class="text-center m-1">
                       <p class='m-0'>You have processed all images from {(inputValue -1)*1000}th to {inputValue*1000}th </p>
                       <p class='m-0'>Please enter  a LARGER number.</p>
                     </div>

@@ -130,20 +130,18 @@ function App() {
           ) : (
             // Render a message when there are no images
             <div class="container-fluid">
-              <div>
-                <div class="card" style={{width: "500px", height:"410px", margin: "0 auto", float: "none"}}>
-                  <img  key={CenterImage.id} src={CenterImage.img} alt={"image"}/>.
-                  <p class="text-center">Image ID: {CenterImage.id}</p>
-                  <div class="card-body text-center">
-                    {CenterImage.valid === 2 ? (
-                      <button class="btn btn-danger"
-                      onClick={() => handleCenterInvalidDelete()}> Delete! </button>
-                      ):(
-                      <button class="btn btn-success"
-                    onClick={() => handleCenterInvalidRestore()}> Restore! </button>
-                  )}
-                  </div> 
-              </div>
+              <div class="card" style={{width: "500px", height:"410px", margin: "0 auto", float: "none"}}>
+                <img class='m-1' key={CenterImage.id} src={CenterImage.img} alt={"image"} style={{width: "480px", height:"360px"}}/>.
+                <p class="text-center">Image ID: {CenterImage.id}</p>
+                <div class="card-body text-center">
+                  {CenterImage.valid === 2 ? (
+                    <button class="btn btn-danger"
+                    onClick={() => handleCenterInvalidDelete()}> Delete! </button>
+                    ):(
+                    <button class="btn btn-success"
+                  onClick={() => handleCenterInvalidRestore()}> Restore! </button>
+                )}
+                </div> 
               </div>
               <div class="container-fluid mt-3">
                 <div class="row">
@@ -153,8 +151,8 @@ function App() {
                     {Subimages.map(sub_image => (
                       <div>
                         <div key={sub_image.id}>
-                          <div class="card" style={{width: "500px", height:"380px"}}>
-                          <img key={sub_image.id} class="m-2" src={sub_image.img} alt={"sub_image"} style={{width: "480px", height:"360px"}}
+                          <div class="card mx-2" style={{width: "500px", height:"380px"}}>
+                          <img key={sub_image.id} class="m-1" src={sub_image.img} alt={"sub_image"} style={{width: "480px", height:"360px"}}
                             onDoubleClick={() => handleSubImageDelete(CenterImage.id, sub_image.id)}/>
                           <p class="text-center">Image ID: {sub_image.id}</p>
                           </div>
@@ -176,15 +174,13 @@ function App() {
               </div>
               </div>
             <div >
-              <div class="text-center">
+              <div class="text-center mt-5  ">
                   <button class="btn btn-primary btn-lg m-2" 
                     onClick={() => handleDone(CenterImage.id)}> Done! </button>
               </div>
             </div>
-            </div>
-          )}
-
-          
+          </div>
+        )} 
           </>
         ) : (null)}
         

@@ -105,8 +105,8 @@ function App() {
   return (
     <div>
       <div>
-      <h1 class="text-center m-4" style={{color: "red"}}>Remove Duplicate Images</h1>
-      <form class="text-center m-4" onSubmit={handleSubmit}>
+      <h5 class="text-center m-2" style={{color: "red"}}>Remove Duplicate Images</h5>
+      <form class="text-center m-2" onSubmit={handleSubmit}>
         <input
           type="number"
           value={inputValue}
@@ -123,22 +123,22 @@ function App() {
 
           {status && CenterImage == 0 ? (
             // Render the image gallery when there are images
-            <div class="text-center m-4">
-              <h5 style={{color: "red"}}>You have processed all images from {(inputValue -1)*1000}th to {inputValue*1000}th </h5>
-              <h5 style={{color: "red"}}>Please enter  a LARGER number.</h5>
+            <div class="text-center m-1">
+              <p class='m-0'>You have processed all images from {(inputValue -1)*1000}th to {inputValue*1000}th </p>
+              <p class='m-0'>Please enter  a LARGER number.</p>
             </div>
           ) : (
             // Render a message when there are no images
             <div class="container-fluid">
-              <div class="card" style={{width: "500px", height:"410px", margin: "0 auto", float: "none"}}>
-                <img class='m-1' key={CenterImage.id} src={CenterImage.img} alt={"image"} style={{width: "480px", height:"360px"}}/>.
-                <p class="text-center">Image ID: {CenterImage.id}</p>
-                <div class="card-body text-center">
+              <div class="card" style={{width: "350px", height:"300px", margin: "0 auto", float: "none"}}>
+                <img class='m-1' key={CenterImage.id} src={CenterImage.img} alt={"image"} style={{width: "480px", height:"360px"}}/>
+                <p class="text-center m-0">Image ID: {CenterImage.id}</p>
+                <div class="card-body text-center mb-1 p-0">
                   {CenterImage.valid === 2 ? (
-                    <button class="btn btn-danger"
+                    <button class="btn btn-danger btn-sm"
                     onClick={() => handleCenterInvalidDelete()}> Delete! </button>
                     ):(
-                    <button class="btn btn-success"
+                    <button class="btn btn-success btn-sm"
                   onClick={() => handleCenterInvalidRestore()}> Restore! </button>
                 )}
                 </div> 
@@ -151,20 +151,21 @@ function App() {
                     {Subimages.map(sub_image => (
                       <div>
                         <div key={sub_image.id}>
-                          <div class="card mx-2" style={{width: "500px", height:"380px"}}>
+                          <div class="card mx-2" style={{width: "350px", height:"300px"}}>
                           <img key={sub_image.id} class="m-1" src={sub_image.img} alt={"sub_image"} style={{width: "480px", height:"360px"}}
                             onDoubleClick={() => handleSubImageDelete(CenterImage.id, sub_image.id)}/>
-                          <p class="text-center">Image ID: {sub_image.id}</p>
-                          </div>
-                          <div class="card-body text-center">
+                          <p class="text-center mb-1 p-0">Image ID: {sub_image.id}</p>
+                          <div class="card-body text-center mb-1 p-0">
                           {sub_image.valid === 2 ? (
-                            <button class="btn btn-danger btn-lg m-2"
+                            <button class="btn btn-danger btn-sm m-0"
                             onClick={() => handleSubInvalidDelete(sub_image)}> Delete! </button>
                           ):(
-                            <button class="btn btn-success btn-lg m-2"
+                            <button class="btn btn-success btn-sm m-0"
                             onClick={() => handleSubValidRestore(sub_image)}> Restore! </button>
                           )}
                           </div>
+                          </div>
+                          
                         </div>
                       </div>
                     ))}
@@ -186,15 +187,15 @@ function App() {
         
       </div>
       {invalidInput ? (
-          <div class="text-center m-4" style={{color: "red"}}> 
+          <div class="text-center m-0" style={{color: "red"}}> 
             <h5>You have entered an invalid value.</h5>
           </div>
         ):(null)}
         {inputGuide ? (
-          <div class="text-center m-4" style={{color: "red"}}> 
-            <h5>Please enter a number from 1 to 40 to load the image.</h5>
-            <h5>Eg: if you enter the number 1, you will process the first 1000 images.</h5>
-            <h5>Eg: if you enter the number 2, you will process images from the 1000th to the 2000th.</h5>
+          <div class="text-center m-0"> 
+            <p class="m-0">Please enter a number from 1 to 40 to load the image.</p>
+            <p class="m-0">Eg: if you enter the number 1, you will process the first 1000 images.</p>
+            <p class="m-0">Eg: if you enter the number 2, you will process images from the 1000th to the 2000th.</p>
           </div>
         ):(null)}
     </div>

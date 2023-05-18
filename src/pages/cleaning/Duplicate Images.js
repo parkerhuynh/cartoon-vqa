@@ -104,49 +104,71 @@ function App() {
     };
   return (
     <div>
-      <div>
       <h5 class="text-center m-2" style={{color: "red"}}>Remove Duplicate Images</h5>
-      <form class="text-center m-2" onSubmit={handleSubmit}>
-        <input
-          type="number"
-          value={inputValue}
-          onChange={(e) => InputChange(e.target.value)}
-        />
-        <button type="submit" >Submit</button>
-      </form>
-      </div>
-  
-
-      <div>
-        {showParagraphs ? (
-          <>
-
-          {status && CenterImage == 0 ? (
-            // Render the image gallery when there are images
-            <div class="text-center m-1">
-              <p class='m-0'>You have processed all images from {(inputValue -1)*1000}th to {inputValue*1000}th </p>
-              <p class='m-0'>Please enter  a LARGER number.</p>
+      <div class="container-fluid ">
+        <div class='row'>
+          <div class='col-4 bg-light'>
+            <div>
+              <form class="text-center m-2" onSubmit={handleSubmit}>
+                <input
+                  type="number"
+                  value={inputValue}
+                  onChange={(e) => InputChange(e.target.value)}
+                />
+                <button type="submit" >Submit</button>
+              </form>
             </div>
-          ) : (
-            // Render a message when there are no images
-            <div class="container-fluid">
-              <div class="card" style={{width: "350px", height:"300px", margin: "0 auto", float: "none"}}>
-                <img class='m-1' key={CenterImage.id} src={CenterImage.img} alt={"image"} style={{width: "480px", height:"360px"}}/>
-                <p class="text-center m-0">Image ID: {CenterImage.id}</p>
-                <div class="card-body text-center mb-1 p-0">
-                  {CenterImage.valid === 2 ? (
-                    <button class="btn btn-danger btn-sm"
-                    onClick={() => handleCenterInvalidDelete()}> Delete! </button>
-                    ):(
-                    <button class="btn btn-success btn-sm"
-                  onClick={() => handleCenterInvalidRestore()}> Restore! </button>
-                )}
-                </div> 
-              </div>
-              <div class="container-fluid mt-3">
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-10">
+            <div class="text-center m-0" style={{color: "red"}}>
+              {invalidInput ? (
+                <p>You have entered an invalid value.</p>
+              ):(null)}
+              {inputGuide ? (
+                <div> 
+                  <p class="m-0">Please enter a number from 1 to 40 to load the image.</p>
+                  <p class="m-0">Eg: if you enter the number 1, you will process the first 1000 images.</p>
+                  <p class="m-0">Eg: if you enter the number 2, you will process images from the 1000th to the 2000th.</p>
+                </div>
+              ):(null)}
+              {showParagraphs ? (
+                <>
+                  {status && CenterImage == 0 ? (
+                    <div class="text-center m-1">
+                      <p class='m-0'>You have processed all images from {(inputValue -1)*1000}th to {inputValue*1000}th </p>
+                      <p class='m-0'>Please enter  a LARGER number.</p>
+                    </div>
+                  ):(
+                    <div>
+                      <div class="card mt-5" style={{width: "350px", height:"300px", margin: "0 auto", float: "none"}}>
+                        <img class='m-1' key={CenterImage.id} src={CenterImage.img} alt={"image"} style={{width: "480px", height:"360px"}}/>
+                        <p class="text-center m-0">Image ID: {CenterImage.id}</p>
+                        <div class="card-body text-center mb-1 p-0">
+                          {CenterImage.valid === 2 ? (
+                            <button class="btn btn-danger btn-sm"
+                            onClick={() => handleCenterInvalidDelete()}> Delete! </button>
+                            ):(
+                            <button class="btn btn-success btn-sm"
+                          onClick={() => handleCenterInvalidRestore()}> Restore! </button>
+                          )}
+                        </div>
+                      </div>
+                      <div >
+                        <div class="text-center mt-5  ">
+                            <button class="btn btn-primary btn-sm m-2" 
+                              onClick={() => handleDone(CenterImage.id)}> Done! </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ):(null)}
+            </div>
+          </div>
+          <div class='col-8 bg-secondary'>
+            {showParagraphs ? (
+              <>
+                {status && CenterImage == 0 ? (null
+                ):(
+                  <div>
                     <div className='image-grid'>
                     {Subimages.map(sub_image => (
                       <div>
@@ -171,21 +193,19 @@ function App() {
                     ))}
                     </div>
                   </div>
-                <div class="col-sm-1"></div>
-              </div>
-              </div>
-            <div >
-              <div class="text-center mt-5  ">
-                  <button class="btn btn-primary btn-lg m-2" 
-                    onClick={() => handleDone(CenterImage.id)}> Done! </button>
-              </div>
-            </div>
+                )}
+              </>
+                  
+                ):(null)
+            }
           </div>
-        )} 
-          </>
-        ) : (null)}
-        
+
+        </div>
+
       </div>
+      <div>
+      </div>
+  
       {invalidInput ? (
           <div class="text-center m-0" style={{color: "red"}}> 
             <h5>You have entered an invalid value.</h5>

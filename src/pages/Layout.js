@@ -27,9 +27,9 @@ const Layout = () => {
                 <NavDropdown.Item href="/cleaningprocess">Image Cleaning Process</NavDropdown.Item>
                 <NavDropdown.Item href="/validimages">Valid Images</NavDropdown.Item>
                 <NavDropdown.Item href="/invalidimages">Invalid Images</NavDropdown.Item>
-                <NavDropdown.Item href="dupimages">Duplicate image Process</NavDropdown.Item>
+                <NavDropdown.Item href="/dupimages">Duplicate image Process</NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.4">Caption Processing</NavDropdown.Item>
+                <NavDropdown.Item href="/captioning">Caption Processing</NavDropdown.Item>
               </NavDropdown>
               <Navbar.Brand href="/status">Status</Navbar.Brand>
               <Navbar.Brand href="/download">Download</Navbar.Brand>

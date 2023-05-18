@@ -71,13 +71,7 @@ def restore_image(img_id):
         connection.commit()
     return "delete image"
 
-@app.route('/changeCaption/<img_id>/<newCaption>', methods=["POST"])
-def changeCaption(img_id, newCaption):
-    connection = connect_to_mysql()
-    with connection.cursor() as cursor:
-        cursor.execute(f'UPDATE cartoon SET caption = "{newCaption}" WHERE id = {img_id};')
-        connection.commit()
-    return ""
+
 
 
 @app.route('/handleSubmit/<img_ids>', methods=['GET', "POST"])
@@ -159,6 +153,7 @@ def deleteSubDuplicateImages(img_id, sub_id):
         cursor.execute(query)
         connection.commit()
     return ""
+
 @app.route('/doneduplicate/<img_id>', methods=['GET', "POST"])
 def doneduplicate(img_id):
     query = f"UPDATE cartoon SET duplicate = {int(img_id)+50000} WHERE id = {img_id};"
@@ -180,6 +175,36 @@ def status():
     rest_image = len(dataset[(dataset["duplicate"] == 0) & (dataset["valid"] == 2)])
     result = {"Total": len(dataset), "invalid": invalid_image, "valid": len(dataset) - invalid_image, "duplicate": duplicate, "rest": rest_image}
     return jsonify(result)
+
+@app.route('/image_captioning', methods=['GET', "POST"])
+def image_captioning():
+    connection = connect_to_mysql()
+    with connection.cursor() as cursor:
+        cursor.execute(f"SELECT id, img, caption_1, caption_2, caption FROM cartoon WHERE valid = 2 AND duplicate < 99999 AND caption IS NULL limit 3;")
+    results = cursor.fetchall()
+    results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"])), "caption_1": result["caption_1"], "caption_2": result["caption_2"], "caption": result["caption"]} for result in results]
+    return jsonify(results)
+
+@app.route('/changeCaption/<img_id>/<newCaption>', methods=["POST"])
+def changeCaption(img_id, newCaption):
+    connection = connect_to_mysql()
+    with connection.cursor() as cursor:
+        if newCaption != "none":
+            cursor.execute(f'UPDATE cartoon SET caption = NULL WHERE id = {img_id};')
+        else:
+            cursor.execute(f'UPDATE cartoon SET caption = "{newCaption}" WHERE id = {img_id};')
+        connection.commit()
+    return ""
+
+@app.route('/view_caption', methods=['GET', "POST"])
+def view_caption():
+    connection = connect_to_mysql()
+    with connection.cursor() as cursor:
+        cursor.execute(f"SELECT id, img, caption_1, caption_2, caption FROM cartoon WHERE valid = 2 AND duplicate < 99999 AND caption IS NOT NULL ORDER BY RAND() limit 40;")
+    results = cursor.fetchall()
+    results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"])), "caption_1": result["caption_1"], "caption_2": result["caption_2"], "caption": result["caption"]} for result in results]
+    return jsonify(results)
+
 
 
 if __name__ == "__main__":

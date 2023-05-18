@@ -122,7 +122,7 @@ function App() {
           {status && CenterImage == 0 ? (
             // Render the image gallery when there are images
             <div class="text-center m-4">
-              <h5 style={{color: "red"}}>You have processed from the {(inputValue -1)*1000}th to {inputValue*1000}th photo</h5>
+              <h5 style={{color: "red"}}>You have processed all images from {(inputValue -1)*1000}th to {inputValue*1000}th </h5>
               <h5 style={{color: "red"}}>Please enter  a LARGER number.</h5>
             </div>
           ) : (
@@ -183,7 +183,7 @@ function App() {
         {inputGuide ? (
           <div class="text-center m-4" style={{color: "red"}}> 
             <h5>Please enter a number from 1 to 40 to load the image.</h5>
-            <h5>Eg: if you enter number 1, you will process the first 1000 pictures.</h5>
+            <h5>Eg: if you enter the number 1, you will process the first 1000 pictures.</h5>
             <h5>Eg: if you enter the number 2, you will process images from the 1000th to the 2000th.</h5>
           </div>
         ):(null)}

@@ -180,7 +180,7 @@ def status():
 def image_captioning():
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
-        cursor.execute(f"SELECT id, img, caption_1, caption_2, caption FROM cartoon WHERE valid = 2 AND duplicate < 99999 AND caption IS NULL limit 3;")
+        cursor.execute(f"SELECT id, img, caption_1, caption_2, caption FROM cartoon WHERE valid = 2 AND duplicate < 99999 AND caption is NULL limit 3;")
     results = cursor.fetchall()
     results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"])), "caption_1": result["caption_1"], "caption_2": result["caption_2"], "caption": result["caption"]} for result in results]
     return jsonify(results)
@@ -189,7 +189,7 @@ def image_captioning():
 def changeCaption(img_id, newCaption):
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
-        if newCaption != "none":
+        if str(newCaption) == "none":
             cursor.execute(f'UPDATE cartoon SET caption = NULL WHERE id = {img_id};')
         else:
             cursor.execute(f'UPDATE cartoon SET caption = "{newCaption}" WHERE id = {img_id};')

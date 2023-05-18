@@ -127,20 +127,18 @@ function App() {
             </div>
           ) : (
             // Render a message when there are no images
-            <div>
-              <div class="card" style={{width: "600px", height:"550px", margin: "0 auto", float: "none", "margin-bottom": "4px"}}>
-                <img style={{width: "450x", height:"490px"}} key={CenterImage.id} src={CenterImage.img} alt={"sub_image"}/>.
+            <div >
+              <div class="card" style={{width: "500px", height:"410px", margin: "0 auto", float: "none"}}>
+                <img  key={CenterImage.id} src={CenterImage.img} alt={"image"}/>.
                 <p class="text-center">Image ID: {CenterImage.id}</p>
                 <div class="card-body text-center">
                   {CenterImage.valid === 2 ? (
-                    <button class="btn btn-danger btn-lg m-2"
+                    <button class="btn btn-danger"
                     onClick={() => handleCenterInvalidDelete()}> Delete! </button>
                     ):(
-                    <button class="btn btn-success btn-lg m-2"
+                    <button class="btn btn-success"
                   onClick={() => handleCenterInvalidRestore()}> Restore! </button>
                 )}
-                  <h3 class="card-title text-center" >Task</h3>
-                  <p class="card-text" style={{color: "red"}}>Double click to delete photos similar to the one above.</p>
                 </div> 
               </div>
               <div class="container" className="image-grid" >

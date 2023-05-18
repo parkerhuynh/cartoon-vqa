@@ -8,7 +8,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 const Layout = () => {
   return (
     <>
-      <div class="row p-5 bg-dark">
+      <div class="row p-1 bg-dark">
         <a href="/status" className="header"> CARTOON-VQA</a>
       </div>
       <div class="row">

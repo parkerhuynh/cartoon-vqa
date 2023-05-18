@@ -106,7 +106,7 @@ function App() {
     <div >
       <h5 class="text-center m-2" style={{color: "red"}}>Remove Duplicate Images</h5>
       <div class="container-fluid">
-        <div class='row border border-dark border-5' style={{height: "700px"}}>
+        <div class='row border border-dark border-5' style={{height: "750px"}}>
           <div class='col-3 border-end border-dark border-5' >
             <div>
               <form class="text-center m-2" onSubmit={handleSubmit}>

@@ -153,7 +153,7 @@ def duplicate_images(user_id):
 
 @app.route('/deleteSubDuplicateImages/<img_id>/<sub_id>', methods=['GET', "POST"])
 def deleteSubDuplicateImages(img_id, sub_id):
-    query = f"UPDATE cartoon SET duplicate = {int(img_id) + 100000} WHERE id = {sub_id};"
+    query = f"UPDATE cartoon SET duplicate = {int(img_id) + 200000} WHERE id = {sub_id};"
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
         cursor.execute(query)
@@ -161,7 +161,7 @@ def deleteSubDuplicateImages(img_id, sub_id):
     return ""
 @app.route('/doneduplicate/<img_id>', methods=['GET', "POST"])
 def doneduplicate(img_id):
-    query = f"UPDATE cartoon SET duplicate = {int(img_id)} WHERE id = {img_id};"
+    query = f"UPDATE cartoon SET duplicate = {int(img_id)+50000} WHERE id = {img_id};"
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
         cursor.execute(query)

@@ -43,10 +43,6 @@
   font-size: 30px;
 }
 
-img {
-  width: 600px;
-  height: 600px;
-}
 
 .image-grid {
   display: flex;
@@ -59,10 +55,6 @@ a:link, a:visited {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-}
-
-.image-container {
-  padding: 4px;
 }
 
 img {

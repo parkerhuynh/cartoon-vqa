@@ -162,6 +162,7 @@ function App() {
                             <li>Guilty</li>
                             <li>Weapons</li>
                           </ul>
+                          <li> Click <span style={{color: "Blue"}}>Done! </span> if all the above problem has been solved. Note that you only need to <span style={{color: "red"}}>click once</span> and wait a few seconds for the next image to appear.</li>
                         </ul>
                       </div>
                     </div>

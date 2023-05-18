@@ -118,12 +118,12 @@ function App() {
                 <button type="submit" >Submit</button>
               </form>
             </div>
-            <div class="text-center m-0" style={{color: "red"}}>
+            <div class="m-0" >
               {invalidInput ? (
-                <p>You have entered an invalid value.</p>
+                <p class="text-center" style={{color: "red"}}>You have entered an invalid value.</p>
               ):(null)}
               {inputGuide ? (
-                <div> 
+                <div class='text-center'> 
                   <p class="m-0">Please enter a number from 1 to 40 to load the image.</p>
                   <p class="m-0">Eg: if you enter the number 1, you will process the first 1000 images.</p>
                   <p class="m-0">Eg: if you enter the number 2, you will process images from the 1000th to the 2000th.</p>
@@ -132,16 +132,16 @@ function App() {
               {showParagraphs ? (
                 <>
                   {status && CenterImage == 0 ? (
-                    <div class="text-center m-1">
+                    <div class="m-1">
                       <p class='m-0'>You have processed all images from {(inputValue -1)*1000}th to {inputValue*1000}th </p>
                       <p class='m-0'>Please enter  a LARGER number.</p>
                     </div>
                   ):(
                     <div>
-                      <div class="card mt-5" style={{width: "350px", height:"300px", margin: "0 auto", float: "none"}}>
+                      <div class="card text-center mt-5" style={{width: "350px", height:"300px", margin: "0 auto", float: "none"}}>
                         <img class='m-1' key={CenterImage.id} src={CenterImage.img} alt={"image"} style={{width: "480px", height:"360px"}}/>
-                        <p class="text-center m-0">Image ID: {CenterImage.id}</p>
-                        <div class="card-body text-center mb-1 p-0">
+                        <p class=" m-0">Image ID: {CenterImage.id}</p>
+                        <div class="card-body mb-1 p-0">
                           {CenterImage.valid === 2 ? (
                             <button class="btn btn-danger btn-sm"
                             onClick={() => handleCenterInvalidDelete()}> Delete! </button>
@@ -151,11 +151,18 @@ function App() {
                           )}
                         </div>
                       </div>
-                      <div >
-                        <div class="text-center mt-5  ">
-                            <button class="btn btn-primary btn-sm m-2" 
-                              onClick={() => handleDone(CenterImage.id)}> Done! </button>
-                        </div>
+                      <div class='mt-5 mx-3'>
+                        <h5>Requirements:</h5>
+                        <ul>
+                          <li>Double click to delete duplicate Images</li>
+                          <li>Click <span style={{color: "red"}}>Delete</span> to delete pictures that are harmful to children such as:</li>
+                          <ul>
+                            <li>Sexual</li>
+                            <li>Violence</li>
+                            <li>Guilty</li>
+                            <li>Weapons</li>
+                          </ul>
+                        </ul>
                       </div>
                     </div>
                   )}
@@ -194,6 +201,12 @@ function App() {
                     </div>
                   </div>
                 )}
+                <div >
+                        <div class="text-center mt-5  ">
+                            <button class="btn btn-primary btn-sm m-2" 
+                              onClick={() => handleDone(CenterImage.id)}> Done! </button>
+                        </div>
+                      </div>
               </>
                   
                 ):(null)

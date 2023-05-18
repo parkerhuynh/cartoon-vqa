@@ -140,16 +140,12 @@ def duplicate_images(user_id):
             valid_value = cursor3.fetchall()
             cursor3.close()
             sub_image["valid"] = valid_value[0]["valid"]
-            
-            if len(sub_images_filter) ==0:
+
+            if int(sub_image["valid"]) == 2:
                 sub_images_filter.append(sub_image)
-            else:
-                if int(sub_image["valid"]) == 0:
-                    sub_images_filter.insert(0, sub_image)
-                else:
-                    sub_images_filter.append(sub_image)
-                    i+=1
-        if i == 7:
+                i+=1
+                    
+        if i == 6:
             break
         
     results_1["sub_imgs"] = sub_images_filter

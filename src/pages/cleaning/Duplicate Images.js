@@ -87,9 +87,9 @@ function App() {
     axios.post('/deleteSubDuplicateImages/' +center_id + "/"+ sub_id)
     };
   
-  const handleDone = (center_id) => {
-    axios.post('/doneduplicate/' + center_id);
-    axios.get('/duplicate_images/' + inputValue).then(res => {
+  const handleDone = async (center_id) => {
+    await axios.post('/doneduplicate/' + center_id);
+    await axios.get('/duplicate_images/' + inputValue).then(res => {
       console.log(res.data)
       setSubImages(res.data.sub_imgs);
       setCenterImage(res.data.center_image);

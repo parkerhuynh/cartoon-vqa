@@ -181,7 +181,8 @@ def status():
     cursor.close()
     invalid_image = len(dataset[dataset["valid"] == 0])
     duplicate = len(dataset[dataset["duplicate"] > 99999])
-    result = {"Total": len(dataset), "invalid": invalid_image, "valid": len(dataset) - invalid_image, "duplicate": duplicate}
+    rest_image = len(dataset[dataset["duplicate"] == 0])
+    result = {"Total": len(dataset), "invalid": invalid_image, "valid": len(dataset) - invalid_image, "duplicate": duplicate, "rest": rest_image}
     return jsonify(result)
 
 

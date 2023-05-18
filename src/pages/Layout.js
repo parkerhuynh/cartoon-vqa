@@ -8,10 +8,10 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 const Layout = () => {
   return (
     <>
-      <div class="header p-5 bg-dark">
-        <h1>CARTOON-VQA</h1>
+      <div class="row p-5 bg-dark">
+        <a href="/status" className="header"> CARTOON-VQA</a>
       </div>
-
+      <div class="row">
       <Navbar variant="dark" bg="dark" expand="lg" className="justify-content-center">
         <Container fluid >
           
@@ -39,6 +39,7 @@ const Layout = () => {
       </Navbar>
 
       <Outlet />
+      </div>
     </>
   )
 };

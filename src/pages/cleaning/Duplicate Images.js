@@ -176,7 +176,7 @@ function App() {
               </div>
             <div >
               <div class="text-center mt-5  ">
-                  <button class="btn btn-primary btn-lg m-2" 
+                  <button class="btn btn-primary btn-sm m-2" 
                     onClick={() => handleDone(CenterImage.id)}> Done! </button>
               </div>
             </div>

@@ -115,6 +115,8 @@ function App() {
         <button type="submit" >Submit</button>
       </form>
       </div>
+  
+
       <div>
         {showParagraphs ? (
           <>
@@ -127,46 +129,58 @@ function App() {
             </div>
           ) : (
             // Render a message when there are no images
-            <div >
-              <div class="card" style={{width: "500px", height:"410px", margin: "0 auto", float: "none"}}>
-                <img  key={CenterImage.id} src={CenterImage.img} alt={"image"}/>.
-                <p class="text-center">Image ID: {CenterImage.id}</p>
-                <div class="card-body text-center">
-                  {CenterImage.valid === 2 ? (
-                    <button class="btn btn-danger"
-                    onClick={() => handleCenterInvalidDelete()}> Delete! </button>
-                    ):(
-                    <button class="btn btn-success"
-                  onClick={() => handleCenterInvalidRestore()}> Restore! </button>
-                )}
-                </div> 
-              </div>
-              <div class="container" className="image-grid" >
-                {Subimages.map(sub_image => (
-                  <div>
-                    <div key={sub_image.id} className="image-container">
-                      <div class="card" style={{width: "500px", height:"380px"}}>
-                      <img key={sub_image.id} class="m-2" src={sub_image.img} alt={"sub_image"} style={{width: "480px", height:"360px"}}
-                        onDoubleClick={() => handleSubImageDelete(CenterImage.id, sub_image.id)}/>
-                      <p class="text-center">Image ID: {sub_image.id}</p>
-                      </div>
-                      <div class="card-body text-center">
-                      {sub_image.valid === 2 ? (
-                        <button class="btn btn-danger btn-lg m-2"
-                        onClick={() => handleSubInvalidDelete(sub_image)}> Delete! </button>
+            <div class="container-fluid">
+              <div>
+                <div class="card" style={{width: "500px", height:"410px", margin: "0 auto", float: "none"}}>
+                  <img  key={CenterImage.id} src={CenterImage.img} alt={"image"}/>.
+                  <p class="text-center">Image ID: {CenterImage.id}</p>
+                  <div class="card-body text-center">
+                    {CenterImage.valid === 2 ? (
+                      <button class="btn btn-danger"
+                      onClick={() => handleCenterInvalidDelete()}> Delete! </button>
                       ):(
-                        <button class="btn btn-success btn-lg m-2"
-                        onClick={() => handleSubValidRestore(sub_image)}> Restore! </button>
-                      )}
+                      <button class="btn btn-success"
+                    onClick={() => handleCenterInvalidRestore()}> Restore! </button>
+                  )}
+                  </div> 
+              </div>
+              </div>
+              <div class="container-fluid mt-3">
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-10">
+                    <div className='image-grid'>
+                    {Subimages.map(sub_image => (
+                      <div>
+                        <div key={sub_image.id}>
+                          <div class="card" style={{width: "500px", height:"380px"}}>
+                          <img key={sub_image.id} class="m-2" src={sub_image.img} alt={"sub_image"} style={{width: "480px", height:"360px"}}
+                            onDoubleClick={() => handleSubImageDelete(CenterImage.id, sub_image.id)}/>
+                          <p class="text-center">Image ID: {sub_image.id}</p>
+                          </div>
+                          <div class="card-body text-center">
+                          {sub_image.valid === 2 ? (
+                            <button class="btn btn-danger btn-lg m-2"
+                            onClick={() => handleSubInvalidDelete(sub_image)}> Delete! </button>
+                          ):(
+                            <button class="btn btn-success btn-lg m-2"
+                            onClick={() => handleSubValidRestore(sub_image)}> Restore! </button>
+                          )}
+                          </div>
+                        </div>
                       </div>
+                    ))}
                     </div>
                   </div>
-                ))}
+                <div class="col-sm-1"></div>
               </div>
+              </div>
+            <div >
               <div class="text-center">
                   <button class="btn btn-primary btn-lg m-2" 
                     onClick={() => handleDone(CenterImage.id)}> Done! </button>
               </div>
+            </div>
             </div>
           )}
 

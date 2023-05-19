@@ -183,7 +183,7 @@ function App() {
                         <div key={sub_image.id}>
                           <div class="card mx-2" style={{width: "350px", height:"300px"}}>
                           <img key={sub_image.id} class="m-1" src={sub_image.img} alt={"sub_image"} style={{width: "480px", height:"360px"}}
-                            onDoubleClick={() => handleSubImageDelete(CenterImage.id, sub_image.id)}/>
+                            onClick={() => handleSubImageDelete(CenterImage.id, sub_image.id)}/>
                           <p class="text-center mb-1 p-0">Image ID: {sub_image.id}</p>
                           <div class="card-body text-center mb-1 p-0">
                           {sub_image.valid === 2 ? (

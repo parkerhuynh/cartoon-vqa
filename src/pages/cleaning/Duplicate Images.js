@@ -177,7 +177,7 @@ function App() {
                 {status && CenterImage == 0 ? (null
                 ):(
                   <div>
-                    <div className='image-grid'>
+                    <div className='image-grid' style={{height: "650px"}}>
                     {Subimages.map(sub_image => (
                       <div>
                         <div key={sub_image.id}>
@@ -200,21 +200,23 @@ function App() {
                       </div>
                     ))}
                     </div>
-                    <div >
-                      <div class="text-center mt-5  ">
+                  </div>
+                  
+                )}
+                <div class='bottom-content'>
+                      <div class="text-center mt-5 ">
                       <button class="btn btn-primary btn-sm m-2" 
                         onClick={() => handleDone(CenterImage.id)}> Done! </button>
                       </div>
                     </div>
-                  </div>
-                )}
+
                 
               </>
                   
                 ):(null)
             }
           </div>
-
+          
         </div>
 
       </div>

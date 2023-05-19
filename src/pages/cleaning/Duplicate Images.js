@@ -177,7 +177,7 @@ function App() {
                 {status && CenterImage == 0 ? (null
                 ):(
                   <div>
-                    <div className='image-grid' style={{height: "600px"}}>
+                    <div className='image-grid' style={{height: "580px"}}>
                     {Subimages.map(sub_image => (
                       <div>
                         <div key={sub_image.id}>

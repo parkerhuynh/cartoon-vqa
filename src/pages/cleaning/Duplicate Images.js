@@ -171,7 +171,7 @@ function App() {
                             <li>Guilty</li>
                             <li>Weapons</li>
                           </ul>
-                          <li> Click <span style={{color: "Blue"}}>Done! </span> if all the above problems has been solved. Note that you only need to <span style={{color: "red"}}>click once</span> and wait a few seconds for the next image to appear.</li>
+                          <li> Press <span style={{color: "Blue"}}>SPACE </span> or Press  <span style={{color: "Blue"}}>ENTER </span>or Click <span style={{color: "Blue"}}>Done! </span> if all the above problems has been solved. Note that you only need to wait a very short time for the next image to appear.</li>
                         </ul>
                       </div>
                     </div>

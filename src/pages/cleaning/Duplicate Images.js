@@ -14,6 +14,21 @@ function App() {
   const [inputGuide, setInputGuide] = useState(true);
   const [invalidInput, setInvalidInput] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.code === 'Space' || event.code === 'Enter') {
+        if (CenterImage.length !== 0) {
+          handleDone(CenterImage.id)
+        }
+
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [CenterImage]);
   const handleSubmit = (e) => {
     e.preventDefault();
     setStatus(true)
@@ -197,7 +212,7 @@ function App() {
                     </div>
               </>
                   
-                ):(null)
+                ):(null)    
             }
           </div>
           

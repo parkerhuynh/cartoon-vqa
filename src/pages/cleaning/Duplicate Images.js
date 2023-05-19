@@ -80,6 +80,7 @@ function App() {
       }));
     });
   };
+
   
 
   const handleSubImageDelete = (center_id, sub_id) => {
@@ -90,7 +91,6 @@ function App() {
   const handleDone = async (center_id) => {
     await axios.post('/doneduplicate/' + center_id);
     await axios.get('/duplicate_images/' + inputValue).then(res => {
-      console.log(res.data)
       setSubImages(res.data.sub_imgs);
       setCenterImage(res.data.center_image);
     })
@@ -139,23 +139,17 @@ function App() {
                   ):(
                     <div>
                       <div class="card text-center mt-5" style={{width: "350px", height:"300px", margin: "0 auto", float: "none"}}>
-                        <img class='m-1' key={CenterImage.id} src={CenterImage.img} alt={"image"} style={{width: "480px", height:"360px"}}/>
+                        <img class='m-1' key={CenterImage.id} src={CenterImage.img} alt={"image"} style={{width: "480px", height:"360px"}}
+                        onClick={() => handleCenterInvalidDelete()}/>
                         <p class=" m-0">Image ID: {CenterImage.id}</p>
                         <div class="card-body mb-1 p-0">
-                          {CenterImage.valid === 2 ? (
-                            <button class="btn btn-danger btn-sm"
-                            onClick={() => handleCenterInvalidDelete()}> Delete! </button>
-                            ):(
-                            <button class="btn btn-success btn-sm"
-                          onClick={() => handleCenterInvalidRestore()}> Restore! </button>
-                          )}
                         </div>
                       </div>
                       <div class='mt-5 mx-3'>
                         <h5>Requirements:</h5>
                         <ul>
-                          <li>Double click to delete duplicate Images</li>
-                          <li>Click <span style={{color: "red"}}>Delete</span> to delete pictures that are harmful to children such as:</li>
+                          <li>Click on images to delete duplicate images</li>
+                          <li>Click on images to delete images that are harmful to children such as:</li>
                           <ul>
                             <li>Sexual</li>
                             <li>Violence</li>
@@ -177,7 +171,7 @@ function App() {
                 {status && CenterImage == 0 ? (null
                 ):(
                   <div>
-                    <div className='image-grid' style={{height: "650px"}}>
+                    <div className='image-grid' style={{height: "580px"}}>
                     {Subimages.map(sub_image => (
                       <div>
                         <div key={sub_image.id}>
@@ -186,16 +180,8 @@ function App() {
                             onClick={() => handleSubImageDelete(CenterImage.id, sub_image.id)}/>
                           <p class="text-center mb-1 p-0">Image ID: {sub_image.id}</p>
                           <div class="card-body text-center mb-1 p-0">
-                          {sub_image.valid === 2 ? (
-                            <button class="btn btn-danger btn-sm m-0"
-                            onClick={() => handleSubInvalidDelete(sub_image)}> Delete! </button>
-                          ):(
-                            <button class="btn btn-success btn-sm m-0"
-                            onClick={() => handleSubValidRestore(sub_image)}> Restore! </button>
-                          )}
                           </div>
                           </div>
-                          
                         </div>
                       </div>
                     ))}
@@ -209,8 +195,6 @@ function App() {
                         onClick={() => handleDone(CenterImage.id)}> Done! </button>
                       </div>
                     </div>
-
-                
               </>
                   
                 ):(null)

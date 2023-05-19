@@ -28,6 +28,7 @@ function App() {
         <li>{status.invalid} invalid images.</li>
         <li>{status.duplicate} duplicate images.</li>
         <li>{status.rest} images left to be processed.</li>
+        <li>{status.good} TRUE CLEAN images.</li>
       </ul>
     </div>
     </div>

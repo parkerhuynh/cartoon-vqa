@@ -35,7 +35,7 @@ function App() {
     setInputGuide(false)
     const number = parseInt(inputValue, 10);
     
-    if (number >= 1 && number <= 40) {
+    if (number >= 1 && number <= 41) {
       
       axios.get('/duplicate_images/' + number).then(res => {
         setShowParagraphs(true)
@@ -139,7 +139,7 @@ function App() {
               ):(null)}
               {inputGuide ? (
                 <div class='text-center'> 
-                  <p class="m-0">Please enter a number from 1 to 40 to load the image.</p>
+                  <p class="m-0">Please enter a number from 1 to 41 to load the image.</p>
                   <p class="m-0">Eg: if you enter the number 1, you will process the first 1000 images.</p>
                   <p class="m-0">Eg: if you enter the number 2, you will process images from the 1000th to the 2000th.</p>
                 </div>

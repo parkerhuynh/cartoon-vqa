@@ -32,6 +32,7 @@ const Layout = () => {
                 <NavDropdown.Item href="/dupimages">Duplicate image Process</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="/captioning">Caption Processing</NavDropdown.Item>
+                <NavDropdown.Item href="/qa">QA Generator</NavDropdown.Item>
                 <NavDropdown.Divider />
                 
               </NavDropdown>

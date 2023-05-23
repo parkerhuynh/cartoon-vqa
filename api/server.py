@@ -13,6 +13,7 @@ import re
 import ast
 
 app = Flask(__name__)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def get_img_pth(img_id):
@@ -52,7 +53,7 @@ def valid_images():
         cursor.execute(f"SELECT id, img FROM cartoon  WHERE valid = 2 AND duplicate < 99999 ORDER BY RAND() LIMIT 40;")
     results = cursor.fetchall()
     results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"]))} for result in results]
-    
+    ques
     return jsonify(results)
 
 @app.route('/detele_image/<img_id>', methods=['GET', "POST"])
@@ -225,15 +226,22 @@ def get_clean_images(no_imga_page, page_number):
     end_ind = page_number*no_imga_page
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
-        cursor.execute(f"SELECT img_id, img, caption_1, caption_2 FROM clean_data WHERE id BETWEEN {start_id} AND {end_ind}")
+        cursor.execute(f"SELECT img_id, img, caption_1, caption_2, qa FROM clean_data WHERE id BETWEEN {start_id} AND {end_ind}")
     results = cursor.fetchall()
     results = [{
         "caption_1": result["caption_1"],
         "caption_2": result["caption_2"],
-        "id": result["img_id"],
+        "qa": result["qa"],
+        "img_id": result["img_id"],
         "img": image_uri(get_img_pth(result["img"]))} for result in results]
     
     return jsonify(results)
+
+@app.route('/qa_generator/<img_id>', methods=['GET', "POST"])
+def qa_generator(img_id):
+    print(img_id)
+    
+    return jsonify(img_id)
 
 
 if __name__ == "__main__":

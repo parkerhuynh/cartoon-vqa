@@ -21,6 +21,7 @@ function ImageGrid() {
 
   useEffect(() => {
     axios.get('/get_clean_images/' + imagesPerPage + "/" + "1").then(res => {
+      console.log(res.data)
       setImages(res.data);
     });
   }, []);
@@ -116,7 +117,7 @@ function ImageGrid() {
           {images.map(image =>(
             <div class="card m-2" style={{width: "450px", height:"900px"}}>
               <img key={image.id} class="m-1" src={image.img} alt={"sub_image"}  style={{height:"250px", "border-radius": "6px"}}/>
-              <h6 class='text-center'>ID: {image.id}</h6>
+              <h6 class='text-center'>ID: {image.img_id}</h6>
               <div class="card-body">
                 <h5 class="card-title text-center">Captions</h5>
                 <ul class="list-group list-group-flush">

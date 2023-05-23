@@ -9,6 +9,7 @@ import ValidImages from"./pages/cleaning/Valid Images";
 import DupImages from"./pages/cleaning/Duplicate Images";
 import Status from"./pages/cleaning/Status";
 import Captioning from"./pages/cleaning/Captioning";
+import Data from"./pages/data/Data";
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="dupimages" element={<DupImages />} />
           <Route path="status" element={<Status />} />
           <Route path="captioning" element={<Captioning />} />
+          <Route path="data" element={<Data />} />
         </Route>
       </Routes>
     </BrowserRouter>

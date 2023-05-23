@@ -1,0 +1,301 @@
+,len_cap_1,len_cap_2,len_tok_1,len_tok_2,cap_1,cap_2,promt_1,promt_2,len_promt_1,len_promt_2,len_promt_tok_1,len_promt_tok_2,promt_3,len_promt_3,len_promt_tok_3
+0,8,32,15,32,the simpsons homer simpson wallpaper cartoon wallpapers 1920x1080,in this image i can see a man and a woman standing and holding a cup in their hands in the background i can also see a microwave oven and some cabinets,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: the simpsons homer simpson wallpaper cartoon wallpapers 1920x1080
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: in this image i can see a man and a woman standing and holding a cup in their hands in the background i can also see a microwave oven and some cabinets
+output:",56,80,103,120,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: the simpsons homer simpson wallpaper cartoon wallpapers 1920x1080 
+context 2: in this image i can see a man and a woman standing and holding a cup in their hands in the background i can also see a microwave oven and some cabinets
+output:",102,159
+1,28,29,28,29,a cartoon man is standing in front of a counter the man is wearing a white shirt and blue pants the man has a stick in his hand,in this image i can see a man standing and holding a stick in his hand and i can also see a mirror and a clock on the wall,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: a cartoon man is standing in front of a counter the man is wearing a white shirt and blue pants the man has a stick in his hand
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: in this image i can see a man standing and holding a stick in his hand and i can also see a mirror and a clock on the wall
+output:",76,77,116,117,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: a cartoon man is standing in front of a counter the man is wearing a white shirt and blue pants the man has a stick in his hand 
+context 2: in this image i can see a man standing and holding a stick in his hand and i can also see a mirror and a clock on the wall
+output:",119,169
+2,28,44,28,44,a man is sitting at a table in a room the man is wearing a blue jacket and a pink shirt there are red chairs around the table,in this image i can see a person sitting on the chair and he is holding a pen in his hand and i can also see a table on which there is a laptop on it and there are some frames on the wall,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: a man is sitting at a table in a room the man is wearing a blue jacket and a pink shirt there are red chairs around the table
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: in this image i can see a person sitting on the chair and he is holding a pen in his hand and i can also see a table on which there is a laptop on it and there are some frames on the wall
+output:",76,92,116,132,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: a man is sitting at a table in a room the man is wearing a blue jacket and a pink shirt there are red chairs around the table 
+context 2: in this image i can see a person sitting on the chair and he is holding a pen in his hand and i can also see a table on which there is a laptop on it and there are some frames on the wall
+output:",134,184
+3,33,39,33,39,a cartoon image of a man and a woman standing in front of a red building the man is wearing a yellow suit and a blue shirt the woman is wearing yellow gloves,in this image we can see a person standing on the left side of the image there is a person wearing a suit and holding a banana in his hand in the background we can also see a building,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: a cartoon image of a man and a woman standing in front of a red building the man is wearing a yellow suit and a blue shirt the woman is wearing yellow gloves
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: in this image we can see a person standing on the left side of the image there is a person wearing a suit and holding a banana in his hand in the background we can also see a building
+output:",81,87,121,127,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: a cartoon image of a man and a woman standing in front of a red building the man is wearing a yellow suit and a blue shirt the woman is wearing yellow gloves 
+context 2: in this image we can see a person standing on the left side of the image there is a person wearing a suit and holding a banana in his hand in the background we can also see a building
+output:",134,184
+4,11,11,11,11,this image may contain sunglasses accessories accessory human person and face,this image may contain sunglasses accessories accessory human person and face,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: this image may contain sunglasses accessories accessory human person and face
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: this image may contain sunglasses accessories accessory human person and face
+output:",59,59,99,99,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: this image may contain sunglasses accessories accessory human person and face 
+context 2: this image may contain sunglasses accessories accessory human person and face
+output:",84,134
+5,33,28,34,29,this is an image of a man in a white sweater with green hair and a red nose the man is standing in front of a large window with icicles hanging from it,in this image i can see a person wearing a white color tshirt and a necklace and i can also see a bridge and ice in the background,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: this is an image of a man in a white sweater with green hair and a red nose the man is standing in front of a large window with icicles hanging from it
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: in this image i can see a person wearing a white color tshirt and a necklace and i can also see a bridge and ice in the background
+output:",81,76,122,117,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: this is an image of a man in a white sweater with green hair and a red nose the man is standing in front of a large window with icicles hanging from it 
+context 2: in this image i can see a person wearing a white color tshirt and a necklace and i can also see a bridge and ice in the background
+output:",123,175
+6,14,27,14,27,this image may contain human person electronics keyboard computer keyboard musical instrument and crowd,in this image we can see a group of people are playing a game on the table in the background there are pictures frames on the wall,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: this image may contain human person electronics keyboard computer keyboard musical instrument and crowd
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: in this image we can see a group of people are playing a game on the table in the background there are pictures frames on the wall
+output:",62,75,102,115,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: this image may contain human person electronics keyboard computer keyboard musical instrument and crowd 
+context 2: in this image we can see a group of people are playing a game on the table in the background there are pictures frames on the wall
+output:",103,153
+7,11,36,11,36,this image may contain audience human crowd person speech and audience,in this image i can see a group of people sitting on the benches and i can also see a person standing on the left side of the image in the background there is a door,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: this image may contain audience human crowd person speech and audience
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: in this image i can see a group of people sitting on the benches and i can also see a person standing on the left side of the image in the background there is a door
+output:",59,84,99,124,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: this image may contain audience human crowd person speech and audience 
+context 2: in this image i can see a group of people sitting on the benches and i can also see a person standing on the left side of the image in the background there is a door
+output:",109,159
+8,59,45,59,46,this is an image of a man standing in front of a pile of junk the man is holding a can of soda in his hand the man has a large pile of garbage behind him there are cars parked in the pile of trash there is a tree in the background there are white clouds in the sky,in this image i can see a person standing and holding a cup in his hand and he is wearing a red tshirt and blue pant and i can also see a red color car in the background there are buildings trees sky and clouds,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: this is an image of a man standing in front of a pile of junk the man is holding a can of soda in his hand the man has a large pile of garbage behind him there are cars parked in the pile of trash there is a tree in the background there are white clouds in the sky
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: in this image i can see a person standing and holding a cup in his hand and he is wearing a red tshirt and blue pant and i can also see a red color car in the background there are buildings trees sky and clouds
+output:",107,93,147,134,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: this is an image of a man standing in front of a pile of junk the man is holding a can of soda in his hand the man has a large pile of garbage behind him there are cars parked in the pile of trash there is a tree in the background there are white clouds in the sky 
+context 2: in this image i can see a person standing and holding a cup in his hand and he is wearing a red tshirt and blue pant and i can also see a red color car in the background there are buildings trees sky and clouds
+output:",166,217
+9,26,25,26,26,a cartoon of a man in a room with a red door and red curtains the man is wearing a white shirt and a black jacket,in this image i can see a man wearing a jacket and a white tshirt and i can also see a door and a curtain,"you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: a cartoon of a man in a room with a red door and red curtains the man is wearing a white shirt and a black jacket
+output:","you are required to ask about 10 questions about a given context. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context: a man is jumping to catch a ball.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+Unknown.
+context: in this image i can see a man wearing a jacket and a white tshirt and i can also see a door and a curtain
+output:",74,73,114,114,"You are required to ask about 10 questions about 2 given contexts. The question topics are: yes/no, counting, object, activity, color, posistion. Answer within 3 words.
+context 1: a man is jumping to catch a ball.
+context 2: a white ball is being catch by a man.
+output:1. What is he doing?
+Jumping.
+2. What sport is he playing?
+Football.
+3. What color is the ball?
+white.
+context 1: a cartoon of a man in a room with a red door and red curtains the man is wearing a white shirt and a black jacket 
+context 2: in this image i can see a man wearing a jacket and a white tshirt and i can also see a door and a curtain
+output:",113,164

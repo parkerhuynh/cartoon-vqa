@@ -10,7 +10,7 @@ import DupImages from"./pages/cleaning/Duplicate Images";
 import Status from"./pages/cleaning/Status";
 import Captioning from"./pages/cleaning/Captioning";
 import Data from"./pages/data/Data";
-import QA from"./pages/data/QA";
+import Analysis1 from"./pages/data/Analysis1";
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 
@@ -29,7 +29,10 @@ export default function App() {
           <Route path="status" element={<Status />} />
           <Route path="captioning" element={<Captioning />} />
           <Route path="data" element={<Data />} />
+          <Route path="analysis1" element={<Analysis1 />} />
+          {/*
           <Route path="qa" element={<QA />} />
+          */}
         </Route>
       </Routes>
     </BrowserRouter>

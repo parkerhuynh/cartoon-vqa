@@ -20,20 +20,30 @@ const Layout = () => {
             <Nav className='m-auto'>
             <Navbar.Brand href="/">Home</Navbar.Brand>
             <Navbar.Brand href="/data">Data</Navbar.Brand>
-            <Navbar.Brand href="/status">Status</Navbar.Brand>
+            <NavDropdown
+                id="nav-dropdown-dark-example"
+                title="Analysis"
+                menuVariant="dark"
+              >
+                <NavDropdown.Item href="/status">Data Status</NavDropdown.Item>
+                <NavDropdown.Item href="/analysis1">Caption Analysis</NavDropdown.Item>
+              </NavDropdown>
+            
               <NavDropdown
                 id="nav-dropdown-dark-example"
                 title="Data Processing"
                 menuVariant="dark"
-              >
+              >{/*
                 <NavDropdown.Item href="/cleaningprocess">Image Cleaning Process</NavDropdown.Item>
+                */}
                 <NavDropdown.Item href="/validimages">Valid Images</NavDropdown.Item>
                 <NavDropdown.Item href="/invalidimages">Invalid Images</NavDropdown.Item>
                 <NavDropdown.Item href="/dupimages">Duplicate image Process</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="/captioning">Caption Processing</NavDropdown.Item>
+                {/*
                 <NavDropdown.Item href="/qa">QA Generator</NavDropdown.Item>
-                <NavDropdown.Divider />
+                */}
                 
               </NavDropdown>
               

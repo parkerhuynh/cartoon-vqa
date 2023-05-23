@@ -19,18 +19,25 @@ function App() {
   return (
     <>
     <h1 class="text-center m-4" style={{color: "red"}}>Data Analysis</h1>
-    <div className='container'>
+    <div className='container m-5'>
+      <div class="row">
+      <div class="col-3"></div>
+      <div class="col-6">
+        <h4>There are totally {status.Total} images</h4>
+        <ul>
+          <li>{status.valid} valid images.</li>
+          <li>{status.invalid} invalid images.</li>
+          <li>{status.duplicate} duplicate images.</li>
+          <li>{status.rest} images left to be processed.</li>
+          <li>{status.good} TRUE CLEAN images.</li>
+        </ul>
+      </div>
+      <div class="col-6"></div>
+      </div>
+      
     
-    <div class="p-5">
-    <h2>There are totally {status.Total} images</h2>
-    <ul>
-        <li>{status.valid} valid images.</li>
-        <li>{status.invalid} invalid images.</li>
-        <li>{status.duplicate} duplicate images.</li>
-        <li>{status.rest} images left to be processed.</li>
-        <li>{status.good} TRUE CLEAN images.</li>
-      </ul>
-    </div>
+    
+
     </div>
     </>
   );

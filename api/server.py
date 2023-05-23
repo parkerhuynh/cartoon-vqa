@@ -237,12 +237,6 @@ def get_clean_images(no_imga_page, page_number):
     
     return jsonify(results)
 
-@app.route('/qa_generator/<img_id>', methods=['GET', "POST"])
-def qa_generator(img_id):
-    print(img_id)
-    
-    return jsonify(img_id)
-
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)

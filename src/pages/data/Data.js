@@ -16,7 +16,7 @@ function ImageGrid() {
     });
   }, []);
   
-  const imagesPerPage = 40;
+  const imagesPerPage = 20;
   const totalPages = Math.ceil(totalImages/ imagesPerPage);
 
   useEffect(() => {

@@ -88,7 +88,7 @@ def handleSubmit(img_ids):
 def download_data():
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
-        cursor.execute(f"SELECT * FROM cartoon;")
+        cursor.execute(f"SELECT * FROM cartoon WHERE valid = 2 AND duplicate < 99999;")
     df = pd.DataFrame(cursor.fetchall())
     csv = df.to_csv(index = False)
     response = make_response(csv)
@@ -117,7 +117,7 @@ def duplicate_images(user_id):
         return "None"
     
     with connection.cursor() as cursor2:
-        cursor2.execute(f"SELECT id  FROM cartoon WHERE duplicate > 99999 AND duplicate <> 0;")
+        cursor2.execute(f"SELECT id  FROM cartoon WHERE duplicate > 99999;")
     dup_images = cursor2.fetchall()
     cursor2.close()
     dup_images = [d['id'] for d in dup_images]
@@ -206,6 +206,31 @@ def view_caption():
     results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"])), "caption_1": result["caption_1"], "caption_2": result["caption_2"], "caption": result["caption"]} for result in results]
     return jsonify(results)
 
+
+@app.route('/get_no_images/<route>', methods=['GET', "POST"])
+def get_no_images(route):
+    print(route)
+    connection = connect_to_mysql()
+    with connection.cursor() as cursor:
+        if route == "clean_data":
+            cursor.execute(f"SELECT id FROM cartoon  WHERE valid = 2 AND duplicate < 99999;")
+            
+    results = cursor.fetchall()
+    return jsonify(len(results))
+
+@app.route('/get_clean_images', methods=['GET', "POST"])
+def get_clean_images():
+    connection = connect_to_mysql()
+    with connection.cursor() as cursor:
+        cursor.execute(f"SELECT id, img, caption_1, caption_2 FROM cartoon  WHERE valid = 2 AND duplicate < 99999 ORDER BY RAND() LIMIT 5;")
+    results = cursor.fetchall()
+    results = [{
+        "caption_1": result["caption_1"],
+        "caption_2": result["caption_2"],
+        "id": result["id"],
+        "img": image_uri(get_img_pth(result["img"]))} for result in results]
+    
+    return jsonify(results)
 
 
 if __name__ == "__main__":

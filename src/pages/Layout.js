@@ -19,6 +19,8 @@ const Layout = () => {
           <Navbar.Collapse id="navbar-dark-example">
             <Nav className='m-auto'>
             <Navbar.Brand href="/">Home</Navbar.Brand>
+            <Navbar.Brand href="/data">Data</Navbar.Brand>
+            <Navbar.Brand href="/status">Status</Navbar.Brand>
               <NavDropdown
                 id="nav-dropdown-dark-example"
                 title="Data Processing"
@@ -31,7 +33,7 @@ const Layout = () => {
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="/captioning">Caption Processing</NavDropdown.Item>
               </NavDropdown>
-              <Navbar.Brand href="/status">Status</Navbar.Brand>
+              
               <Navbar.Brand href="/download">Download</Navbar.Brand>
             </Nav>
           </Navbar.Collapse>

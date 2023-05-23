@@ -9,7 +9,7 @@ const Layout = () => {
   return (
     <>
       <div class="row p-1 bg-dark">
-        <a href="/status" className="header"> CARTOON-VQA</a>
+        <a href="/" className="header"> CARTOON-VQA</a>
       </div>
       <div class="row">
       <Navbar variant="dark" bg="dark" expand="lg" className="justify-content-center">
@@ -32,6 +32,8 @@ const Layout = () => {
                 <NavDropdown.Item href="/dupimages">Duplicate image Process</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="/captioning">Caption Processing</NavDropdown.Item>
+                <NavDropdown.Divider />
+                
               </NavDropdown>
               
               <Navbar.Brand href="/download">Download</Navbar.Brand>

@@ -209,25 +209,28 @@ def view_caption():
 
 @app.route('/get_no_images/<route>', methods=['GET', "POST"])
 def get_no_images(route):
-    print(route)
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
         if route == "clean_data":
-            cursor.execute(f"SELECT id FROM cartoon  WHERE valid = 2 AND duplicate < 99999;")
             
+            cursor.execute(f"SELECT id FROM clean_data;") 
     results = cursor.fetchall()
     return jsonify(len(results))
 
-@app.route('/get_clean_images', methods=['GET', "POST"])
-def get_clean_images():
+@app.route('/get_clean_images/<no_imga_page>/<page_number>', methods=['GET', "POST"])
+def get_clean_images(no_imga_page, page_number):
+    no_imga_page = int(no_imga_page)
+    page_number = int(page_number)
+    start_id = (page_number-1)*no_imga_page + 1
+    end_ind = page_number*no_imga_page
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
-        cursor.execute(f"SELECT id, img, caption_1, caption_2 FROM cartoon  WHERE valid = 2 AND duplicate < 99999 ORDER BY RAND() LIMIT 5;")
+        cursor.execute(f"SELECT img_id, img, caption_1, caption_2 FROM clean_data WHERE id BETWEEN {start_id} AND {end_ind}")
     results = cursor.fetchall()
     results = [{
         "caption_1": result["caption_1"],
         "caption_2": result["caption_2"],
-        "id": result["id"],
+        "id": result["img_id"],
         "img": image_uri(get_img_pth(result["img"]))} for result in results]
     
     return jsonify(results)

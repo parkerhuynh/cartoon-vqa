@@ -16,7 +16,7 @@ function ImageGrid() {
     });
   }, []);
   
-  const imagesPerPage = 10;
+  const imagesPerPage = 40;
   const totalPages = Math.ceil(totalImages/ imagesPerPage);
 
   useEffect(() => {
@@ -25,15 +25,85 @@ function ImageGrid() {
     });
   }, []);
   
-  
-  const pageButtons = [];
-  for (let i = 1; i <= 16; i++) {
-    pageButtons.push(
-      <button class="btn btn-danger m-2" classkey={i} onClick={() => setCurrentPage(i)}>
-        {i}
-      </button>
-    );
+  const handlePageButton = (i) => {
+    setCurrentPage(i)
+    axios.get('/get_clean_images/' + imagesPerPage + "/" + i).then(res => {
+      setImages(res.data)
+    })
   }
+  const pageButtons = [];
+  if (currentPage < 7) {
+    for (let i = 1; i <= 7; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+    pageButtons.push(
+      <button class="btn  m-2" classkey={totalPages}>
+        ...
+      </button>)
+
+    for (let i = totalPages-2; i <= totalPages; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+  } else if ((currentPage => 7) && (currentPage < totalPages-3)) {
+    for (let i = 1; i <= 3; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+    pageButtons.push(
+      <button class="btn  m-2" classkey={totalPages}>
+        ...
+      </button>)
+    
+    for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+    pageButtons.push(
+      <button class="btn  m-2" classkey={totalPages}>
+        ...
+      </button>)
+    for (let i = totalPages-1; i <= totalPages; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+  } else {
+    for (let i = 1; i <= 3; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+    pageButtons.push(
+      <button class="btn  m-2" classkey={totalPages}>
+        ...
+      </button>)
+    for (let i = totalPages-4; i <= totalPages; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+
+  } 
 
   return (
     <>

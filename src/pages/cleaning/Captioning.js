@@ -176,6 +176,17 @@ function ImageGrid() {
         <div class="col-2"></div>
       </div>
     </div>
+    <div class="container mb-4 text-center">
+      <div class="row">
+        <div class="col-5"></div>
+        <div class="col-2">
+          <div>
+          <input class="form-control form-control-lg " type="number"  placeholder="Go to Page"/>
+          </div>
+        </div>
+        <div class="col-5"></div>
+      </div>
+    </div>
     </>
   );
 }

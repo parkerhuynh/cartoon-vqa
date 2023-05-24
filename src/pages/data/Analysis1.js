@@ -6,7 +6,7 @@ const IFrame = ({ url }) => {
     const resizeIframe = (iframe) => {
         const { documentElement } = iframe.contentWindow.document;
         const height = documentElement.scrollHeight;
-        iframe.style.height = `${height}px`;
+        iframe.style.height = '8000px';
         iframe.style.width = '100%';
         
     };
@@ -24,7 +24,7 @@ const IFrame = ({ url }) => {
                     resizeIframe(e.target);
                 }}
                 title="static_html"
-                src={"./demo.html"}
+                src={"./analysis1.html"}
                 ></iframe>
             </div>
             <div class="col-1"></div>

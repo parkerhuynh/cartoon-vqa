@@ -53,7 +53,6 @@ def valid_images():
         cursor.execute(f"SELECT id, img FROM cartoon  WHERE valid = 2 AND duplicate < 99999 ORDER BY RAND() LIMIT 40;")
     results = cursor.fetchall()
     results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"]))} for result in results]
-    ques
     return jsonify(results)
 
 @app.route('/detele_image/<img_id>', methods=['GET', "POST"])

@@ -171,7 +171,7 @@ function ImageGrid() {
         </div>
       </div>
     </div>
-    <div class="container bg-dark text-light min-vh-100 mt-2">
+    <div class="container bg-dark min-vh-100 mt-2">
       <div class="row">
       <div class="col-sm-1">
       </div>

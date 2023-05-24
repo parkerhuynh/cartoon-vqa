@@ -11,6 +11,8 @@ function ImageGrid() {
   const [totalImages, setTotalImages] = useState();
   const [editedCaptions1, setEditedCaptions1] = useState({});
   const [editedCaptions2, setEditedCaptions2] = useState({});
+  const [inputValue, setInputValue] = useState('');
+
 
   useEffect(() => {
     axios.get('/get_no_images/clean_data').then(res => {
@@ -23,7 +25,6 @@ function ImageGrid() {
 
   useEffect(() => {
     axios.get('/get_clean_images/' + imagesPerPage + "/" + "1").then(res => {
-      console.log(res.data)
       setImages(res.data);
     });
   }, []);
@@ -49,11 +50,34 @@ function ImageGrid() {
       [id]: value,
     }));
   };
+
+  const handleChange = (event) => {
+    if (event.target.value != '') {
+      const value = event.target.value;
+    const intValue = parseInt(value, 10);
+    if ((intValue => 1) && (intValue <= totalPages)) {
+      console.log(intValue)
+      setInputValue(intValue);
+    }
+    }
+    
+    
+  };
+
+  const handleSubmit = (event) => {
+      event.preventDefault();
+      handlePageButton(inputValue);
+      setInputValue(inputValue)
+  };
+
+
   const pageButtons = [];
+  
+
   if (currentPage < 7) {
     for (let i = 1; i <= 7; i++) {
       pageButtons.push(
-        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -65,7 +89,7 @@ function ImageGrid() {
 
     for (let i = totalPages-2; i <= totalPages; i++) {
       pageButtons.push(
-        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -73,7 +97,7 @@ function ImageGrid() {
   } else if ((currentPage => 7) && (currentPage < totalPages-3)) {
     for (let i = 1; i <= 3; i++) {
       pageButtons.push(
-        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -85,7 +109,7 @@ function ImageGrid() {
     
     for (let i = currentPage - 2; i <= currentPage + 2; i++) {
       pageButtons.push(
-        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -96,7 +120,7 @@ function ImageGrid() {
       </button>)
     for (let i = totalPages-1; i <= totalPages; i++) {
       pageButtons.push(
-        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -104,7 +128,7 @@ function ImageGrid() {
   } else {
     for (let i = 1; i <= 3; i++) {
       pageButtons.push(
-        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -115,7 +139,7 @@ function ImageGrid() {
       </button>)
     for (let i = totalPages-4; i <= totalPages; i++) {
       pageButtons.push(
-        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -123,10 +147,31 @@ function ImageGrid() {
 
   }
   
-
-
   return (
     <>
+    <div class="container mt-3 text-center">
+      <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+        <div className="pagination justify-content-center mt-4 mb-4">
+        {pageButtons}
+      </div>
+        </div>
+        <div class="col-2"></div>
+      </div>
+    </div>
+    <div class="container mb-4 text-center">
+      <div class="form-group row">
+        <div class="col-5"></div>
+        <div class="col-2 align-items-center">
+        <form onSubmit={handleSubmit}>
+          <input class="form-control form-control-sm" type="number" placeholder="Go to Page" onChange={handleChange} />
+          <button class="btn btn-primary m-1" type="submit">Submit</button>
+        </form>
+        </div>
+        <div class="col-5"></div>
+      </div>
+    </div>
     <div class="container">
       <div class="row mt-3">
       <div class="col-sm-1 mt-3">
@@ -162,7 +207,6 @@ function ImageGrid() {
           ))}
         </div>
       </div>
-      <div class="col-sm-1 mt-3"></div>
       </div>
     </div>
     <div class="container mt-3 text-center">
@@ -177,12 +221,13 @@ function ImageGrid() {
       </div>
     </div>
     <div class="container mb-4 text-center">
-      <div class="row">
+      <div class="form-group row">
         <div class="col-5"></div>
-        <div class="col-2">
-          <div>
-          <input class="form-control form-control-lg " type="number"  placeholder="Go to Page"/>
-          </div>
+        <div class="col-2 align-items-center">
+        <form onSubmit={handleSubmit}>
+          <input class="form-control form-control-sm" type="number" placeholder="Go to Page" onChange={handleChange} />
+          <button class="btn btn-primary m-1" type="submit">Submit</button>
+        </form>
         </div>
         <div class="col-5"></div>
       </div>

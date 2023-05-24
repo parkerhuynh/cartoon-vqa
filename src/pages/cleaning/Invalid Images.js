@@ -9,7 +9,7 @@ function ImageGrid() {
   const [images, setImages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const imagesPerPage = 100;
+  const imagesPerPage = 40;
   const totalPages = Math.ceil(images.length / imagesPerPage);
 
   useEffect(() => {

@@ -178,23 +178,14 @@ def status():
     result = {"good":good_images, "Total": len(dataset), "invalid": invalid_image, "valid": len(dataset) - invalid_image, "duplicate": duplicate, "rest": rest_image}
     return jsonify(result)
 
-@app.route('/image_captioning', methods=['GET', "POST"])
-def image_captioning():
-    connection = connect_to_mysql()
-    with connection.cursor() as cursor:
-        cursor.execute(f"SELECT id, img, caption_1, caption_2, caption FROM cartoon WHERE valid = 2 AND duplicate < 99999 AND caption is NULL limit 3;")
-    results = cursor.fetchall()
-    results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"])), "caption_1": result["caption_1"], "caption_2": result["caption_2"], "caption": result["caption"]} for result in results]
-    return jsonify(results)
-
-@app.route('/changeCaption/<img_id>/<newCaption>', methods=["POST"])
-def changeCaption(img_id, newCaption):
+@app.route('/changeCaption/<caption_id>/<img_id>/<newCaption>', methods=["POST"])
+def changeCaption(caption_id, img_id, newCaption):
     connection = connect_to_mysql()
     with connection.cursor() as cursor:
         if str(newCaption) == "none":
-            cursor.execute(f'UPDATE cartoon SET caption = NULL WHERE id = {img_id};')
+            cursor.execute(f'UPDATE clean_data SET caption_{caption_id} = NULL WHERE img_id = {img_id};')
         else:
-            cursor.execute(f'UPDATE cartoon SET caption = "{newCaption}" WHERE id = {img_id};')
+            cursor.execute(f'UPDATE clean_data SET caption_{caption_id} = "{newCaption}" WHERE img_id = {img_id};')
         connection.commit()
     return ""
 

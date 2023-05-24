@@ -9,6 +9,8 @@ function ImageGrid() {
   const [images, setImages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalImages, setTotalImages] = useState();
+  const [editedCaptions1, setEditedCaptions1] = useState({});
+  const [editedCaptions2, setEditedCaptions2] = useState({});
 
   useEffect(() => {
     axios.get('/get_no_images/clean_data').then(res => {
@@ -32,6 +34,21 @@ function ImageGrid() {
       setImages(res.data)
     })
   }
+  const handleCaptionChange1 = async (event, id) => {
+    const { value } = event.target;
+    await setEditedCaptions1((prevCaptions) => ({
+      ...prevCaptions,
+      [id]: value,
+    }));
+    await axios.post('/changeCaption/1/' + id + '/' + event.target.value);
+  };
+  const handleCaptionChange2 = (event, id) => {
+    const { value } = event.target;
+    setEditedCaptions2((prevCaptions) => ({
+      ...prevCaptions,
+      [id]: value,
+    }));
+  };
   const pageButtons = [];
   if (currentPage < 7) {
     for (let i = 1; i <= 7; i++) {
@@ -104,7 +121,9 @@ function ImageGrid() {
       );
     }
 
-  } 
+  }
+  
+
 
   return (
     <>
@@ -121,8 +140,22 @@ function ImageGrid() {
               <div class="card-body">
                 <h5 class="card-title text-center">Captions</h5>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">{image.caption_1}</li>
-                  <li class="list-group-item">{image.caption_2}</li>
+                  <li class="list-group-item">
+                    <textarea 
+                    class="form-control"
+                    value={editedCaptions1[image.img_id] || image.caption_1}
+                    rows="10"
+                    onChange={(event) => handleCaptionChange1(event, image.img_id)}
+                    ></textarea>
+                  </li>
+                  <li class="list-group-item">
+                    <textarea 
+                    class="form-control"
+                    value={editedCaptions2[image.img_id] || image.caption_2}
+                    rows="10"
+                    onChange={(event) => handleCaptionChange2(event, image.img_id)}
+                    ></textarea>
+                  </li>
                 </ul>
               </div>
             </div>

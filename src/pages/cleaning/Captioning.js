@@ -77,19 +77,19 @@ function ImageGrid() {
   if (currentPage < 7) {
     for (let i = 1; i <= 7; i++) {
       pageButtons.push(
-        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary btn-sm m-1" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
     }
     pageButtons.push(
-      <button class="btn  m-2" classkey={totalPages}>
+      <button class="btn btn-sm m-1" classkey={totalPages}>
         ...
       </button>)
 
     for (let i = totalPages-2; i <= totalPages; i++) {
       pageButtons.push(
-        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary btn-sm m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -97,7 +97,7 @@ function ImageGrid() {
   } else if ((currentPage => 7) && (currentPage < totalPages-3)) {
     for (let i = 1; i <= 3; i++) {
       pageButtons.push(
-        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary btn-sm m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -109,7 +109,7 @@ function ImageGrid() {
     
     for (let i = currentPage - 2; i <= currentPage + 2; i++) {
       pageButtons.push(
-        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary btn-sm m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -120,7 +120,7 @@ function ImageGrid() {
       </button>)
     for (let i = totalPages-1; i <= totalPages; i++) {
       pageButtons.push(
-        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary btn-sm m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -128,18 +128,18 @@ function ImageGrid() {
   } else {
     for (let i = 1; i <= 3; i++) {
       pageButtons.push(
-        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary btn-sm m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
     }
     pageButtons.push(
-      <button class="btn  m-2" classkey={totalPages}>
+      <button class="btn btn-sm " classkey={totalPages}>
         ...
       </button>)
     for (let i = totalPages-4; i <= totalPages; i++) {
       pageButtons.push(
-        <button class="btn btn-primary m-2" classkey={i} onClick={() => handlePageButton(i)}>
+        <button class="btn btn-primary btn-sm m-2" classkey={i} onClick={() => handlePageButton(i)}>
           {i}
         </button>
       );
@@ -148,35 +148,34 @@ function ImageGrid() {
   }
   
   return (
-    <>
-    <div class="container mt-3 text-center">
-      <div class="row">
-        <div class="col-2"></div>
-        <div class="col-8">
-        <div className="pagination justify-content-center mt-4 mb-4">
-        {pageButtons}
-      </div>
-        </div>
-        <div class="col-2"></div>
-      </div>
-    </div>
-    <div class="container mb-4 text-center">
-      <div class="form-group row">
-        <div class="col-5"></div>
-        <div class="col-2 align-items-center">
-        <form onSubmit={handleSubmit}>
-          <input class="form-control form-control-sm" type="number" placeholder="Go to Page" onChange={handleChange} />
-          <button class="btn btn-primary m-1" type="submit">Submit</button>
-        </form>
-        </div>
-        <div class="col-5"></div>
-      </div>
-    </div>
+    < >
     <div class="container">
-      <div class="row mt-3">
-      <div class="col-sm-1 mt-3">
+      <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6 text-center">
+        <div className="pagination justify-content-center  mb-1">
+        {pageButtons}
+        </div>
+        </div>
+        <div class="col-3 ">
+          <div class="mt-2">
+            <form onSubmit={handleSubmit} className="row g-2 align-items-center">
+              <div className="col-auto">
+                <input class="form-control form-control-sm" type="number" placeholder="Go to Page" onChange={handleChange} style={{ width: '80px' }}/>
+              </div>
+              <div className="col-auto">
+                <button class="btn btn-primary btn-sm m-1" type="submit">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-      <div  class="col-sm-10 pt-3">
+    </div>
+    <div class="container bg-dark text-light min-vh-100 mt-2">
+      <div class="row">
+      <div class="col-sm-1">
+      </div>
+      <div  class="col-sm-10">
         <div className='image-grid'>
           {images.map(image =>(
             <div class="card m-2" style={{width: "450px", height:"900px"}}>
@@ -209,29 +208,28 @@ function ImageGrid() {
       </div>
       </div>
     </div>
-    <div class="container mt-3 text-center">
+    <div class="container">
       <div class="row">
-        <div class="col-2"></div>
-        <div class="col-8">
-        <div className="pagination justify-content-center mt-4 mb-4">
+        <div class="col-3"></div>
+        <div class="col-6 text-center">
+        <div className="pagination justify-content-center  mb-1">
         {pageButtons}
-      </div>
         </div>
-        <div class="col-2"></div>
-      </div>
-    </div>
-    <div class="container mb-4 text-center">
-      <div class="form-group row">
-        <div class="col-5"></div>
-        <div class="col-2 align-items-center">
-        <form onSubmit={handleSubmit}>
-          <input class="form-control form-control-sm" type="number" placeholder="Go to Page" onChange={handleChange} />
-          <button class="btn btn-primary m-1" type="submit">Submit</button>
-        </form>
         </div>
-        <div class="col-5"></div>
+        <div class="col-3 ">
+          <div class="mt-2">
+            <form onSubmit={handleSubmit} className="row g-2 align-items-center">
+              <div className="col-auto">
+                <input class="form-control form-control-sm" type="number" placeholder="Go to Page" onChange={handleChange} style={{ width: '80px' }}/>
+              </div>
+              <div className="col-auto">
+                <button class="btn btn-primary btn-sm m-1" type="submit">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-    </div>
+    </div>>
     </>
   );
 }

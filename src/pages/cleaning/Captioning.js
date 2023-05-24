@@ -5,111 +5,146 @@ import 'katex/dist/katex.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../App.css';
 
-function App() {
+function ImageGrid() {
   const [images, setImages] = useState([]);
-  const [process, setProcess] = useState(true);
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalImages, setTotalImages] = useState();
+
   useEffect(() => {
-    axios.get('/image_captioning').then(res => {
+    axios.get('/get_no_images/clean_data').then(res => {
+      setTotalImages(res.data)
+    });
+  }, []);
+  
+  const imagesPerPage = 20;
+  const totalPages = Math.ceil(totalImages/ imagesPerPage);
+
+  useEffect(() => {
+    axios.get('/get_clean_images/' + imagesPerPage + "/" + "1").then(res => {
+      console.log(res.data)
       setImages(res.data);
     });
   }, []);
   
-  const processButton = () => {
-    setProcess(true)
-    window.location.reload();
+  const handlePageButton = (i) => {
+    setCurrentPage(i)
+    axios.get('/get_clean_images/' + imagesPerPage + "/" + i).then(res => {
+      setImages(res.data)
+    })
   }
-  const viewButtom = () => {
-    setProcess(false)
-    axios.get('/view_caption').then(res => {
-      setImages(res.data);
-    });
-  }
-  const handleCaptionChange = (img_id, text) => {
-    if (text == "") {
-      axios.post('/changeCaption/'+ img_id + "/" + "none")
-    } else {
-    axios.post('/changeCaption/'+ img_id + "/" + text)
-  }};
-  const handleRefresh = () => {
-    window.location.reload();
-  };
+  const pageButtons = [];
+  if (currentPage < 7) {
+    for (let i = 1; i <= 7; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+    pageButtons.push(
+      <button class="btn  m-2" classkey={totalPages}>
+        ...
+      </button>)
+
+    for (let i = totalPages-2; i <= totalPages; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+  } else if ((currentPage => 7) && (currentPage < totalPages-3)) {
+    for (let i = 1; i <= 3; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+    pageButtons.push(
+      <button class="btn  m-2" classkey={totalPages}>
+        ...
+      </button>)
+    
+    for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+    pageButtons.push(
+      <button class="btn  m-2" classkey={totalPages}>
+        ...
+      </button>)
+    for (let i = totalPages-1; i <= totalPages; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+  } else {
+    for (let i = 1; i <= 3; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+    pageButtons.push(
+      <button class="btn  m-2" classkey={totalPages}>
+        ...
+      </button>)
+    for (let i = totalPages-4; i <= totalPages; i++) {
+      pageButtons.push(
+        <button class="btn btn-danger m-2" classkey={i} onClick={() => handlePageButton(i)}>
+          {i}
+        </button>
+      );
+    }
+
+  } 
+
   return (
     <>
-    <div class="container-fluid">
-      <div class='row'>
-        <div class='col-1'></div>
-        <div class='col-10'><h1 class="text-center m-2" style={{color: "red"}}>Image Caption Processing</h1></div>
-        <div class='col-1' >
-          <div class="btn-group btn-group-sm mt-4 " role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-dark"
-            onClick={() => processButton()}>Process</button>
-            <button type="button" class="btn btn-dark"
-            onClick={() => viewButtom()}>View</button>
-          </div>
-        </div>
+    <div class="container">
+      <div class="row mt-3">
+      <div class="col-sm-1 mt-3">
       </div>
-    </div>
-    
-    {process ? (
-      <div class="container-fluid">
-      <div className='image-grid'>
-      {images.map(image => (
-        <div class='col-4 p-2'>
-          <div class='card'>
-          <img class="card-img-top" src={image.img} alt="Image 2"/>
-          <p class='text-center'>ID: {image.id}</p>
-          <div class="card-body">
-            <h5 class="card-title">Captions</h5>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">{image.caption_1}</li>
-              <li class="list-group-item">{image.caption_2}</li>
-              <li class="list-group-item">
-                <div class="form-group">
-                    <label for="exampleFormControlTextarea1">Fix Caption</label>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="7"
-                    value ={image.caption}
-                    onChange={(event) => handleCaptionChange(image.id, event.target.value)}></textarea>
-                  </div>
-                </li>
-            </ul>
-          </div>
-        </div>  
-        </div>
-      ))}
-      </div>
-      <div >
-        <div class="text-center mt-5  ">
-          <button class="btn btn-primary btn-sm m-2" 
-            onClick={() => handleRefresh()}> Done! </button>
-        </div>
-      </div>
-    </div>
-    ): (
-      <div class="container-fluid">
+      <div  class="col-sm-10 pt-3">
         <div className='image-grid'>
-        {images.map(image => (
-          <div class='col-4 p-2'>
-            <div class='card'>
-            <img class="card-img-top" src={image.img} alt="Image 2"/>
-            <p class='text-center'>ID: {image.id}</p>
-            <div class="card-body">
-              <h5 class="card-title">Captions</h5>
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">{image.caption_1}</li>
-                <li class="list-group-item">{image.caption_2}</li>
-                <li class="list-group-item">{image.caption}</li>
-              </ul>
+          {images.map(image =>(
+            <div class="card m-2" style={{width: "450px", height:"900px"}}>
+              <img key={image.id} class="m-1" src={image.img} alt={"sub_image"}  style={{height:"250px", "border-radius": "6px"}}/>
+              <h6 class='text-center'>ID: {image.img_id}</h6>
+              <div class="card-body">
+                <h5 class="card-title text-center">Captions</h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">{image.caption_1}</li>
+                  <li class="list-group-item">{image.caption_2}</li>
+                </ul>
+              </div>
             </div>
-          </div>  
-          </div>
-        ))}
+          ))}
         </div>
       </div>
-    )}
+      <div class="col-sm-1 mt-3"></div>
+      </div>
+    </div>
+    <div class="container mt-3 text-center">
+      <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+        <div className="pagination justify-content-center mt-4 mb-4">
+        {pageButtons}
+      </div>
+        </div>
+        <div class="col-2"></div>
+      </div>
+    </div>
     </>
   );
 }
 
-export default App;
-
+export default ImageGrid;

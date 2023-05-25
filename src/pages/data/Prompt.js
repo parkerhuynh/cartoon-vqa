@@ -6,7 +6,7 @@ const IFrame = ({ url }) => {
     const resizeIframe = (iframe) => {
         const { documentElement } = iframe.contentWindow.document;
         const height = documentElement.scrollHeight;
-        iframe.style.height = '8000px';
+        iframe.style.height = '6000px';
         iframe.style.width = '100%';
         
     };

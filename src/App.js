@@ -31,7 +31,7 @@ export default function App() {
           <Route path="captioning" element={<Captioning />} />
           <Route path="data" element={<Data />} />
           <Route path="analysis1" element={<Analysis1 />} />
-          <Route path="promt" element={<Promt />} />
+          <Route path="prompt" element={<Promt />} />
           {/*
           <Route path="qa" element={<QA />} />
           */}

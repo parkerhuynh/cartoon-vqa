@@ -11,6 +11,7 @@ import Status from"./pages/cleaning/Status";
 import Captioning from"./pages/cleaning/Captioning";
 import Data from"./pages/data/Data";
 import Analysis1 from"./pages/data/Analysis1";
+import Promt from "./pages/data/Promt"
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="captioning" element={<Captioning />} />
           <Route path="data" element={<Data />} />
           <Route path="analysis1" element={<Analysis1 />} />
+          <Route path="promt" element={<Promt />} />
           {/*
           <Route path="qa" element={<QA />} />
           */}

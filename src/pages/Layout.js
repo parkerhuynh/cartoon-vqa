@@ -27,6 +27,7 @@ const Layout = () => {
               >
                 <NavDropdown.Item href="/status">Data Status</NavDropdown.Item>
                 <NavDropdown.Item href="/analysis1">Caption Analysis</NavDropdown.Item>
+                <NavDropdown.Item href="/promt">Promt Analysis</NavDropdown.Item>
               </NavDropdown>
             
               <NavDropdown

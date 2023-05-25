@@ -11,7 +11,7 @@ import Status from"./pages/cleaning/Status";
 import Captioning from"./pages/cleaning/Captioning";
 import Data from"./pages/data/Data";
 import Analysis1 from"./pages/data/Analysis1";
-import Promt from "./pages/data/Promt"
+import Promt from "./pages/data/Prompt"
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 

@@ -11,7 +11,7 @@ import Status from"./pages/cleaning/Status";
 import Captioning from"./pages/cleaning/Captioning";
 import Data from"./pages/data/Data";
 import Analysis1 from"./pages/data/Analysis1";
-import Promt from "./pages/data/Prompt"
+import Prompt from "./pages/data/Prompt"
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 
@@ -31,7 +31,7 @@ export default function App() {
           <Route path="captioning" element={<Captioning />} />
           <Route path="data" element={<Data />} />
           <Route path="analysis1" element={<Analysis1 />} />
-          <Route path="prompt" element={<Promt />} />
+          <Route path="prompt" element={<Prompt />} />
           {/*
           <Route path="qa" element={<QA />} />
           */}

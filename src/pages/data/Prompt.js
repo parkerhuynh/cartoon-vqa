@@ -24,7 +24,7 @@ const IFrame = ({ url }) => {
                     resizeIframe(e.target);
                 }}
                 title="static_html"
-                src={"./Promt.html"}
+                src={"./Prompt.html"}
                 ></iframe>
             </div>
             <div class="col-1"></div>

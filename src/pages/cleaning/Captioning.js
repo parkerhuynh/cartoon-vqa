@@ -13,7 +13,7 @@ function ImageGrid() {
   const [editedCaptions2, setEditedCaptions2] = useState({});
   const [inputValue, setInputValue] = useState('');
 
-
+  const removedCharacters = /[\/\\?><]/g;
   useEffect(() => {
     axios.get('/get_no_images/clean_data').then(res => {
       setTotalImages(res.data)
@@ -53,7 +53,7 @@ function ImageGrid() {
 
   const handleChange = (event) => {
     if (event.target.value != '') {
-      const value = event.target.value;
+      const value = event.target.value.replace(/[\/\?\\><]/g, '');
     const intValue = parseInt(value, 10);
     if ((intValue => 1) && (intValue <= totalPages)) {
       console.log(intValue)

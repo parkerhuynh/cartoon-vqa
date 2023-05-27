@@ -19,7 +19,15 @@ const Layout = () => {
           <Navbar.Collapse id="navbar-dark-example">
             <Nav className='m-auto'>
             <Navbar.Brand href="/">Home</Navbar.Brand>
-            <Navbar.Brand href="/data">Data</Navbar.Brand>
+            <NavDropdown
+                id="nav-dropdown-dark-example"
+                title="Data"
+                menuVariant="dark"
+              ><NavDropdown.Item href="/preprocess">Preprocess</NavDropdown.Item>
+              <NavDropdown.Divider />
+                <NavDropdown.Item href="/status">Data</NavDropdown.Item>
+              </NavDropdown>
+            
             <NavDropdown
                 id="nav-dropdown-dark-example"
                 title="Analysis"
@@ -28,25 +36,26 @@ const Layout = () => {
                 <NavDropdown.Item href="/status">Data Status</NavDropdown.Item>
                 <NavDropdown.Item href="/analysis1">Caption Analysis</NavDropdown.Item>
                 <NavDropdown.Item href="/prompt">Prompt Analysis</NavDropdown.Item>
+                <NavDropdown.Divider />
               </NavDropdown>
-            
+              {/*
               <NavDropdown
                 id="nav-dropdown-dark-example"
                 title="Data Processing"
                 menuVariant="dark"
-              >{/*
+              >
                 <NavDropdown.Item href="/cleaningprocess">Image Cleaning Process</NavDropdown.Item>
-                */}
                 <NavDropdown.Item href="/validimages">Valid Images</NavDropdown.Item>
                 <NavDropdown.Item href="/invalidimages">Invalid Images</NavDropdown.Item>
                 <NavDropdown.Item href="/dupimages">Duplicate image Process</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="/captioning">Caption Processing</NavDropdown.Item>
-                {/*
+                
                 <NavDropdown.Item href="/qa">QA Generator</NavDropdown.Item>
-                */}
+                
                 
               </NavDropdown>
+              */}
               
               <Navbar.Brand href="/download">Download</Navbar.Brand>
             </Nav>

@@ -1,5 +1,5 @@
 
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, send_file
 import json
 import pandas as pd
 import pymysql.cursors
@@ -84,17 +84,31 @@ def handleSubmit(img_ids):
         connection.commit()
     return ""
     
-@app.route('/download-data', methods=['GET', "POST"])
-def download_data():
-    connection = connect_to_mysql()
-    with connection.cursor() as cursor:
-        cursor.execute(f"SELECT * FROM cartoon WHERE valid = 2 AND duplicate < 99999;")
-    df = pd.DataFrame(cursor.fetchall())
-    csv = df.to_csv(index = False)
-    response = make_response(csv)
-    response.headers['Content-Type'] = 'text/csv'
-    response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
-    return response
+@app.route('/download-data/<dataname>', methods=['GET', "POST"])
+def download_data(dataname):
+    
+    if dataname == "clean_data":
+        connection = connect_to_mysql()
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT * FROM cartoon WHERE valid = 2 AND duplicate < 99999;")
+        df = pd.DataFrame(cursor.fetchall())
+        csv = df.to_csv(index = False)
+        response = make_response(csv)
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
+        return response
+    elif dataname == "jn-preprocessing":
+        file_path = 'raw_data.csv'
+        filename = 'preprocessing.ipynb'
+        return send_file(file_path, as_attachment=True)
+    elif dataname == "raw_data":
+        file_path = 'raw_data.csv'
+        return send_file(file_path, as_attachment=True)
+
+
+
+
+    
 
 def convert_text_to_list(text):
     # Remove any surrounding whitespace or quotes from the text

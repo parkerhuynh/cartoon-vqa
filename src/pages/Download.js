@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function DownloadButton() {
   const handleDownload = () => {
-    axios.get('/download-data').then((response) => {
+    axios.get('/download-data/clean_data').then((response) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;

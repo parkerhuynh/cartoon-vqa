@@ -12,6 +12,7 @@ import Captioning from"./pages/cleaning/Captioning";
 import Data from"./pages/data/Data";
 import Analysis1 from"./pages/data/Analysis1";
 import Prompt from "./pages/data/Prompt"
+import Preprocess from "./pages/data/Preprocessing"
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="data" element={<Data />} />
           <Route path="analysis1" element={<Analysis1 />} />
           <Route path="prompt" element={<Prompt />} />
+          <Route path="preprocess" element={<Preprocess />} />
           {/*
           <Route path="qa" element={<QA />} />
           */}

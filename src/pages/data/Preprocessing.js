@@ -11,7 +11,7 @@ const IFrame = ({ url }) => {
     const resizeIframe = (iframe) => {
         const { documentElement } = iframe.contentWindow.document;
         const height = documentElement.scrollHeight;
-        iframe.style.height = '2300px';
+        iframe.style.height = '2500px';
         iframe.style.width = '100%';
         
     };

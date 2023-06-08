@@ -19,13 +19,30 @@ const Layout = () => {
           <Navbar.Collapse id="navbar-dark-example">
             <Nav className='m-auto'>
             <Navbar.Brand href="/">Home</Navbar.Brand>
+            {/*
             <NavDropdown
                 id="nav-dropdown-dark-example"
                 title="Data"
                 menuVariant="dark"
               ><NavDropdown.Item href="/preprocess">Preprocess</NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item href="/assignment_checking">Assignment Checking</NavDropdown.Item>
+                <NavDropdown.Item href="/assignment_tracking">Assignment Tracking</NavDropdown.Item>
               <NavDropdown.Divider />
-                <NavDropdown.Item href="/status">Data</NavDropdown.Item>
+                <NavDropdown.Item href="/worker_checking">Worker Checking</NavDropdown.Item>
+                <NavDropdown.Item href="/worker_tracking">Workers Tracking</NavDropdown.Item>
+              </NavDropdown>
+              */}
+              <NavDropdown
+                id="nav-dropdown-dark-example"
+                title="MTURK"
+                menuVariant="dark"
+              ><NavDropdown.Divider />
+                <NavDropdown.Item href="/working_analysis">Working Time Analysis</NavDropdown.Item>
+                <NavDropdown.Item href="/workers">Workers</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="/mturk_uploading">Upload</NavDropdown.Item>
+              
               </NavDropdown>
             
             <NavDropdown

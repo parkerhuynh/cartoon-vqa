@@ -10,11 +10,121 @@ import json
 import os
 import openai
 import re
+from collections import Counter
 import ast
+from time import sleep
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+def extract_data(result):
+    ids = []
+    correct = []
+    incorrect = []
+    partially_correct = []
+    ambiguous = []
+    partially_incorrect = []
+
+    for item in result:
+        for key, value in item.items():
+            ids.append(int(key))
+            correct.append(int(value['correct']))
+            incorrect.append(int(value['incorrect']))
+            partially_correct.append(int(value['partially_correct']))
+            ambiguous.append(int(value['ambiguous']))
+            partially_incorrect.append(int(value['partially_incorrect']))
+
+    return ids, incorrect, partially_incorrect, ambiguous, partially_correct, correct
+def convert_string_to_list_of_dicts(json_string):
+    try:
+        json_list = json.loads(json_string)
+        if isinstance(json_list, list):
+            return json_list
+        else:
+            print("The provided JSON string is not a valid JSON array.")
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {str(e)}")
+
+def triple_dataset_generation():
+    columns = ['HITId', 'HITTypeId', 'Title', 'Description', 'Keywords',  'Reward', 'CreationTime', 'MaxAssignments', 'RequesterAnnotation', 'AssignmentDurationInSeconds', 
+           'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime','SubmitTime',
+           'AutoApprovalTime', 'ApprovalTime', 'RejectionTime', 'RequesterFeedback', 'WorkTimeInSeconds', 'LifetimeApprovalRate', 'Last30DaysApprovalRate', 
+           'Last7DaysApprovalRate', 'Input.id1', 'Input.id2', 'Input.id3', 'Input.id4', 'Input.id5', 'Input.id6', 'Input.id7', 'Input.id8', 'Input.id9', 'Input.id10', 
+           'Input.id11', 'Input.id12', 'Input.img_url1', 'Input.img_url2', 'Input.img_url3', 'Input.img_url4', 'Input.img_url5', 'Input.img_url6', 'Input.img_url7',
+           'Input.img_url8', 'Input.img_url9', 'Input.img_url10', 'Input.img_url11', 'Input.img_url12', 'Input.question1', 'Input.question2', 'Input.question3',
+           'Input.question4', 'Input.question5', 'Input.question6', 'Input.question7', 'Input.question8', 'Input.question9', 'Input.question10', 'Input.question11',
+           'Input.question12', 'Input.answer1', 'Input.answer2', 'Input.answer3', 'Input.answer4', 'Input.answer5', 'Input.answer6', 'Input.answer7', 'Input.answer8',
+           'Input.answer9', 'Input.answer10', 'Input.answer11', 'Input.answer12', 'Answer.taskAnswers', 'Approve', 'Reject']
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.columns = columns
+    mturk_data["index"]  = mturk_data.index
+    mturk_data = mturk_data[["WorkerId", "AssignmentId", "HITId", "Answer.taskAnswers"]]
+    result_dic = {
+        "worker_id": [],
+        "assignment_id": [],
+        "hit_id":[],
+        "id":[],
+        "incorrect":[],
+        "partially_incorrect":[],
+        "ambiguous":[],
+        "partially_correct":[],
+        "correct": [],
+    }
+    for i in range(len(mturk_data)):
+        row = mturk_data.iloc[i]
+        WorkerId, AssignmentId, HITId, Answer_taskAnswers = row
+        results = convert_string_to_list_of_dicts(Answer_taskAnswers)
+        ids, incorrect, partially_incorrect, ambiguous, partially_correct, correct = extract_data(results)
+        
+        result_dic["worker_id"] += [WorkerId]*len(ids)
+        result_dic["assignment_id"] += [AssignmentId]*len(ids)
+        result_dic["hit_id"] += [HITId]*len(ids)
+        result_dic["id"] += ids
+        result_dic["incorrect"] += incorrect
+        result_dic["partially_incorrect"] += partially_incorrect
+        result_dic["ambiguous"] += ambiguous
+        result_dic["partially_correct"] += partially_correct
+        result_dic["correct"] += correct
+    data = pd.DataFrame(result_dic)
+    full_base_data = pd.read_csv("data_final.csv")
+    full_base_data = full_base_data[["id","Img path", "Question", "Answer"]]
+    mturk_data = data.merge(full_base_data, on="id", how="left")
+    mturk_data['value'] = mturk_data['incorrect']*0 + mturk_data['partially_incorrect']*1/4 + mturk_data['ambiguous']*2/4 + mturk_data['partially_correct']*3/4 + mturk_data['correct']*4/4
+    mturk_data.to_csv("Triples_data.csv", index=False)
+
+def mturk_batch_generation():
+    df = pd.read_csv("data_final.csv")
+    df["Img path"] = df["Img path"].apply(lambda x: "https://storage.googleapis.com/cartoon_img/" + x)
+    division = 12
+    sample = (len(df)//division)*division
+    df = df[:sample]
+    df["id"] =  df.index
+    batch_result = pd.read_csv("Triples_data.csv")
+    remove_id = set(batch_result["id"])
+    df = df[~df["id"].isin(remove_id)]
+
+    index = df["id"].to_list()
+    img_path = df["Img path"].to_list()
+    question = df["Question"].to_list()
+    answer= df["Answer"].to_list()
+    A =  {
+        "id":index,
+        "img_url":img_path,
+        "question": question,
+        "answer":answer
+    }
+    sample_per_column = (len(df)//division)
+    new_A = {}
+    for key, value in A.items():
+        for i in range(1, division+1):
+            new_key = key + str(i)
+            new_value = value[(i - 1) * sample_per_column : i * sample_per_column]
+            new_A[new_key] = new_value
+    new_A = pd.DataFrame(new_A)
+    new_A.to_csv("mturk_batch.csv", index=False)
+
+    
+        
 
 def get_img_pth(img_id):
     img_dic = "../images/"
@@ -101,13 +211,17 @@ def download_data(dataname):
         file_path = 'raw_data.csv'
         filename = 'preprocessing.ipynb'
         return send_file(file_path, as_attachment=True)
+    
     elif dataname == "raw_data":
         file_path = 'raw_data.csv'
         return send_file(file_path, as_attachment=True)
-
-
-
-
+    
+    elif dataname == "mturk_batch":
+        mturk_batch_generation()
+        file_path = 'mturk_batch.csv'
+        return send_file(file_path, as_attachment=True)
+        
+    
     
 
 def convert_text_to_list(text):
@@ -191,27 +305,6 @@ def status():
     result = {"good":good_images, "Total": len(dataset), "invalid": invalid_image, "valid": len(dataset) - invalid_image, "duplicate": duplicate, "rest": rest_image}
     return jsonify(result)
 
-@app.route('/changeCaption/<caption_id>/<img_id>/<newCaption>', methods=["POST"])
-def changeCaption(caption_id, img_id, newCaption):
-    connection = connect_to_mysql()
-    with connection.cursor() as cursor:
-        if str(newCaption) == "none":
-            cursor.execute(f'UPDATE clean_data SET caption_{caption_id} = NULL WHERE img_id = {img_id};')
-        else:
-            cursor.execute(f'UPDATE clean_data SET caption_{caption_id} = "{newCaption}" WHERE img_id = {img_id};')
-        connection.commit()
-    return ""
-
-@app.route('/view_caption', methods=['GET', "POST"])
-def view_caption():
-    connection = connect_to_mysql()
-    with connection.cursor() as cursor:
-        cursor.execute(f"SELECT id, img, caption_1, caption_2, caption FROM cartoon WHERE valid = 2 AND duplicate < 99999 AND caption IS NOT NULL ORDER BY RAND() limit 40;")
-    results = cursor.fetchall()
-    results = [{"id": result["id"], "img": image_uri(get_img_pth(result["img"])), "caption_1": result["caption_1"], "caption_2": result["caption_2"], "caption": result["caption"]} for result in results]
-    return jsonify(results)
-
-
 @app.route('/get_no_images/<route>', methods=['GET', "POST"])
 def get_no_images(route):
     connection = connect_to_mysql()
@@ -221,25 +314,113 @@ def get_no_images(route):
             cursor.execute(f"SELECT id FROM clean_data;") 
     results = cursor.fetchall()
     return jsonify(len(results))
+####################################################################################################################################################
+@app.route('/upload/<file_name>', methods=['POST'])
+def upload_file(file_name):
+    uploaded_file = request.files['file']
+    # Process the file as needed
+    # For example, save it to a specific location
+    uploaded_file.save(file_name)
+    if file_name == "mturk_result.csv":
+        sleep(5)
+        triple_dataset_generation()
+    return 'File uploaded successfully'
 
-@app.route('/get_clean_images/<no_imga_page>/<page_number>', methods=['GET', "POST"])
-def get_clean_images(no_imga_page, page_number):
-    no_imga_page = int(no_imga_page)
-    page_number = int(page_number)
-    start_id = (page_number-1)*no_imga_page + 1
-    end_ind = page_number*no_imga_page
-    connection = connect_to_mysql()
-    with connection.cursor() as cursor:
-        cursor.execute(f"SELECT img_id, img, caption_1, caption_2, qa FROM clean_data WHERE id BETWEEN {start_id} AND {end_ind}")
-    results = cursor.fetchall()
-    results = [{
-        "caption_1": result["caption_1"],
-        "caption_2": result["caption_2"],
-        "qa": result["qa"],
-        "img_id": result["img_id"],
-        "img": image_uri(get_img_pth(result["img"]))} for result in results]
+@app.route('/working_time/', methods=['POST','GET'])
+def working_time():
+    mturk_data = pd.read_csv("mturk_result.csv")
+    working_time = mturk_data['WorkTimeInSeconds'].to_list()
+    return working_time
+
+@app.route('/worker_working_time/<number_worker>', methods=['POST','GET'])
+def worker_working_time(number_worker):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    working_time = pd.DataFrame(mturk_data.groupby('WorkerId')['WorkTimeInSeconds'].mean())
+    working_time = working_time.reset_index()
+    working_time = working_time.sort_values("WorkTimeInSeconds")
+    working_time.columns = ["Worker Id", "Work Time In Second"]
+    working_time = working_time.to_dict(orient='records')
     
-    return jsonify(results)
+    return working_time[:int(number_worker)]
+
+@app.route('/get_worker_profile/<worker_id>', methods=['POST','GET'])
+def get_worker_profile(worker_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    worker_profile=mturk_data[mturk_data["WorkerId"]== worker_id][["WorkerId", "SubmitTime","AssignmentStatus","AssignmentId", "WorkTimeInSeconds", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate", "Approve", "Reject"]]
+    life_approval_complete,  life_approval_all = worker_profile["LifetimeApprovalRate"].iloc[0].split("(")[1].replace(")", "").split("/")
+    life_approval_complete,  life_approval_all = int(life_approval_complete),  int(life_approval_all)
+
+    month_approval_complete,  month_approval_all = worker_profile["Last30DaysApprovalRate"].iloc[0].split("(")[1].replace(")", "").split("/")
+    month_approval_complete,  month_approval_all = int(month_approval_complete),  int(month_approval_all)
+
+    week_approval_complete,  week_approval_all = worker_profile["Last7DaysApprovalRate"].iloc[0].split("(")[1].replace(")", "").split("/")
+    week_approval_complete,  week_approval_all = int(week_approval_complete),  int(week_approval_all)
+    worker_profile = worker_profile[["SubmitTime", "WorkTimeInSeconds", "AssignmentId", "AssignmentStatus", "Approve", "Reject"]]
+    worker_profile = worker_profile.sort_values("SubmitTime")
+    worker_profile = worker_profile.fillna(0)
+    worker_profile = worker_profile.reset_index(drop=True)
+    worker_profile["id"] = worker_profile.index
+    summary = [
+        {"id":1, "feature": "Avg. Time", "value": int(worker_profile["WorkTimeInSeconds"].mean())},
+        {"id":2, "feature": "Num. Assigments", "value": len(worker_profile)}
+    ]
+    result = {
+        "data": worker_profile.to_dict(orient='records'),
+        "lifeAprovalRate": [
+            {"name": "Approved", "value": life_approval_complete},
+            {"name": "reject", "value": life_approval_all - life_approval_complete}
+        ],
+        "30AprovalRate": [
+            {"name": "Approved", "value": month_approval_complete},
+            {"name": "reject", "value": month_approval_all - month_approval_complete}
+        ],
+        "7AprovalRate": [
+            {"name": "Approved", "value": week_approval_complete},
+            {"name": "reject", "value": week_approval_all - week_approval_complete}
+        ],
+        "summary": summary
+    }
+    return result
+
+@app.route('/get_workers/', methods=['POST','GET'])
+def get_workers():
+    mturk_data = pd.read_csv("mturk_result.csv")
+    workers = mturk_data[["WorkerId", "SubmitTime","AssignmentStatus","AssignmentId", "WorkTimeInSeconds", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate", "Approve", "Reject"]]
+    worker_counts = workers['WorkerId'].value_counts().reset_index()
+    worker_counts.columns = ['WorkerId', 'count']
+    average_working_time = workers.groupby('WorkerId')['WorkTimeInSeconds'].mean().reset_index()
+    average_working_time['WorkTimeInSeconds'] =average_working_time['WorkTimeInSeconds'].apply(lambda x: int(x))
+    workers = pd.merge(worker_counts, average_working_time, on='WorkerId')
+    workers["id"] = workers.index
+    workers_data = workers.sort_values("count",  ascending=False)
+    workers_data = workers.to_dict(orient='records')
+    summary = [
+        {"id":1, "name":"Number of Worker", "value":len(workers)},
+        {"id":2, "name":"Avg. Asgmts. per Worker", "value":int(workers["count"].mean())},
+        {"id":3, "name":"Hardest Worker", "value": worker_counts["WorkerId"].iloc[0]},
+        {"id":4, "name":"Num. Asgmts. Hardest Worker", "value": int(worker_counts["count"].iloc[0])}
+    ]
+    results= {
+        "data": workers_data,
+        "summary":summary
+    }
+    return results
+
+@app.route('/get_assignment/<assignment_id>', methods=['POST','GET'])
+def get_assignment(assignment_id):
+    columns = ['worker_id', 'assignment_id', 'id', 
+    'incorrect', 'partially_incorrect', 'ambiguous', 
+    'partially_correct', 'correct', 'Img path', 
+    'Question', 'Answer', 'value']
+    triple = pd.read_csv("Triples_data.csv")
+    triple = triple[triple["assignment_id"] == assignment_id]
+    triple = triple[columns]
+    triple['id'] = triple.index
+    results = triple.to_dict(orient='records')
+    return results
+    
+
+
 
 
 if __name__ == "__main__":

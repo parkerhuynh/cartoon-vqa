@@ -13,13 +13,17 @@ import Data from"./pages/data/Data";
 import Analysis1 from"./pages/data/Analysis1";
 import Prompt from "./pages/data/Prompt"
 import Preprocess from "./pages/data/Preprocessing"
+import Workers from "./pages/MTURK/Workers"
+import Upload from "./pages/MTURK/Upload"
+import WorkingAnalysis from "./pages/MTURK/WorkingTImeAnalysis"
+import WorkerProfile from "./pages/MTURK/WorkerProfile"
+import Assignment from "./pages/MTURK/Assignment"
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 
 
-export default function App() {
+function App() {
   return (
-    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
@@ -34,14 +38,16 @@ export default function App() {
           <Route path="analysis1" element={<Analysis1 />} />
           <Route path="prompt" element={<Prompt />} />
           <Route path="preprocess" element={<Preprocess />} />
+          <Route path="workers" element={<Workers />} />
+          <Route path="mturk_uploading" element={<Upload  />} />
+          <Route path="working_analysis" element={<WorkingAnalysis  />} />
+          <Route path="profile/:worker_id" element={<WorkerProfile />} />
+          <Route path="assignment/:assignment_id" element={<Assignment />} />
           {/*
           <Route path="qa" element={<QA />} />
           */}
         </Route>
       </Routes>
-    </BrowserRouter>
   );
 }
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+export default App;

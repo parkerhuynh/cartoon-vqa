@@ -181,9 +181,6 @@ def restore_image(img_id):
         connection.commit()
     return "delete image"
 
-
-
-
 @app.route('/handleSubmit/<img_ids>', methods=['GET', "POST"])
 def handleSubmit(img_ids):
     id_list = [int(x) for x in img_ids.split("-")]
@@ -360,6 +357,12 @@ def get_worker_profile(worker_id):
     worker_profile = worker_profile.fillna(0)
     worker_profile = worker_profile.reset_index(drop=True)
     worker_profile["id"] = worker_profile.index
+    name_keys = ["Submited", "Approved", "Rejected"]
+    status = dict(worker_profile["AssignmentStatus"].value_counts())
+    for name_key in name_keys:
+        if name_key not in status.keys():
+            status[name_key] =0
+    status_list = [{"name": key, "value": int(status[key])} for key in status.keys()]     
     summary = [
         {"id":1, "feature": "Avg. Time", "value": int(worker_profile["WorkTimeInSeconds"].mean())},
         {"id":2, "feature": "Num. Assigments", "value": len(worker_profile)}
@@ -378,7 +381,8 @@ def get_worker_profile(worker_id):
             {"name": "Approved", "value": week_approval_complete},
             {"name": "reject", "value": week_approval_all - week_approval_complete}
         ],
-        "summary": summary
+        "summary": summary,
+        "status": status_list
     }
     return result
 
@@ -415,9 +419,29 @@ def get_assignment(assignment_id):
     triple = pd.read_csv("Triples_data.csv")
     triple = triple[triple["assignment_id"] == assignment_id]
     triple = triple[columns]
-    triple['id'] = triple.index
     results = triple.to_dict(orient='records')
     return results
+
+@app.route('/get_triple/<triple_id>', methods=['POST','GET'])
+def get_triple(triple_id):
+    try:
+        mturk_data = pd.read_csv("data_final.csv")
+        mturk_data = mturk_data[mturk_data["id"] == int(triple_id)]
+        triple = dict(mturk_data[["Img path", "Question", "Answer", "Topic"]].iloc[0])
+
+        mturk_data = pd.read_csv("Triples_data.csv")
+        mask = (mturk_data == int(triple_id)).sum(axis=1) == 1
+        assignments = mturk_data[mask]
+        assignments = assignments.reset_index()
+        assignments["index"] = assignments.index
+        assignments = assignments.to_dict(orient='records')
+        results = {
+            "triple": triple,
+            "assignments":assignments
+        }
+        return results
+    except:
+        return []
     
 
 

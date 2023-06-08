@@ -28,7 +28,9 @@ function WorkerProfile() {
             setLoading(false);
         }
     };
-    console.log(images)
+    const handleTripleClick = (tripleId) => {
+        window.location.href = `/triple/${tripleId}`;
+      };
     return (
         <>
         <h3 class="text-center text-danger mt-3">Assignment Review</h3>
@@ -42,6 +44,8 @@ function WorkerProfile() {
                         <div class = "col-3 p-2">
                             <div class="card h-100">
                             <img key={image.id} class="m-1" src={image["Img path"]} alt={"sub_image"}  style={{height:"250px", "border-radius": "6px"}}/>
+                            <h6 class='text-center' onClick={() => handleTripleClick(image.id)}>ID: {image.id}</h6>
+                            {/*
                             <h6 class='text-center'>ID: {image.id}</h6>
                             <h6 class='text-center'>Worker ID:</h6>
                             <h6 class='text-center text-danger'>{image.worker_id}</h6>
@@ -49,6 +53,7 @@ function WorkerProfile() {
                             <h6 class='text-center text-danger'>{image.assignment_id}</h6>
                             <h6 class='text-center'>Image:</h6>
                             <h6 class='text-center text-danger'>{image["Img path"]}</h6>
+                            */}
                             <div class="card-body">
                                 <p>Question: {image.Question}</p>
                                 <p>Answer: {image.Answer}</p>

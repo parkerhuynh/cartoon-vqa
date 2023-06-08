@@ -357,12 +357,15 @@ def get_worker_profile(worker_id):
     worker_profile = worker_profile.fillna(0)
     worker_profile = worker_profile.reset_index(drop=True)
     worker_profile["id"] = worker_profile.index
-    name_keys = ["Submited", "Approved", "Rejected"]
-    status = dict(worker_profile["AssignmentStatus"].value_counts())
+    name_keys = ["Submitted", "Approved", "Rejected"]
+    value_status = dict(worker_profile["AssignmentStatus"].value_counts())
+    status = {}
     for name_key in name_keys:
-        if name_key not in status.keys():
-            status[name_key] =0
-    status_list = [{"name": key, "value": int(status[key])} for key in status.keys()]     
+        if name_key not in value_status.keys():
+            status[name_key] = 0
+        else:
+            status[name_key] = value_status[name_key]
+    status_list = [{"name": key, "value": int(status[key])} for key in status.keys()]
     summary = [
         {"id":1, "feature": "Avg. Time", "value": int(worker_profile["WorkTimeInSeconds"].mean())},
         {"id":2, "feature": "Num. Assigments", "value": len(worker_profile)}

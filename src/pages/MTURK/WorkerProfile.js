@@ -37,8 +37,8 @@ function WorkerProfile() {
     const status = profileData["status"];
     const summary_data = profileData["summary"];
 
-    const PIECOLORS = ['#0088FE', '#FF8042'];
-    const STATUSCOLORS = ['#42ffbd', '#0088FE', '#FF8042'];
+    const PIECOLORS = ['#14A44D', '#DC4C64'];
+    const STATUSCOLORS = ['#3B71CA', '#14A44D', '#DC4C64'];
     const PIESIZE = 250;
     const getFontColor = (status) => {
         if (status === 'Rejected') {
@@ -120,7 +120,7 @@ function WorkerProfile() {
                                             dataKey="value"
                                             nameKey="name"
                                             outerRadius={PIESIZE * (1.2 / 4)}
-                                            fill="#8884d8"
+                                            fill="#f50c2f"
                                             label
                                         >
                                             {lifedata.map((entry, index) => (
@@ -138,7 +138,7 @@ function WorkerProfile() {
                                             dataKey="value"
                                             nameKey="name"
                                             outerRadius={PIESIZE * (1.2 / 4)}
-                                            fill="#8884d8"
+                                            fill="#f50c2f"
                                             label
                                         >
                                             {monthdata.map((entry, index) => (
@@ -156,7 +156,7 @@ function WorkerProfile() {
                                             dataKey="value"
                                             nameKey="name"
                                             outerRadius={PIESIZE * (1.2 / 4)}
-                                            fill="#8884d8"
+                                            fill="#f50c2f"
                                             label
                                         >
                                             {weekdata.map((entry, index) => (
@@ -180,7 +180,7 @@ function WorkerProfile() {
                                         dataKey="value"
                                         nameKey="name"
                                         outerRadius={100}
-                                        fill='#FF8042'
+                                        fill='#DC4C64'
                                         label
                                     >
                                         {lifedata.map((entry, index) => (

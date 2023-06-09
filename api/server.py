@@ -181,9 +181,6 @@ def restore_image(img_id):
         connection.commit()
     return "delete image"
 
-
-
-
 @app.route('/handleSubmit/<img_ids>', methods=['GET', "POST"])
 def handleSubmit(img_ids):
     id_list = [int(x) for x in img_ids.split("-")]
@@ -220,9 +217,18 @@ def download_data(dataname):
         mturk_batch_generation()
         file_path = 'mturk_batch.csv'
         return send_file(file_path, as_attachment=True)
+    elif dataname == "mturk_decision":
+        decision = pd.read_csv("mturk_result.csv")
+        message = "It is crucial to emphasize that the data in question concerns children, and any inaccuracies have the potential to affect their cognitive development. Consequently, we have determined that it is necessary to reject all of your submissions."
+        decision.loc[decision["AssignmentStatus"] == "Approved", 'Approve'] = "x"
+        decision.loc[decision["AssignmentStatus"] == "Rejected", 'Reject'] = message
+        decision["AssignmentStatus"] = "Submitted"
+        decision.to_csv("decision.csv", index=False)
+        sleep(4)
+        file_path = 'decision.csv'
+        return send_file(file_path, as_attachment=True)
         
-    
-    
+
 
 def convert_text_to_list(text):
     # Remove any surrounding whitespace or quotes from the text
@@ -360,6 +366,7 @@ def get_worker_profile(worker_id):
     worker_profile = worker_profile.fillna(0)
     worker_profile = worker_profile.reset_index(drop=True)
     worker_profile["id"] = worker_profile.index
+    
     summary = [
         {"id":1, "feature": "Avg. Time", "value": int(worker_profile["WorkTimeInSeconds"].mean())},
         {"id":2, "feature": "Num. Assigments", "value": len(worker_profile)}
@@ -382,18 +389,49 @@ def get_worker_profile(worker_id):
     }
     return result
 
+def calculate_rate(approved, rejected):
+    if approved + rejected == 0:
+        return "Not Review"
+    else:
+        return (approved / (approved + rejected))*100
+
 @app.route('/get_workers/', methods=['POST','GET'])
 def get_workers():
     mturk_data = pd.read_csv("mturk_result.csv")
-    workers = mturk_data[["WorkerId", "SubmitTime","AssignmentStatus","AssignmentId", "WorkTimeInSeconds", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate", "Approve", "Reject"]]
-    worker_counts = workers['WorkerId'].value_counts().reset_index()
+    mturk_data = mturk_data[["WorkerId", "SubmitTime","AssignmentStatus","AssignmentId", "WorkTimeInSeconds", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate", "Approve", "Reject"]]
+    counts = mturk_data.groupby(["WorkerId", "AssignmentStatus"]).size().reset_index(name='count')
+    pivot_table = counts.pivot(index="WorkerId", columns="AssignmentStatus", values='count').reset_index()
+    head_list = ['WorkerId', 'Submitted', 'Rejected', 'Approved']
+    for header in head_list:
+        if header not in list(pivot_table.columns):
+            pivot_table[header] = [0]*len(pivot_table)
+    pivot_table = pivot_table.fillna(0)
+
+    worker_counts = mturk_data['WorkerId'].value_counts().reset_index()
     worker_counts.columns = ['WorkerId', 'count']
-    average_working_time = workers.groupby('WorkerId')['WorkTimeInSeconds'].mean().reset_index()
-    average_working_time['WorkTimeInSeconds'] =average_working_time['WorkTimeInSeconds'].apply(lambda x: int(x))
+
+    average_working_time = mturk_data.groupby('WorkerId')['WorkTimeInSeconds'].mean().reset_index()
+    average_working_time['WorkTimeInSeconds'] = average_working_time['WorkTimeInSeconds'].apply(lambda x: int(x))
+
     workers = pd.merge(worker_counts, average_working_time, on='WorkerId')
+    workers = pd.merge(workers, pivot_table,  on='WorkerId')
     workers["id"] = workers.index
+
     workers_data = workers.sort_values("count",  ascending=False)
-    workers_data = workers.to_dict(orient='records')
+    workers_data["Approval Rate"] = workers_data.apply(lambda row: calculate_rate(row['Approved'], row['Rejected']), axis=1)
+    numeric_cols = workers_data.select_dtypes(include=['float64', 'int64']).columns
+    workers_data[numeric_cols] = workers_data[numeric_cols].astype(int)
+    workers_data = workers_data.to_dict(orient='records')
+
+    mturk_data = pd.read_csv("Triples_data.csv")
+    mturk_data = mturk_data[["worker_id", "id", "value", "assignment_id"]]
+
+    duplicate_counts = mturk_data.groupby(['worker_id', 'value', 'assignment_id']).size().reset_index(name='count')
+    danger_worker = duplicate_counts[duplicate_counts["count"] == 12]["worker_id"]
+    danger_worker = danger_worker.value_counts().reset_index()
+    danger_worker.columns = ['WorkerId', 'count']
+    danger_worker = danger_worker.to_dict(orient='records')
+
     summary = [
         {"id":1, "name":"Number of Worker", "value":len(workers)},
         {"id":2, "name":"Avg. Asgmts. per Worker", "value":int(workers["count"].mean())},
@@ -402,7 +440,8 @@ def get_workers():
     ]
     results= {
         "data": workers_data,
-        "summary":summary
+        "summary":summary,
+        "danger_worker": danger_worker 
     }
     return results
 
@@ -415,13 +454,98 @@ def get_assignment(assignment_id):
     triple = pd.read_csv("Triples_data.csv")
     triple = triple[triple["assignment_id"] == assignment_id]
     triple = triple[columns]
-    triple['id'] = triple.index
     results = triple.to_dict(orient='records')
     return results
-    
+
+@app.route('/get_triple/<triple_id>', methods=['POST','GET'])
+def get_triple(triple_id):
+    try:
+        mturk_data = pd.read_csv("data_final.csv")
+        mturk_data = mturk_data[mturk_data["id"] == int(triple_id)]
+        triple = dict(mturk_data[["Img path", "Question", "Answer", "Topic"]].iloc[0])
+
+        mturk_data = pd.read_csv("Triples_data.csv")
+        mask = (mturk_data == int(triple_id)).sum(axis=1) == 1
+        assignments = mturk_data[mask]
+        assignments = assignments.reset_index()
+        assignments["index"] = assignments.index
+        assignments = assignments.to_dict(orient='records')
+        results = {
+            "triple": triple,
+            "assignments":assignments
+        }
+        return results
+    except:
+        return []
+
+@app.route('/reject_assignment/<assignment_id>', methods=['POST','GET'])
+def reject_assignment(assignment_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[mturk_data['AssignmentId'] == assignment_id, 'AssignmentStatus'] = "Rejected"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
 
 
+@app.route('/approve_assignment/<assignment_id>', methods=['POST','GET'])
+def approve_assignment(assignment_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[mturk_data['AssignmentId'] == assignment_id, 'AssignmentStatus'] = "Approved"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
 
+@app.route('/approve_worker/<worker_id>', methods=['POST','GET'])
+def approve_worker(worker_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[mturk_data['WorkerId'] == worker_id, 'AssignmentStatus'] = "Approved"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
+
+@app.route('/reject_worker/<worker_id>', methods=['POST','GET'])
+def reject_worker(worker_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[mturk_data['WorkerId'] == worker_id, 'AssignmentStatus'] = "Rejected"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
+
+@app.route('/get_assignments/', methods=['POST','GET'])
+def get_assignments():
+    mturk_data = pd.read_csv("mturk_result.csv")
+    name_keys = ["Submitted", "Approved", "Rejected"]
+    value_status = dict(mturk_data["AssignmentStatus"].value_counts())
+    status = {}
+    for name_key in name_keys:
+        if name_key not in value_status.keys():
+            status[name_key] = 0
+        else:
+            status[name_key] = value_status[name_key]
+    status_list = [{"name": key, "value": int(status[key])} for key in status.keys()]
+
+    mturk_data = pd.read_csv("Triples_data.csv")
+    mturk_data = mturk_data[["worker_id", "id", "value", "assignment_id"]]
+    mapping = {
+        1.0: "correct",
+        0.75: "partially_correct",
+        0.5: "ambiguous",
+        0.25: "partially_incorrect",
+        0.0: "incorrect"
+    }
+
+    mturk_data['value_category'] = mturk_data['value'].replace(mapping)
+    category_counting = mturk_data['value_category'].value_counts().reset_index().rename(columns={'index': 'name', 'value': 'count'}).to_dict('records')
+
+    duplicate_counts = mturk_data.groupby(['worker_id', 'value_category', 'assignment_id']).size().reset_index(name='count')
+    assignments_1_option = duplicate_counts[duplicate_counts["count"] == 12][['worker_id', 'value_category', 'assignment_id']]
+    danger_workers = pd.DataFrame(assignments_1_option["worker_id"].value_counts())
+    danger_workers = danger_workers.reset_index()
+    danger_workers.rename(columns={'worker_id': 'count', 'index': 'worker_id'}, inplace=True)
+    # Counting the number of duplicate rows
+
+
+    results = {
+        "status": status_list,
+        "catefory_count": category_counting,
+    }
+    return results
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)

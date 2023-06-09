@@ -217,6 +217,18 @@ def download_data(dataname):
         mturk_batch_generation()
         file_path = 'mturk_batch.csv'
         return send_file(file_path, as_attachment=True)
+    elif dataname == "mturk_decision":
+        decision = pd.read_csv("mturk_result.csv")
+        message = "It is crucial to emphasize that the data in question concerns children, and any inaccuracies have the potential to affect their cognitive development. Consequently, we have determined that it is necessary to reject all of your submissions."
+        decision.loc[decision["AssignmentStatus"] == "Approved", 'Approve'] = "x"
+        decision.loc[decision["AssignmentStatus"] == "Rejected", 'Reject'] = message
+        decision["AssignmentStatus"] = "Submitted"
+        decision.to_csv("decision.csv", index=False)
+        sleep(4)
+        file_path = 'decision.csv'
+        return send_file(file_path, as_attachment=True)
+        
+
 
 def convert_text_to_list(text):
     # Remove any surrounding whitespace or quotes from the text

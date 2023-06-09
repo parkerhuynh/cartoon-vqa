@@ -11,12 +11,22 @@ const FileUploadForm = () => {
     setFileName(filename);
   };
 
-  const handleDownload = () => {
+  const handleBatchDownload = () => {
     axios.get('/download-data/mturk_batch').then((response) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'mturk_batch_data.csv');
+      link.setAttribute('download', 'mturk_batch.csv');
+      document.body.appendChild(link);
+      link.click();
+    });
+  };
+  const handleDecisionDownload = () => {
+    axios.get('/download-data/mturk_decision').then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'mturk_Decision.csv');
       document.body.appendChild(link);
       link.click();
     });
@@ -89,7 +99,16 @@ const FileUploadForm = () => {
             <div class="col-4"></div>
             <div class="col-4">
               <h3 class="mb-4">Download MTURK batch</h3>
-              <button type="button" class="btn btn-success" onClick={handleDownload}>Download Data</button>
+              <button type="button" class="btn btn-success" onClick={handleBatchDownload}>Download Data</button>
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-4"></div>
+            <div class="col-4">
+              <h3 class="mb-4">Download MTURK Decision</h3>
+              <button type="button" class="btn btn-success" onClick={handleDecisionDownload}>Download Data</button>
             </div>
             <div class="col-4"></div>
         </div>

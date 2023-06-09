@@ -46,11 +46,10 @@ function ImageGrid() {
   };
   const handleBarClick = (data) => {
     const workerId = data["WorkerId"];
-    window.location.href = `/profile/${workerId}`;
+    window.open(`/profile/${workerId}`, '_blank');
   };
   const handletableClick = (workerId) => {
-    console.log(workerId)
-    window.location.href = `/profile/${workerId}`;
+    window.open(`/profile/${workerId}`, '_blank');
   };
 
   const handleSearch = (event) => {
@@ -62,8 +61,8 @@ function ImageGrid() {
     );
     setFilteredWorkers(filtered);
   };
-
-
+  console.log(workers)
+  console.log(filteredWorkers)
   const handleSort = (column) => {
     if (sortColumn === column) {
       // Reverse the sort order if the same column is clicked again
@@ -83,7 +82,6 @@ function ImageGrid() {
         return a.Count - b.Count;
 
       } else if (column === 'Approval Rate') {
-        console.log(a)
         if (a["Approval Rate"] === 'Not Review' && b["Approval Rate"] !== 'Not Review') {
           return 1; // Place "not review" at the end
         }
@@ -124,6 +122,17 @@ function ImageGrid() {
       .finally(() => {
         setDimmed(false)
       });
+      const updatedData = filteredWorkers.map(item => {
+        if (item.WorkerId === worker_id) {
+          item.Approved = 0;
+          item.Reviewed = item.count;
+          item.Rejected = item.count;
+          item["Approval Rate"] = 0;
+          return item
+        }
+        return item;
+    });
+    setFilteredWorkers(updatedData)
   };
   const handleApproveAll = (worker_id) => {
     setDimmed(true);
@@ -134,6 +143,17 @@ function ImageGrid() {
       .finally(() => {
         setDimmed(false)
       })
+      const updatedData = filteredWorkers.map(item => {
+        if (item.WorkerId === worker_id) {
+            item.Approved = item.count;
+            item.Reviewed = item.count;
+            item.Rejected = 0;
+            item["Approval Rate"] = 100;
+            return item
+        }
+        return item;
+    });
+    setFilteredWorkers(updatedData)
   };
 
 
@@ -297,11 +317,11 @@ function ImageGrid() {
                       <td  onClick={() => handletableClick(row.WorkerId)}>{row.WorkTimeInSeconds}</td>
                       <td  onClick={() => handletableClick(row.WorkerId)}>{row["Approval Rate"]}</td>
                       <td>
-                        {row["Rejected"] === row["Submitted"] ? (null) : (<button style={{ width: "70px", height: "15px" }}
+                        {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
                         type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
                       </td>
                       <td>
-                        {row["Approved"] === row["Submitted"] ? (null) : (<button style={{ width: "70px", height: "15px" }}
+                        {row.Rejected === row.count  ? (null) : (<button style={{ width: "70px", height: "15px" }}
                         type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectAll(row.WorkerId)}></button>)}
                       </td>
 

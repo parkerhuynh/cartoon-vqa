@@ -38,8 +38,10 @@ const Layout = () => {
                 title="MTURK"
                 menuVariant="dark"
               ><NavDropdown.Divider />
-                <NavDropdown.Item href="/working_analysis">Working Time Analysis</NavDropdown.Item>
+
                 <NavDropdown.Item href="/workers">Workers</NavDropdown.Item>
+                <NavDropdown.Item href="/assignments">Assignments</NavDropdown.Item>
+                <NavDropdown.Item href="/working_analysis">Working Time Analysis</NavDropdown.Item>
                 <NavDropdown.Item href="/searching">Searching</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="/mturk_uploading">Upload</NavDropdown.Item>

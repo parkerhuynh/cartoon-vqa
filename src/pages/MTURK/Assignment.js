@@ -11,7 +11,7 @@ function WorkerProfile() {
     const { assignment_id } = useParams();
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const [dimmed, setDimmed] = useState(false);
     useEffect(() => {
         fetchData();
     }, []);
@@ -31,20 +31,55 @@ function WorkerProfile() {
     const handleTripleClick = (tripleId) => {
         window.location.href = `/triple/${tripleId}`;
       };
+    
+      const handleRejectClick  = (assignemtId, worker_id) => {
+        setDimmed(true);
+        axios.post('/reject_assignment/' + assignemtId)
+        .then(() => {
+            console.log("Done!")
+        })
+        .finally(() => {
+            window.location.href = `/profile/${worker_id}`
+        })
+
+    };
+    const handleApproveClick  = (assignemtId, worker_id) => {
+        setDimmed(true);
+        axios.post('/approve_assignment/' + assignemtId)
+        .then(() => {
+            console.log("Done!")
+        })
+        .finally(() => {
+            window.location.href = `/profile/${worker_id}`
+        })
+    };
     return (
         <>
         <h3 class="text-center text-danger mt-3">Assignment Review</h3>
         {loading ? (<p class="text-center"> Loading ...</p>) : (
             
-            <div class="container">
+            <div class="container" className={dimmed ? 'dimmed-screen' : ''}>
                 <h1 class="text-center text-info mt-3">{assignment_id}</h1>
+                <div class="row mt-5">
+                    <div class="col-4"></div>
+                    <div class="col-2">
+                        <button style={{width: "130px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-success" onClick={() => handleApproveClick(assignment_id, images[0].worker_id)}>Approve</button>
+                    </div>
+                    <div class="col-2">
+                        <button style={{width: "130px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-danger" onClick={() => handleRejectClick(assignment_id, images[0].worker_id)} >Reject</button>
+                    </div>
+                    <div class="col-4"></div>
+                </div>
+                
                 <div class="row mt-3">
                     <div className='image-grid'>
                     {images.map(image => (
                         <div class = "col-3 p-2">
-                            <div class="card h-100">
+                            <div class="card h-100"  onClick={() => handleTripleClick(image.id)}>
                             <img key={image.id} class="m-1" src={image["Img path"]} alt={"sub_image"}  style={{height:"250px", "border-radius": "6px"}}/>
-                            <h6 class='text-center' onClick={() => handleTripleClick(image.id)}>ID: {image.id}</h6>
+                            <h6 class='text-center'>ID: {image.id}</h6>
                             {/*
                             <h6 class='text-center'>ID: {image.id}</h6>
                             <h6 class='text-center'>Worker ID:</h6>

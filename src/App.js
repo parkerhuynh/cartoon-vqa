@@ -20,6 +20,7 @@ import WorkerProfile from "./pages/MTURK/WorkerProfile"
 import Assignment from "./pages/MTURK/Assignment"
 import Searching from "./pages/MTURK/Searching"
 import Triple from "./pages/MTURK/Triple"
+import Assigments from "./pages/MTURK/Assignments"
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 
@@ -47,6 +48,7 @@ function App() {
           <Route path="assignment/:assignment_id" element={<Assignment />} />
           <Route path="triple/:triple_id" element={<Triple />} />
           <Route path="searching" element={<Searching />} />
+          <Route path="assignments" element={<Assigments />} />
           
           {/*
           <Route path="qa" element={<QA />} />

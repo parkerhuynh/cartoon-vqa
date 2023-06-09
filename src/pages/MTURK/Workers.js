@@ -18,6 +18,8 @@ function ImageGrid() {
   const [filteredWorkers, setFilteredWorkers] = useState([]);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
+  const [dimmed, setDimmed] = useState(false);
+  const [dangerWorkers, setDangerWorkers] = useState(false);
   useEffect(() => {
     fetchData();
   }, []);
@@ -29,6 +31,7 @@ function ImageGrid() {
       setWorkers(responseData["data"]);
       setSummary(responseData["summary"]);
       setFilteredWorkers(responseData["data"])
+      setDangerWorkers(responseData["danger_worker"])
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -112,8 +115,26 @@ function ImageGrid() {
       return 'green';
     }
   };
-
-
+  const handleRejectAll = (worker_id) => {
+    setDimmed(true);
+    axios.post('/reject_worker/'+ worker_id)
+      .then(() => {
+        console.log("Done!")
+      })
+      .finally(() => {
+        setDimmed(false)
+      });
+  };
+  const handleApproveAll = (worker_id) => {
+    setDimmed(true);
+    axios.post('/approve_worker/' + worker_id)
+      .then(() => {
+        console.log("Done!")
+      })
+      .finally(() => {
+        setDimmed(false)
+      })
+  };
 
 
   return (
@@ -122,7 +143,8 @@ function ImageGrid() {
       <div class="container mt-2">
         <h1 class="text-center m-2"> Workers</h1>
         {loading ? (<p class="text-center"> Loading ...</p>) : (
-          <div class="container">
+          <div  className={dimmed ? 'dimmed-screen' : ''}> 
+          <div class="container" >
             <div class="row">
               <div class="col-6">
                 <h2 class="text-info mt-3">Summary Information</h2>
@@ -188,6 +210,7 @@ function ImageGrid() {
                 </ResponsiveContainer>
               </div>
             </div>
+
             <div class="row">
               <div>
                 <div class="row my-3">
@@ -229,6 +252,20 @@ function ImageGrid() {
               </div>
 
             </div>
+
+            <div class="row">
+            <h4 class="px-5">List of Dangerous Workers</h4>
+            <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={dangerWorkers}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="WorkerId" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill={themeColor} onClick={handleBarClick} />
+                  </BarChart>
+                </ResponsiveContainer>
+              <h6 class="px-5">People who pose a threat are those who possess the ability to deceive by consistently selecting a single option for all the answers in a series of exercises.</h6>
+            </div>
             <div class="row my-5">
               <h2 class="text-info mt-3">List of Workers</h2>
               <input type="text" class="form-control" value={searchQuery} onChange={handleSearch} placeholder="Search worker..." />
@@ -238,24 +275,43 @@ function ImageGrid() {
                     <th scope="col" >#</th>
                     <th scope="col" onClick={() => handleSort('WorkerID')}>Worker ID  {sortColumn === 'WorkerID' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                     <th scope="col" onClick={() => handleSort('Count')}>Count  {sortColumn === 'Count' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
-                    <th scope="col" onClick={() => handleSort('WorkTimeInSeconds')}>Worker Avg. Working Time  {sortColumn === 'WorkTimeInSeconds' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
+                    <th scope="col">Reviewed</th>
+                    <th scope="col">Approved</th>
+                    <th scope="col">Rejected</th>
+                    <th scope="col" onClick={() => handleSort('WorkTimeInSeconds')}>Avg. Time  {sortColumn === 'WorkTimeInSeconds' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
+                    
                     <th scope="col" onClick={() => handleSort('Approval Rate')}>Approval Rate {sortColumn === 'Approval Rate' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
+                    <th scope="col">Approve</th>
+                    <th scope="col">Reject</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredWorkers.map((row) => (
-                    <tr key={row.id} onClick={() => handletableClick(row.WorkerId)} style={{ color: getFontColor(row["Approval Rate"]) }}>
-                      <td>{row.id}</td>
-                      <td>{row.WorkerId}</td>
-                      <td>{row.count}</td>
-                      <td>{row.WorkTimeInSeconds}</td>
-                      <td>{row["Approval Rate"]}</td>
+                    <tr key={row.id} style={{ color: getFontColor(row["Approval Rate"]) }}>
+                      <td  onClick={() => handletableClick(row.WorkerId)}>{row.id}</td>
+                      <td  onClick={() => handletableClick(row.WorkerId)}>{row.WorkerId}</td>
+                      <td  onClick={() => handletableClick(row.WorkerId)}>{row.count}</td>
+                      <td  onClick={() => handletableClick(row.WorkerId)}>{row["Approved"] + row["Rejected"] }</td>
+                      <td  onClick={() => handletableClick(row.WorkerId)}>{row["Approved"] }</td>
+                      <td  onClick={() => handletableClick(row.WorkerId)}>{row["Rejected"] }</td>
+                      <td  onClick={() => handletableClick(row.WorkerId)}>{row.WorkTimeInSeconds}</td>
+                      <td  onClick={() => handletableClick(row.WorkerId)}>{row["Approval Rate"]}</td>
+                      <td>
+                        {row["Rejected"] === row["Submitted"] ? (null) : (<button style={{ width: "70px", height: "15px" }}
+                        type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
+                      </td>
+                      <td>
+                        {row["Approved"] === row["Submitted"] ? (null) : (<button style={{ width: "70px", height: "15px" }}
+                        type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectAll(row.WorkerId)}></button>)}
+                      </td>
+
                     </tr>
                   ))}
                 </tbody>
               </table>
 
             </div>
+          </div>
           </div>
 
         )}

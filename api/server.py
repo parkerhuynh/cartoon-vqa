@@ -354,15 +354,7 @@ def get_worker_profile(worker_id):
     worker_profile = worker_profile.fillna(0)
     worker_profile = worker_profile.reset_index(drop=True)
     worker_profile["id"] = worker_profile.index
-    name_keys = ["Submitted", "Approved", "Rejected"]
-    value_status = dict(worker_profile["AssignmentStatus"].value_counts())
-    status = {}
-    for name_key in name_keys:
-        if name_key not in value_status.keys():
-            status[name_key] = 0
-        else:
-            status[name_key] = value_status[name_key]
-    status_list = [{"name": key, "value": int(status[key])} for key in status.keys()]
+    
     summary = [
         {"id":1, "feature": "Avg. Time", "value": int(worker_profile["WorkTimeInSeconds"].mean())},
         {"id":2, "feature": "Num. Assigments", "value": len(worker_profile)}
@@ -381,8 +373,7 @@ def get_worker_profile(worker_id):
             {"name": "Approved", "value": week_approval_complete},
             {"name": "reject", "value": week_approval_all - week_approval_complete}
         ],
-        "summary": summary,
-        "status": status_list
+        "summary": summary
     }
     return result
 
@@ -419,6 +410,16 @@ def get_workers():
     numeric_cols = workers_data.select_dtypes(include=['float64', 'int64']).columns
     workers_data[numeric_cols] = workers_data[numeric_cols].astype(int)
     workers_data = workers_data.to_dict(orient='records')
+
+    mturk_data = pd.read_csv("Triples_data.csv")
+    mturk_data = mturk_data[["worker_id", "id", "value", "assignment_id"]]
+
+    duplicate_counts = mturk_data.groupby(['worker_id', 'value', 'assignment_id']).size().reset_index(name='count')
+    danger_worker = duplicate_counts[duplicate_counts["count"] == 12]["worker_id"]
+    danger_worker = danger_worker.value_counts().reset_index()
+    danger_worker.columns = ['WorkerId', 'count']
+    danger_worker = danger_worker.to_dict(orient='records')
+
     summary = [
         {"id":1, "name":"Number of Worker", "value":len(workers)},
         {"id":2, "name":"Avg. Asgmts. per Worker", "value":int(workers["count"].mean())},
@@ -427,7 +428,8 @@ def get_workers():
     ]
     results= {
         "data": workers_data,
-        "summary":summary
+        "summary":summary,
+        "danger_worker": danger_worker 
     }
     return results
 
@@ -492,6 +494,46 @@ def reject_worker(worker_id):
     mturk_data.loc[mturk_data['WorkerId'] == worker_id, 'AssignmentStatus'] = "Rejected"
     mturk_data.to_csv('mturk_result.csv', index=False)
     return []
+
+@app.route('/get_assignments/', methods=['POST','GET'])
+def get_assignments():
+    mturk_data = pd.read_csv("mturk_result.csv")
+    name_keys = ["Submitted", "Approved", "Rejected"]
+    value_status = dict(mturk_data["AssignmentStatus"].value_counts())
+    status = {}
+    for name_key in name_keys:
+        if name_key not in value_status.keys():
+            status[name_key] = 0
+        else:
+            status[name_key] = value_status[name_key]
+    status_list = [{"name": key, "value": int(status[key])} for key in status.keys()]
+
+    mturk_data = pd.read_csv("Triples_data.csv")
+    mturk_data = mturk_data[["worker_id", "id", "value", "assignment_id"]]
+    mapping = {
+        1.0: "correct",
+        0.75: "partially_correct",
+        0.5: "ambiguous",
+        0.25: "partially_incorrect",
+        0.0: "incorrect"
+    }
+
+    mturk_data['value_category'] = mturk_data['value'].replace(mapping)
+    category_counting = mturk_data['value_category'].value_counts().reset_index().rename(columns={'index': 'name', 'value': 'count'}).to_dict('records')
+
+    duplicate_counts = mturk_data.groupby(['worker_id', 'value_category', 'assignment_id']).size().reset_index(name='count')
+    assignments_1_option = duplicate_counts[duplicate_counts["count"] == 12][['worker_id', 'value_category', 'assignment_id']]
+    danger_workers = pd.DataFrame(assignments_1_option["worker_id"].value_counts())
+    danger_workers = danger_workers.reset_index()
+    danger_workers.rename(columns={'worker_id': 'count', 'index': 'worker_id'}, inplace=True)
+    # Counting the number of duplicate rows
+
+
+    results = {
+        "status": status_list,
+        "catefory_count": category_counting,
+    }
+    return results
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)

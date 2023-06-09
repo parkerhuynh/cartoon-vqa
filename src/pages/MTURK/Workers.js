@@ -315,7 +315,7 @@ function ImageGrid() {
                       <td  onClick={() => handletableClick(row.WorkerId)}>{row["Approved"] }</td>
                       <td  onClick={() => handletableClick(row.WorkerId)}>{row["Rejected"] }</td>
                       <td  onClick={() => handletableClick(row.WorkerId)}>{row.WorkTimeInSeconds}</td>
-                      <td  onClick={() => handletableClick(row.WorkerId)}>{row["Approval Rate"]}</td>
+                      <td  onClick={() => handletableClick(row.WorkerId)}>{Math.floor(row["Approval Rate"])}</td>
                       <td>
                         {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
                         type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}

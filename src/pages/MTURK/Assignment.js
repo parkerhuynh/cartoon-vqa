@@ -104,6 +104,18 @@ function WorkerProfile() {
                     </div>
 
                 </div>
+                <div class="row mt-5">
+                    <div class="col-4"></div>
+                    <div class="col-2">
+                        <button style={{width: "130px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-success" onClick={() => handleApproveClick(assignment_id, images[0].worker_id)}>Approve</button>
+                    </div>
+                    <div class="col-2">
+                        <button style={{width: "130px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-danger" onClick={() => handleRejectClick(assignment_id, images[0].worker_id)} >Reject</button>
+                    </div>
+                    <div class="col-4"></div>
+                </div>
             
             </div>
         )}

@@ -71,7 +71,7 @@ function ImageGrid() {
                                                 <td>2</td>
                                                 <td>Received Assigments</td>
                                                 <td>{sum}</td>
-                                                <td>{Math.floor(status[0].value*0.05)} USD</td>
+                                                <td>{Math.floor(sum*0.05)} USD</td>
                                             </tr>
                                             <tr class="text-success">
                                                 <td>3</td>

@@ -81,3 +81,8 @@ img {
   margin-right: 10px;
 
 }
+
+.dimmed-screen {
+  pointer-events: none;
+  opacity: 0.5;
+}

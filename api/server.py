@@ -217,9 +217,6 @@ def download_data(dataname):
         mturk_batch_generation()
         file_path = 'mturk_batch.csv'
         return send_file(file_path, as_attachment=True)
-        
-    
-    
 
 def convert_text_to_list(text):
     # Remove any surrounding whitespace or quotes from the text
@@ -389,18 +386,39 @@ def get_worker_profile(worker_id):
     }
     return result
 
+def calculate_rate(approved, rejected):
+    if approved + rejected == 0:
+        return "Not Review"
+    else:
+        return (approved / (approved + rejected))*100
+
 @app.route('/get_workers/', methods=['POST','GET'])
 def get_workers():
     mturk_data = pd.read_csv("mturk_result.csv")
-    workers = mturk_data[["WorkerId", "SubmitTime","AssignmentStatus","AssignmentId", "WorkTimeInSeconds", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate", "Approve", "Reject"]]
-    worker_counts = workers['WorkerId'].value_counts().reset_index()
+    mturk_data = mturk_data[["WorkerId", "SubmitTime","AssignmentStatus","AssignmentId", "WorkTimeInSeconds", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate", "Approve", "Reject"]]
+    counts = mturk_data.groupby(["WorkerId", "AssignmentStatus"]).size().reset_index(name='count')
+    pivot_table = counts.pivot(index="WorkerId", columns="AssignmentStatus", values='count').reset_index()
+    head_list = ['WorkerId', 'Submitted', 'Rejected', 'Approved']
+    for header in head_list:
+        if header not in list(pivot_table.columns):
+            pivot_table[header] = [0]*len(pivot_table)
+    pivot_table = pivot_table.fillna(0)
+
+    worker_counts = mturk_data['WorkerId'].value_counts().reset_index()
     worker_counts.columns = ['WorkerId', 'count']
-    average_working_time = workers.groupby('WorkerId')['WorkTimeInSeconds'].mean().reset_index()
-    average_working_time['WorkTimeInSeconds'] =average_working_time['WorkTimeInSeconds'].apply(lambda x: int(x))
+
+    average_working_time = mturk_data.groupby('WorkerId')['WorkTimeInSeconds'].mean().reset_index()
+    average_working_time['WorkTimeInSeconds'] = average_working_time['WorkTimeInSeconds'].apply(lambda x: int(x))
+
     workers = pd.merge(worker_counts, average_working_time, on='WorkerId')
+    workers = pd.merge(workers, pivot_table,  on='WorkerId')
     workers["id"] = workers.index
+
     workers_data = workers.sort_values("count",  ascending=False)
-    workers_data = workers.to_dict(orient='records')
+    workers_data["Approval Rate"] = workers_data.apply(lambda row: calculate_rate(row['Approved'], row['Rejected']), axis=1)
+    numeric_cols = workers_data.select_dtypes(include=['float64', 'int64']).columns
+    workers_data[numeric_cols] = workers_data[numeric_cols].astype(int)
+    workers_data = workers_data.to_dict(orient='records')
     summary = [
         {"id":1, "name":"Number of Worker", "value":len(workers)},
         {"id":2, "name":"Avg. Asgmts. per Worker", "value":int(workers["count"].mean())},
@@ -445,10 +463,35 @@ def get_triple(triple_id):
         return results
     except:
         return []
-    
+
+@app.route('/reject_assignment/<assignment_id>', methods=['POST','GET'])
+def reject_assignment(assignment_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[mturk_data['AssignmentId'] == assignment_id, 'AssignmentStatus'] = "Rejected"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
 
 
+@app.route('/approve_assignment/<assignment_id>', methods=['POST','GET'])
+def approve_assignment(assignment_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[mturk_data['AssignmentId'] == assignment_id, 'AssignmentStatus'] = "Approved"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
 
+@app.route('/approve_worker/<worker_id>', methods=['POST','GET'])
+def approve_worker(worker_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[mturk_data['WorkerId'] == worker_id, 'AssignmentStatus'] = "Approved"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
+
+@app.route('/reject_worker/<worker_id>', methods=['POST','GET'])
+def reject_worker(worker_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[mturk_data['WorkerId'] == worker_id, 'AssignmentStatus'] = "Rejected"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)

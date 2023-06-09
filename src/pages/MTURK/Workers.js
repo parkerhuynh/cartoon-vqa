@@ -78,11 +78,23 @@ function ImageGrid() {
       } else if (column === 'Count') {
         // Sort by Count numerically
         return a.Count - b.Count;
+
+      } else if (column === 'Approval Rate') {
+        console.log(a)
+        if (a["Approval Rate"] === 'Not Review' && b["Approval Rate"] !== 'Not Review') {
+          return 1; // Place "not review" at the end
+        }
+        if (a["Approval Rate"] !== 'Not Review' && b["Approval Rate"] === 'Not Review') {
+          return -1; // Place "not review" at the end
+        }
+
+        return a["Approval Rate"] - b["Approval Rate"];
       } else if (column === 'WorkTimeInSeconds') {
         // Sort by Working time
         return new Date(a.WorkTimeInSeconds) - new Date(b.WorkTimeInSeconds);
       }
-    });
+    })
+
 
     // Reverse the sorted array if the sort order is descending
     if (sortOrder === 'desc') {
@@ -91,6 +103,16 @@ function ImageGrid() {
 
     setFilteredWorkers(sorted);
   };
+  const getFontColor = (rate) => {
+    if (rate === 'Not Review') {
+      return 'black';
+    } else if (rate < 75) {
+      return 'red';
+    } else {
+      return 'green';
+    }
+  };
+
 
 
 
@@ -217,15 +239,17 @@ function ImageGrid() {
                     <th scope="col" onClick={() => handleSort('WorkerID')}>Worker ID  {sortColumn === 'WorkerID' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                     <th scope="col" onClick={() => handleSort('Count')}>Count  {sortColumn === 'Count' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                     <th scope="col" onClick={() => handleSort('WorkTimeInSeconds')}>Worker Avg. Working Time  {sortColumn === 'WorkTimeInSeconds' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
+                    <th scope="col" onClick={() => handleSort('Approval Rate')}>Approval Rate {sortColumn === 'Approval Rate' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredWorkers.map((row) => (
-                    <tr key={row.id} onClick={() => handletableClick(row.WorkerId)}>
+                    <tr key={row.id} onClick={() => handletableClick(row.WorkerId)} style={{ color: getFontColor(row["Approval Rate"]) }}>
                       <td>{row.id}</td>
                       <td>{row.WorkerId}</td>
                       <td>{row.count}</td>
                       <td>{row.WorkTimeInSeconds}</td>
+                      <td>{row["Approval Rate"]}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , CSSProperties} from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { PieChart, Pie, Cell, Legend } from 'recharts';
+import 'katex/dist/katex.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Form } from 'react-bootstrap';
+import '../../App.css';
+import ClipLoader from "react-spinners/ClipLoader";
+
 
 function WorkerProfile() {
     const { worker_id } = useParams();
@@ -10,7 +16,8 @@ function WorkerProfile() {
     const [assigments, setAssigments] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [filterAssignement, setFilterAssignement] = useState([]);
-    const [statusFilter, setStatusFilter] = useState('All');
+    const [statusFilter, setStatusFilter] = useState('Approved');
+    const [dimmed, setDimmed] = useState(false);
     useEffect(() => {
         fetchData();
     }, []);
@@ -70,12 +77,111 @@ function WorkerProfile() {
         }
       });
 
+    const handleRejectClick  = (assignemtId) => {
+        setDimmed(true);
+        axios.post('/reject_assignment/' + assignemtId)
+        .then(() => {
+            console.log("Done!")
+        })
+        .finally(() => {
+            setDimmed(false)
+        })
+        const updatedData = assigments.map(item => {
+            if (item.AssignmentId === assignemtId) {
+                return {
+                    ...item,
+                    AssignmentStatus: 'Rejected',
+                  };
+                }
+                return item;
+              });
+        setAssigments(updatedData)
+        setFilterAssignement(updatedData)
+    };
+    const handleApproveClick  = (assignemtId) => {
+        setDimmed(true);
+        axios.post('/approve_assignment/' + assignemtId)
+        .then(() => {
+            console.log("Done!")
+        })
+        .finally(() => {
+            setDimmed(false)
+        })
+
+        const updatedData = assigments.map(item => {
+            if (item.AssignmentId === assignemtId) {
+                return {
+                    ...item,
+                    AssignmentStatus: 'Approved',
+                  };
+                }
+                return item;
+              });
+        setAssigments(updatedData)
+        setFilterAssignement(updatedData)
+    };
+
+    const handleRejectAll = () => {
+        setDimmed(true);
+        axios.post('/reject_worker/' + worker_id)
+        .then(() => {
+            console.log("Done!")
+        })
+        .finally(() => {
+            setDimmed(false)
+        })
+
+
+        const updatedData = assigments.map(item => ({
+          ...item,
+          AssignmentStatus: 'Rejected',
+        }));
+        setAssigments(updatedData)
+        setFilterAssignement(updatedData)
+
+      };
+
+    const handleApproveAll = () => {
+        setDimmed(true);
+        axios.post('/approve_worker/' + worker_id)
+        .then(() => {
+            console.log("Done!")
+        })
+        .finally(() => {
+            setDimmed(false)
+        })
+        const updatedData = assigments.map(item => ({
+          ...item,
+          AssignmentStatus: 'Approved',
+        }));
+        setAssigments(updatedData)
+        setFilterAssignement(updatedData)
+      };
+
     return (
         <div>
             {loading ? (
                 <p class="text-center"> Loading ...</p>
             ) : profileData ? (
-                <>
+                <div className={dimmed ? 'dimmed-screen' : ''}>
+                    {dimmed && (
+                        <div className="loading-overlay container ">
+                            <div className="loading-indicator row text-center">
+                                <div class="rol-4"> </div>
+                                <div class="rol-4">
+                                <ClipLoader
+                                    color="#36d7b7"
+                                    loading={dimmed}
+                                    size={80}
+                                    aria-label="Loading Spinner"
+                                    data-testid="loader"
+                                />
+                                </div>
+                                <div class="rol-4"> </div>
+                                
+                            </div>
+                        </div>
+                    )}
                     <div class="container">
                         <div class="row mt-4">
                             <div class="col-4 ms-5 ml-5">
@@ -107,8 +213,10 @@ function WorkerProfile() {
                                     </tbody>
                                 </table>
                                 <div class="row text-center">
-                                    <div class="col-6"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-success">Approve All</button></div>
-                                    <div class="col-6"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-danger">Reject All</button></div>
+                                    <div class="col-6"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-success"
+                                    onClick={() => handleApproveAll()}>Approve All</button></div>
+                                    <div class="col-6"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-danger" 
+                                    onClick={() => handleRejectAll()}>Reject All</button></div>
                                 </div>
                             </div>
                             <div class="col-8" style={{ display: 'flex', justifyContent: 'space-around' }}>
@@ -236,15 +344,17 @@ function WorkerProfile() {
                                             <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.SubmitTime}</td>
                                             <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.WorkTimeInSeconds}</td>
                                             <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.AssignmentStatus}</td>
-                                            <td>{row.AssignmentStatus === "Approved" ? (null) : (<button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-success"></button>)}</td>
-                                            <td>{row.AssignmentStatus === "Rejected" ? (null) : (<button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-danger"></button>)}</td>
+                                            <td>{row.AssignmentStatus === "Approved" ? (null) : (<button style={{ width: "70px", height: "15px" }} 
+                                            type="button" class="btn btn-sm btn-success" onClick={() => handleApproveClick(row.AssignmentId)}></button>)}</td>
+                                            <td>{row.AssignmentStatus === "Rejected" ? (null) : (<button style={{ width: "70px", height: "15px" }} 
+                                            type="button" onClick={() => handleRejectClick(row.AssignmentId)} class="btn btn-sm btn-danger"></button>)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </>
+                </div>
             ) : (
                 <p>Data unavailable</p>
             )}

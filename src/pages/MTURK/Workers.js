@@ -4,7 +4,7 @@ import 'katex/dist/katex.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form } from 'react-bootstrap';
 import '../../App.css';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
 
 
@@ -14,14 +14,43 @@ function ImageGrid() {
   const [summary, setSummary] = useState([]);
   const [dangerWorkers, setDangerWorkers] = useState([]);
   const [filteredWorkers, setFilteredWorkers] = useState([]);
-  
+  const [pieChart, setPieChart] = useState([]);
+
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [numberWoker, SetNumberWoker] = useState(10);
+  const [numberWoker, SetNumberWoker] = useState(50);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
   const [dimmed, setDimmed] = useState(false);
+
+
+  const handlePie = (workers) => {
+    const data = [
+      { workerStatus: 'Reviewing', count: 0 },
+      { workerStatus: 'Approved', count: 0 },
+      { workerStatus: 'Rejected', count: 0 },
+    ];
+    workers.forEach((worker) => {
+
+      switch (true) {
+        case (worker.Approved + worker.Rejected) !== worker.count:
+          data[0].count++;
+          break;
+        case worker.Approved === worker.count:
+          data[1].count++;
+          break;
+        case worker.Rejected === worker.count:
+          data[2].count++;
+          break;
+        default:
+          break;
+      }
+    })
+    console.log(data)
+    setPieChart(data)
+  }
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -34,6 +63,7 @@ function ImageGrid() {
       setSummary(responseData.summary);
       setFilteredWorkers(responseData.data)
       setDangerWorkers(responseData.danger_worker)
+      handlePie(responseData.data)
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -102,6 +132,7 @@ function ImageGrid() {
     });
     setFilteredWorkers(updatedData)
     setWorkers(updatedData)
+    handlePie(updatedData)
   };
   const handleRejectAll = (worker_id) => {
     setDimmed(true);
@@ -124,6 +155,7 @@ function ImageGrid() {
     });
     setFilteredWorkers(updatedData)
     setWorkers(updatedData)
+    handlePie(updatedData)
   };
 
   const handleSort = (column) => {
@@ -177,14 +209,45 @@ function ImageGrid() {
     }
   };
 
-  const workerIdsList = [];
+  const getBarColor = (data) => {
+    if (data.Approved === data.count) {
+      return "#14A44D"
+    } else if (data.Rejected === data.count) {
+      return "#DC4C64"
+    } else {
+      return "#3B71CA"
+    }
+  };
 
-  for (let i = 0; i < filteredWorker.length; i++) {
-      workerIdsList.push(filteredWorker[i].WorkerId);
+  const formattedCountData = filteredWorker.map((item) => ({
+    ...item,
+    fill: getBarColor(item),
+  }));
+  const formattedTimeData = filteredWorker.map((item) => ({
+    ...item,
+    fill: getBarColor(item),
+  }));
+
+  const workerIdsList = [];
+  const color_worker = {}
+
+  for (let i = 0; i < formattedCountData.length; i++) {
+    workerIdsList.push(formattedCountData[i].WorkerId);
+    color_worker[formattedCountData[i].WorkerId] = formattedCountData[i].fill
   }
-  
   const filtereddangerWorkers = dangerWorkers.filter(worker => workerIdsList.includes(worker.WorkerId));
-  
+  const filteredcoloreddangerWorkers = []
+  for (let i = 0; i < dangerWorkers.length; i++) {
+    if (workerIdsList.includes(dangerWorkers[i].WorkerId)) {
+      const item = dangerWorkers[i]
+      item.fill = color_worker[dangerWorkers[i].WorkerId]
+      filteredcoloreddangerWorkers.push(item)
+    }
+  }
+  const PIECOLORS = ['#3B71CA', '#14A44D', '#DC4C64'];
+  const PIESIZE = 250;
+
+
   return (
     <>
 
@@ -215,16 +278,35 @@ function ImageGrid() {
                     </tbody>
                   </table>
 
-                    <div>
-                      <select   class="form-control text-center" value={statusFilter}onChange={(e) => handleStatusFilter(e.target.value)}>
-                        <option value="All">All</option>
-                        <option value="Submitted">Submitted</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Rejected">Rejected</option>
-                      </select>
+                  <div>
+                    <select class="form-control text-center btn btn-outline-info" value={statusFilter} onChange={(e) => handleStatusFilter(e.target.value)}>
+                      <option value="All">All</option>
+                      <option class="text-primary" value="Submitted">Reviewing</option>
+                      <option class="text-success" value="Approved">Approved</option>
+                      <option class="text-danger" value="Rejected">Rejected</option>
+                    </select>
                   </div>
                 </div>
-                <div class="col-6">
+                <div class="col-6 text-center" >
+                <h7 ><b>Review Processing</b></h7>
+                  <div style={{"display": "flex", "justify-content": "center"}}>
+                    
+                    <PieChart width={400} height={PIESIZE}>
+                      <Pie
+                        data={pieChart}
+                        dataKey="count"
+                        nameKey="workerStatus"
+                        outerRadius={PIESIZE * (1.2 / 4)}
+                        fill="#f50c2f"
+                        label
+                      >
+                        {pieChart.map((entry, index) => (
+                          <Cell key={index} fill={PIECOLORS[index % PIECOLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Legend />
+                    </PieChart>
+                  </div>
                 </div>
               </div>
               <div class="row my-3">
@@ -257,12 +339,13 @@ function ImageGrid() {
                   </div>
 
                   <ResponsiveContainer width="100%" height={400}>
-                    <BarChart data={filteredWorker.slice(0, numberWoker)}>
+                    <BarChart data={formattedCountData.slice(0, numberWoker)}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="WorkerId" />
                       <YAxis />
                       <Tooltip />
-                      <Bar dataKey="count" fill={themeColor} onClick={handleBarClick} />
+                      <Bar dataKey="count"
+                        onClick={handleBarClick} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -298,12 +381,13 @@ function ImageGrid() {
 
                   </div>
                   <ResponsiveContainer width="100%" height={400}>
-                    <BarChart data={filteredWorker.slice(0, numberWoker)}>
+                    <BarChart data={formattedTimeData.slice(0, numberWoker)}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="WorkerId" />
                       <YAxis />
                       <Tooltip />
-                      <Bar dataKey="WorkTimeInSeconds" fill={themeColor} onClick={handleBarClick} />
+                      <Bar dataKey="WorkTimeInSeconds"
+                        onClick={handleBarClick} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -311,29 +395,29 @@ function ImageGrid() {
               </div>
 
               <div class="row">
-                <h4 class="px-5">List of {filtereddangerWorkers.length} Dangerous Workers</h4>
+                <h4 class="px-5">List of {filteredcoloreddangerWorkers.length} Dangerous Workers</h4>
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={filtereddangerWorkers}>
+                  <BarChart data={filteredcoloreddangerWorkers}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="WorkerId" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="count" fill={themeColor} onClick={handleBarClick} />
+                    <Bar dataKey="count" fill="fill" onClick={handleBarClick} />
                   </BarChart>
                 </ResponsiveContainer>
                 <h6 class="px-5">People who pose a threat are those who possess the ability to deceive by consistently selecting a single option for all the answers in a series of exercises.</h6>
               </div>
               <div class="row my-5">
-                <h2 class="text-info mt-3">List of Workers</h2>
+                <h2 class="text-info mt-3">List of {filteredWorker.length} Workers</h2>
                 <div class="row">
                   <div class="col-10">
                     <input type="text" class="form-control" value={searchQuery} onChange={handleSearch} placeholder="Search worker..." />
                   </div>
                   <div class="col-2">
                     <div>
-                      <select   class="form-control text-center" value={statusFilter}onChange={(e) => handleStatusFilter(e.target.value)}>
+                      <select class="form-control text-center btn btn-outline-info" value={statusFilter} onChange={(e) => handleStatusFilter(e.target.value)}>
                         <option value="All">All</option>
-                        <option value="Submitted">Submitted</option>
+                        <option value="Submitted">Reviewing</option>
                         <option value="Approved">Approved</option>
                         <option value="Rejected">Rejected</option>
                       </select>

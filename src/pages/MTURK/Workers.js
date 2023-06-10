@@ -12,7 +12,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 function ImageGrid() {
   const [workers, setWorkers] = useState([]);
   const [summary, setSummary] = useState([]);
-  const [dangerWorkers, setDangerWorkers] = useState(false);
+  const [dangerWorkers, setDangerWorkers] = useState([]);
   const [filteredWorkers, setFilteredWorkers] = useState([]);
   
   const [statusFilter, setStatusFilter] = useState('All');
@@ -176,6 +176,14 @@ function ImageGrid() {
       return 'green';
     }
   };
+
+  const workerIdsList = [];
+
+  for (let i = 0; i < filteredWorker.length; i++) {
+      workerIdsList.push(filteredWorker[i].WorkerId);
+  }
+  
+  const filtereddangerWorkers = dangerWorkers.filter(worker => workerIdsList.includes(worker.WorkerId));
   
   return (
     <>
@@ -303,9 +311,9 @@ function ImageGrid() {
               </div>
 
               <div class="row">
-                <h4 class="px-5">List of Dangerous Workers</h4>
+                <h4 class="px-5">List of {filtereddangerWorkers.length} Dangerous Workers</h4>
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={dangerWorkers}>
+                  <BarChart data={filtereddangerWorkers}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="WorkerId" />
                     <YAxis />

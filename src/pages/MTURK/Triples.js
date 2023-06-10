@@ -21,9 +21,10 @@ function ImageGrid() {
     const [statusFilter, setStatusFilter] = useState('All');
 
     const sortStatusData = (status) => {
-        const sortedData = [...status].sort((a, b) => a.count - b.count);
+        const sortedData = [...status].sort((a, b) => b.count - a.count);
         getStatus(sortedData);
     };
+    
     useEffect(() => {
         fetchData();
     }, []);
@@ -33,6 +34,7 @@ function ImageGrid() {
         try {
             const response = await axios.get('/get_triple_summary/all');
             const responseData = response.data;
+            console.log(responseData)
             getSummary(responseData)
             getStatus(responseData.statusCount)
             sortStatusData(responseData.statusCount)
@@ -85,7 +87,7 @@ function ImageGrid() {
     };
     const topicColors = generateColors('FF0000', '000000', topics.length);
     const firstWordColors = generateColors('85FFA9', 'F1601D', firstWords.length);
-
+    console.log(status)
     return (
         <>
             {loading ? (
@@ -168,7 +170,7 @@ function ImageGrid() {
                             <div>
                                 <select class="form-control text-center" value={statusFilter} onChange={(e) => handleStatusFilter(e.target.value)} >
                                 <option value="All">All</option>
-                                <option class="text-primary" value="Submitted">Reviewing</option>
+                                <option class="text-primary" value="Reviewing">Reviewing</option>
                                 <option class="text-success" value="Approved">Approved</option>
                                 <option class="text-danger" value="Rejected">Rejected</option>
                                 </select>

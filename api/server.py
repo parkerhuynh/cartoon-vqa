@@ -136,6 +136,49 @@ def image_uri(filename):
     image_data = open(filename, "rb").read()
     return "data:image/jpg;base64," + base64.b64encode(image_data).decode()
 
+def first_word_process(word):
+    if word in ["is", "are", "was"]:
+        return "is/are"
+    elif word in ["what", "what's"]:
+        return "what"
+    elif word in ["do", "did", "does"]:
+        return "do/did/does"
+    else:
+        return word
+
+def topic_processing(topic):
+    if topic in ["spatial/object detection", "object detection", 
+                 "object classification", "object detection/attribute classification",
+                "object classification", "object detection and action recognition",
+                "object detection/action recognition", "object identification", "classification",
+                "property classification", "position/action recognition", "classifying", 
+                "object detection/ spatial", "definition", "open-end", "object detection/position",
+                "attribution classification", ]:
+        return "object recognition"
+    elif topic in ["yes/no question", "fact checking"]:
+        return "yes/no"
+    elif topic in ["spatial recognition", "position", "positon", "attribtue classification", "positional",
+                  "attribute classification/spatial", "direction", "position/ spatial", "distance"]:
+        return "spatial"
+    elif topic in ["time", "weather", "emotion recognition", "facial recognition", "emotional recognition"]:
+        return "reasoning"
+    else:
+        return topic
+def cumulative(data_count):
+    data = []
+    for i in range(3, -1, -1):
+        count = 0
+        for j in data_count:
+            count += 1
+            if j["option"] == i:
+                if i == 3:
+                    data.append(j['count'])
+                else:
+                    data.append(j['count'] + data[len(data)-1])
+                break
+        if count == 0:
+            data.append(0)
+    return data
 
 @app.route('/get_images', methods=['GET', "POST"])
 def get_images():
@@ -547,5 +590,122 @@ def get_assignments():
     }
     return results
 
+@app.route('/get_triple_summary/<filter_status>', methods=['POST','GET'])
+def get_triple_summary(filter_status):
+    triples = pd.read_csv("Triples_data.csv")
+    triples = triples[["assignment_id", "id", "value", "Question", "Answer"]]
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data = mturk_data[["AssignmentId", "AssignmentStatus"]]
+    triples = pd.merge(triples, mturk_data, left_on='assignment_id', right_on='AssignmentId').drop("AssignmentId", axis = 1)
+    del mturk_data
+    triples.loc[triples['AssignmentStatus'] == "Submitted", 'AssignmentStatus'] = "Reviewing"
+    status_count = triples.AssignmentStatus.value_counts()
+    status_count = status_count.reset_index()
+    status_count.columns = ["status", "count"]
+    status_count = status_count.to_dict("records")
+    status_count
+
+    if filter_status.lower() in ["reviewing", "approved", "rejected"]:
+        triples = triples[triples["AssignmentStatus"] == filter_status]
+            
+
+    triples = triples.drop(["assignment_id"], axis=1)
+    base_data = pd.read_csv("data_final.csv")
+    base_data =  base_data[["id", "Topic"]]
+    triples = pd.merge(triples, base_data, on='id')
+    del base_data
+    #############################
+    triples["FirstWord"] = triples["Question"].apply(lambda x: x.split(" ")[0])
+    triples["FirstWord"] = triples["FirstWord"].map(first_word_process)
+    first_word_count = triples["FirstWord"].value_counts()
+    first_word_count = first_word_count.reset_index()
+    first_word_count.columns = ["FirstWord", "count"]
+    first_word_count = first_word_count.to_dict('records')
+
+    #############################
+    triples["Topic"] = triples["Topic"].apply(lambda x: x.replace(".", "").lower())
+    topic_count = triples["Topic"].map(topic_processing).value_counts()
+    topic_count = topic_count.reset_index()
+    topic_count.columns = ["topic", "count"]
+    topic_count = topic_count.to_dict('records')
+
+    ##############################
+    score_dict = {
+        1: "Correct",
+        0.75: "Partially Correct",
+        0.5: "Ambiguous",
+        0.25: "Partially Incorrect",
+        0: "Incorrect"
+    }
+    triples["value_category"] = triples["value"].map(score_dict)
+    category_count = triples["value_category"].value_counts()
+    category_count = category_count.reset_index()
+    category_count.columns = ["category", "count"]
+    category_count = category_count.to_dict("records")
+
+    ###########################
+    pivot_df = triples[["id", "value_category"]].pivot_table(index='id', columns='value_category', aggfunc=len, fill_value=0)
+    pivot_df = pivot_df.reset_index()
+    pivot_df = pivot_df.drop(["id"], axis = 1)
+    ambiguous_count = pivot_df.Ambiguous.value_counts()
+    ambiguous_count = ambiguous_count.reset_index()
+    ambiguous_count.columns = ["option", "count"]
+    ambiguous_count = ambiguous_count.to_dict("records")
+
+    ##########################
+    correct_count = pivot_df.Correct.value_counts()
+    correct_count = correct_count.reset_index()
+    correct_count.columns = ["option", "count"]
+    correct_count = correct_count.to_dict("records")
+
+    ########################
+    incorrect_count = pivot_df.Incorrect.value_counts()
+    incorrect_count = incorrect_count.reset_index()
+    incorrect_count.columns = ["option", "count"]
+    incorrect_count = incorrect_count.to_dict("records")
+
+    ########################
+    partially_correct = pivot_df["Partially Correct"].value_counts()
+    partially_correct = partially_correct.reset_index()
+    partially_correct.columns = ["option", "count"]
+    partially_correct = partially_correct.to_dict("records")
+
+    ########################
+    partially_incorrect = pivot_df["Partially Incorrect"].value_counts()
+    partially_incorrect = partially_incorrect.reset_index()
+    partially_incorrect.columns = ["option", "count"]
+    partially_incorrect = partially_incorrect.to_dict("records")
+
+    ########################
+    cumulative_list = []
+    incorrect_cumulative = cumulative(incorrect_count)
+    partially_incorrect_cumulative = cumulative(partially_incorrect)
+    ambiguous_cumulative = cumulative(ambiguous_count)
+    partially_correct_cumulative = cumulative(partially_correct)
+    correct_cumulative = cumulative(correct_count)
+    name_keys = ["3 Workers", "2 Workers", "1 Workers", "Total", ]
+    for i, key in enumerate(name_keys):
+        cumulative_data = {}
+        cumulative_data["name"] = key
+        cumulative_data["Incorrect"] = incorrect_cumulative[i]
+        cumulative_data["Partially Incorrect"] = partially_incorrect_cumulative[i]
+        cumulative_data["Ambiguous"] = ambiguous_cumulative[i]
+        cumulative_data["Partially Correct"] = partially_correct_cumulative[i]
+        cumulative_data["Correct"] = correct_cumulative[i]
+        cumulative_list.append(cumulative_data)
+    answer_list = triples["Answer"].value_counts()
+    answer_list = answer_list.reset_index()
+    answer_list.columns = ["Answer", "Count"]
+    answer_list = answer_list.to_dict("records")
+
+    results = {
+        "statusCount": status_count,
+        "firstWordCount": first_word_count,
+        "topicCount":topic_count,
+        "categoryCount": category_count,
+        "cumulative_data": cumulative_list,
+        "answerList": answer_list[:50]
+    }
+    return results
 if __name__ == "__main__":
     app.run(debug=True, port=8080)

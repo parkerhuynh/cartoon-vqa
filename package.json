@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
     "bootstrap": "^5.2.3",
+    "chroma-js": "^2.4.2",
     "jquery": "^3.6.4",
     "katex": "^0.16.7",
     "moment": "^2.29.4",

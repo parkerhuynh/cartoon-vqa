@@ -12,16 +12,46 @@ import ClipLoader from "react-spinners/ClipLoader";
 function WorkerProfile() {
     const { worker_id } = useParams();
     const [profileData, setProfileData] = useState({});
-    const [loading, setLoading] = useState(true);
     const [assigments, setAssigments] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
     const [filterAssignement, setFilterAssignement] = useState([]);
-    const [statusFilter, setStatusFilter] = useState('All');
+    const [pieChart, setPieChart] = useState([]);
+
+
     const [dimmed, setDimmed] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('All');
+
+
+    const handlePie = (assigments) => {
+        const data = [
+            { AssignmentStatus: 'Submitted', count: 0 },
+            { AssignmentStatus: 'Approved', count: 0 },
+            { AssignmentStatus: 'Rejected', count: 0 },
+        ];
+        assigments.forEach((assignment) => {
+            switch (assignment.AssignmentStatus) {
+                case 'Submitted':
+                    data[0].count++;
+                    break;
+                case 'Approved':
+                    data[1].count++;
+                    break;
+                case 'Rejected':
+                    data[2].count++;
+                    break;
+                default:
+                    break;
+            }
+        })
+        setPieChart(data)
+    }
+
 
     useEffect(() => {
         fetchData();
     }, []);
+
     const fetchData = async () => {
         try {
             const response = await axios.get('/get_worker_profile/' + worker_id);
@@ -29,6 +59,7 @@ function WorkerProfile() {
             setProfileData(responseData);
             setAssigments(responseData["data"])
             setFilterAssignement(responseData["data"])
+            handlePie(responseData["data"]);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -38,12 +69,6 @@ function WorkerProfile() {
     const handleAssigmentClick = (assignemtId) => {
         window.location.href = `/assignment/${assignemtId}`;
     };
-    const lifedata = profileData["lifeAprovalRate"];
-    const monthdata = profileData["30AprovalRate"];
-    const weekdata = profileData["7AprovalRate"];
-    const status = profileData["status"];
-    const summary_data = profileData["summary"];
-
     const PIECOLORS = ['#14A44D', '#DC4C64'];
     const STATUSCOLORS = ['#3B71CA', '#14A44D', '#DC4C64'];
     const PIESIZE = 250;
@@ -97,7 +122,10 @@ function WorkerProfile() {
         });
         setAssigments(updatedData)
         setFilterAssignement(updatedData)
+        handlePie(updatedData)
     };
+
+    
     const handleApproveClick = (assignemtId) => {
         setDimmed(true);
         axios.post('/approve_assignment/' + assignemtId)
@@ -119,6 +147,7 @@ function WorkerProfile() {
         });
         setAssigments(updatedData)
         setFilterAssignement(updatedData)
+        handlePie(updatedData)
     };
 
     const handleRejectAll = () => {
@@ -138,6 +167,7 @@ function WorkerProfile() {
         }));
         setAssigments(updatedData)
         setFilterAssignement(updatedData)
+        handlePie(updatedData)
 
     };
 
@@ -156,16 +186,22 @@ function WorkerProfile() {
         }));
         setAssigments(updatedData)
         setFilterAssignement(updatedData)
+        handlePie(updatedData)
     };
+
 
     return (
         <div>
             {loading ? (
                 <div className={dimmed ? 'dimmed-screen' : ''}>
                     <div className="loading-indicator row text-center">
-
-
-
+                        <ClipLoader
+                            color="#36d7b7"
+                            loading={dimmed}
+                            size={80}
+                            aria-label="Loading Spinner"
+                            data-testid="loader"
+                        />
                     </div>
                 </div>
             ) : profileData ? (
@@ -209,7 +245,7 @@ function WorkerProfile() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {summary_data.map((row) => (
+                                        {profileData.summary.map((row) => (
                                             <tr key={row.id}>
                                                 <td>{row.id}</td>
                                                 <td>{row.feature}s</td>
@@ -230,14 +266,14 @@ function WorkerProfile() {
                                     <h7 ><b>Life Time</b></h7>
                                     <PieChart width={PIESIZE} height={PIESIZE}>
                                         <Pie
-                                            data={lifedata}
+                                            data={profileData.lifeAproval}
                                             dataKey="value"
                                             nameKey="name"
                                             outerRadius={PIESIZE * (1.2 / 4)}
                                             fill="#f50c2f"
                                             label
                                         >
-                                            {lifedata.map((entry, index) => (
+                                            {profileData.lifeAproval.map((entry, index) => (
                                                 <Cell key={index} fill={PIECOLORS[index % PIECOLORS.length]} />
                                             ))}
                                         </Pie>
@@ -248,14 +284,14 @@ function WorkerProfile() {
                                     <h7 ><b>Last 30 Dates</b></h7>
                                     <PieChart width={PIESIZE} height={PIESIZE}>
                                         <Pie
-                                            data={monthdata}
+                                            data={profileData.monthAproval}
                                             dataKey="value"
                                             nameKey="name"
                                             outerRadius={PIESIZE * (1.2 / 4)}
                                             fill="#f50c2f"
                                             label
                                         >
-                                            {monthdata.map((entry, index) => (
+                                            {profileData.monthAproval.map((entry, index) => (
                                                 <Cell key={index} fill={PIECOLORS[index % PIECOLORS.length]} />
                                             ))}
                                         </Pie>
@@ -266,14 +302,14 @@ function WorkerProfile() {
                                     <h7 ><b>Last 7 Dates</b></h7>
                                     <PieChart width={PIESIZE} height={PIESIZE}>
                                         <Pie
-                                            data={weekdata}
+                                            data={profileData.weekAproval}
                                             dataKey="value"
                                             nameKey="name"
                                             outerRadius={PIESIZE * (1.2 / 4)}
                                             fill="#f50c2f"
                                             label
                                         >
-                                            {weekdata.map((entry, index) => (
+                                            {profileData.weekAproval.map((entry, index) => (
                                                 <Cell key={index} fill={PIECOLORS[index % PIECOLORS.length]} />
                                             ))}
                                         </Pie>
@@ -290,14 +326,14 @@ function WorkerProfile() {
                             <div class="col-4">
                                 <PieChart width={400} height={300}>
                                     <Pie
-                                        data={status}
-                                        dataKey="value"
-                                        nameKey="name"
+                                        data={pieChart}
+                                        dataKey="count"
+                                        nameKey="AssignmentStatus"
                                         outerRadius={100}
                                         fill='#DC4C64'
                                         label
                                     >
-                                        {lifedata.map((entry, index) => (
+                                        {pieChart.map((entry, index) => (
                                             <Cell key={index} fill={STATUSCOLORS[index % STATUSCOLORS.length]} />
                                         ))}
                                     </Pie>

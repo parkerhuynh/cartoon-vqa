@@ -373,15 +373,15 @@ def get_worker_profile(worker_id):
     ]
     result = {
         "data": worker_profile.to_dict(orient='records'),
-        "lifeAprovalRate": [
+        "lifeAproval": [
             {"name": "Approved", "value": life_approval_complete},
             {"name": "reject", "value": life_approval_all - life_approval_complete}
         ],
-        "30AprovalRate": [
+        "monthAproval": [
             {"name": "Approved", "value": month_approval_complete},
             {"name": "reject", "value": month_approval_all - month_approval_complete}
         ],
-        "7AprovalRate": [
+        "weekAproval": [
             {"name": "Approved", "value": week_approval_complete},
             {"name": "reject", "value": week_approval_all - week_approval_complete}
         ],

@@ -29,7 +29,7 @@ function WorkerProfile() {
         }
     };
     const handleTripleClick = (tripleId) => {
-        window.location.href = `/triple/${tripleId}`;
+        window.open(`/triple/${tripleId}`, '_blank')
       };
     
       const handleRejectClick  = (assignemtId, worker_id) => {

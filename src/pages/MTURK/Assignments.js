@@ -9,7 +9,6 @@ import { PieChart, Pie, Cell, Legend } from 'recharts';
 
 
 function ImageGrid() {
-    const [workers, setWorkers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [dimmed, setDimmed] = useState(false);
     const [status, setStatus] = useState([]);
@@ -38,8 +37,7 @@ function ImageGrid() {
     const testColor = "#be10e6"
     const themeColor = "#0a87f5"
     const PIECOLORS = ['#3B71CA', '#14A44D', '#DC4C64'];
-
-
+    console.log(status)
 
     return (
         <>
@@ -67,7 +65,7 @@ function ImageGrid() {
                                                 <td>26241</td>
                                                 <td>{Math.floor(26241*0.05)} USD</td>
                                             </tr>
-                                            <tr class="text-primary">
+                                            <tr class="text-warning">
                                                 <td>2</td>
                                                 <td>Received Assigments</td>
                                                 <td>{sum}</td>
@@ -85,8 +83,14 @@ function ImageGrid() {
                                                 <td>{status[2].value}</td>
                                                 <td>{Math.floor(status[2].value*0.05)} USD</td>
                                             </tr>
-                                            <tr class="text-info">
+                                            <tr class="text-primary">
                                                 <td>5</td>
+                                                <td>Reviewing Assignments</td>
+                                                <td>{status[0].value}</td>
+                                                <td>{Math.floor(status[0].value*0.05)} USD</td>
+                                            </tr>
+                                            <tr class="text-info">
+                                                <td>6</td>
                                                 <td>Remaining Assigments</td>
                                                 <td>{26241 - status[1].value}</td>
                                                 <td>{Math.floor((26241 - status[1].value)*0.05)} USD</td>

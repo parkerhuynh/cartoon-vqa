@@ -510,7 +510,8 @@ def reject_worker(worker_id):
 @app.route('/get_assignments/', methods=['POST','GET'])
 def get_assignments():
     mturk_data = pd.read_csv("mturk_result.csv")
-    name_keys = ["Submitted", "Approved", "Rejected"]
+    mturk_data.loc[mturk_data["AssignmentStatus"] == "Submitted", 'AssignmentStatus'] = "Reviewing"
+    name_keys = ["Reviewing", "Approved", "Rejected"]
     value_status = dict(mturk_data["AssignmentStatus"].value_counts())
     status = {}
     for name_key in name_keys:
@@ -519,7 +520,6 @@ def get_assignments():
         else:
             status[name_key] = value_status[name_key]
     status_list = [{"name": key, "value": int(status[key])} for key in status.keys()]
-
     mturk_data = pd.read_csv("Triples_data.csv")
     mturk_data = mturk_data[["worker_id", "id", "value", "assignment_id"]]
     mapping = {

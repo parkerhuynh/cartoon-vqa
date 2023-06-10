@@ -177,7 +177,10 @@ def cumulative(data_count):
                     data.append(j['count'] + data[len(data)-1])
                 break
         if count == 0:
-            data.append(0)
+            if i == 3:
+                data.append(0)
+            else:
+                data.append(data[len(data)-1])
     return data
 
 @app.route('/get_images', methods=['GET', "POST"])

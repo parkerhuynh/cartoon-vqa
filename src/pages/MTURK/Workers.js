@@ -288,9 +288,9 @@ function ImageGrid() {
                   </div>
                 </div>
                 <div class="col-6 text-center" >
-                <h7 ><b>Review Processing</b></h7>
-                  <div style={{"display": "flex", "justify-content": "center"}}>
-                    
+                  <h7 ><b>Review Processing</b></h7>
+                  <div style={{ "display": "flex", "justify-content": "center" }}>
+
                     <PieChart width={400} height={PIESIZE}>
                       <Pie
                         data={pieChart}

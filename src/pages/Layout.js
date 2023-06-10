@@ -41,9 +41,10 @@ const Layout = () => {
 
                 <NavDropdown.Item href="/workers">Workers</NavDropdown.Item>
                 <NavDropdown.Item href="/assignments">Assignments</NavDropdown.Item>
-                <NavDropdown.Item href="/working_analysis">Working Time Analysis</NavDropdown.Item>
+
                 <NavDropdown.Item href="/searching">Searching</NavDropdown.Item>
               <NavDropdown.Divider />
+              <NavDropdown.Item href="/working_analysis">Working Time Analysis</NavDropdown.Item>
               <NavDropdown.Item href="/mturk_uploading">Upload</NavDropdown.Item>
               
               </NavDropdown>
@@ -53,6 +54,7 @@ const Layout = () => {
                 title="Analysis"
                 menuVariant="dark"
               >
+                
                 <NavDropdown.Item href="/status">Data Status</NavDropdown.Item>
                 <NavDropdown.Item href="/analysis1">Caption Analysis</NavDropdown.Item>
                 <NavDropdown.Item href="/prompt">Prompt Analysis</NavDropdown.Item>

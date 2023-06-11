@@ -21,7 +21,7 @@ function ImageGrid() {
     const [statusFilter, setStatusFilter] = useState('All');
 
     const sortStatusData = (status) => {
-        const sortedData = [...status].sort((a, b) => b.count - a.count);
+        const sortedData = [...status].sort((a, b) =>  a.name.localeCompare(b.name));
         getStatus(sortedData);
     };
     
@@ -48,7 +48,6 @@ function ImageGrid() {
         }
     };
     const handleStatusFilter = async (value) => {
-        console.log("asdasdasd")
         setStatusFilter(value);
         try {
             setLoading(true);
@@ -66,8 +65,9 @@ function ImageGrid() {
             setLoading(false);
         }
     };
-    const PIECOLORS = ['#DC4C64', '#3B71CA', '#14A44D'];
-    const ANSWERCOLORS = ['#3DF805', '#F86205', '#F8A705', '#9BF805', '#F80505'];
+    const PIECOLORS = ['#14A44D','#DC4C64' ,'#3B71CA' ];
+    const ANSWERCOLORS = ['#F80505', '#F86205', '#F8A705', '#9BF805', '#3DF805'];
+    const COLORS = ['#F80505', '#F86205', '#FFC300', '#32CD32', '#008080', '#8A2BE2', '#FF1493', '#00CED1', '#FF4500', '#800000', '#00FF00', '#FF00FF', '#000080', '#800080', '#FFFF00'];
     const PIESIZE = 250;
     let topic_sum = 0
     for (let i = 0; i < topics.length; i++) {
@@ -81,13 +81,7 @@ function ImageGrid() {
     for (let i = 0; i < firstWords.length; i++) {
         firstword_sum += firstWords[i].count
     }
-    const generateColors = (baseColor, endColor,count) => {
-        const colors = chroma.scale([endColor, baseColor]).colors(count);
-        return colors;
-    };
-    const topicColors = generateColors('FF0000', '000000', topics.length);
-    const firstWordColors = generateColors('85FFA9', 'F1601D', firstWords.length);
-    console.log(status)
+
     return (
         <>
             {loading ? (
@@ -177,12 +171,12 @@ function ImageGrid() {
                             </div>
                         </div>
                         <div class="col-6" style={{ "display": "flex", "justify-content": "center" }}>
-                            <PieChart width={450} height={300}>
+                            <PieChart width={450} height={450}>
                                 <Pie
                                     data={summary.statusCount}
                                     dataKey="count"
                                     nameKey="status"
-                                    outerRadius={100}
+                                    outerRadius={130}
                                     fill="#f50c2f"
                                     label
                                 >
@@ -198,12 +192,12 @@ function ImageGrid() {
                         <h3 class="mx-5 text-info">Response Analysis 1</h3>
                         <div class="col-6 text-center" >
                             <div style={{ "display": "flex", "justify-content": "center" }}>
-                                <PieChart width={450} height={300}>
+                                <PieChart width={450} height={450}>
                                     <Pie
                                         data={categories}
                                         dataKey="count"
                                         nameKey="category"
-                                        outerRadius={100}
+                                        outerRadius={130}
                                         fill="#f50c2f"
                                         label
                                     >
@@ -231,7 +225,7 @@ function ImageGrid() {
                                     {Object.entries(categories).map(([key, category]) => (
                                         <tr>
                                             <td>{key}</td>
-                                            <td>{category.category}</td>
+                                            <td>{category.name}</td>
                                             <td>{category.count}</td>
                                             <td>{Math.round((category.count / categorical_sum) * 100)}%</td>
 
@@ -301,7 +295,7 @@ function ImageGrid() {
                                     label
                                 >
                                     {topics.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={topicColors[index]} />
+                                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
                                     ))}
                                 </Pie>
 
@@ -324,7 +318,7 @@ function ImageGrid() {
                                     label
                                 >
                                     {firstWords.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={firstWordColors[index]} />
+                                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
                                     ))}
                                 </Pie>
 

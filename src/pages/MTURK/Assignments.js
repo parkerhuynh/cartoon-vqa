@@ -12,6 +12,10 @@ function ImageGrid() {
     const [loading, setLoading] = useState(true);
     const [dimmed, setDimmed] = useState(false);
     const [status, setStatus] = useState([]);
+    const sortStatusData = (status) => {
+        const sortedData = [...status].sort((a, b) => a.name.localeCompare(b.name));
+        setStatus(sortedData);
+    };
     useEffect(() => {
         fetchData();
     }, []);
@@ -20,8 +24,7 @@ function ImageGrid() {
         try {
             const response = await axios.get('/get_assignments/');
             const responseData = response.data;
-            console.log(responseData)
-            setStatus(responseData.status)
+            sortStatusData(responseData.status)
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -34,11 +37,8 @@ function ImageGrid() {
             sum += status[key].value;
         }
     }
-    const testColor = "#be10e6"
-    const themeColor = "#0a87f5"
-    const PIECOLORS = ['#3B71CA', '#14A44D', '#DC4C64'];
+    const PIECOLORS = ['#14A44D',  '#DC4C64', '#3B71CA'];
     console.log(status)
-
     return (
         <>
 
@@ -55,6 +55,7 @@ function ImageGrid() {
                                                 <th scope="col">#</th>
                                                 <th scope="col">Feature</th>
                                                 <th scope="col">Value</th>
+                                                <th scope="col">%</th>
                                                 <th scope="col">Estimate</th>
                                             </tr>
                                         </thead>
@@ -63,50 +64,55 @@ function ImageGrid() {
                                                 <td>1</td>
                                                 <td>Total Assigments</td>
                                                 <td>26241</td>
+                                                <td>100%</td>
                                                 <td>{Math.floor(26241*0.05)} USD</td>
                                             </tr>
                                             <tr class="text-warning">
                                                 <td>2</td>
                                                 <td>Received Assigments</td>
                                                 <td>{sum}</td>
+                                                <td>{Math.round((sum/26241)*100)} %</td>
                                                 <td>{Math.floor(sum*0.05)} USD</td>
                                             </tr>
                                             <tr class="text-success">
                                                 <td>3</td>
                                                 <td>Approved Assigments</td>
-                                                <td>{status[1].value}</td>
-                                                <td>{Math.floor(status[1].value*0.05)} USD</td>
+                                                <td>{status[0].value}</td>
+                                                <td>{Math.round((status[0].value/26241)*100)}%</td>
+                                                <td>{Math.floor(status[0].value*0.05)} USD</td>
                                             </tr>
                                             <tr class="text-danger">
                                                 <td>4</td>
                                                 <td>Rejected Assigments</td>
-                                                <td>{status[2].value}</td>
-                                                <td>{Math.floor(status[2].value*0.05)} USD</td>
+                                                <td>{status[1].value}</td>
+                                                <td>{Math.round((status[1].value/26241)*100)}%</td>
+                                                <td>{Math.floor(status[1].value*0.05)} USD</td>
                                             </tr>
                                             <tr class="text-primary">
                                                 <td>5</td>
                                                 <td>Reviewing Assignments</td>
-                                                <td>{status[0].value}</td>
-                                                <td>{Math.floor(status[0].value*0.05)} USD</td>
+                                                <td>{status[2].value}</td>
+                                                <td>{Math.round((status[2].value/26241)*100)}%</td>
+                                                <td>{Math.floor(status[2].value*0.05)} USD</td>
                                             </tr>
                                             <tr class="text-info">
                                                 <td>6</td>
                                                 <td>Remaining Assigments</td>
-                                                <td>{26241 - status[1].value}</td>
-                                                <td>{Math.floor((26241 - status[1].value)*0.05)} USD</td>
+                                                <td>{26241 - status[0].value}</td>
+                                                <td>{Math.round(((26241 - status[0].value)/26241)*100)}%</td>
+                                                <td>{Math.floor((26241 - status[0].value)*0.05)} USD</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="col-1"></div>
-                                <div class="col-4 ">
-                                    <div>
-                                    <PieChart width={300} height={300}>
+                                <div class="col-6 ">
+                                    <div style={{ "display": "flex", "justify-content": "center" }}>
+                                    <PieChart width={450} height={350}>
                                         <Pie
                                             data={status}
                                             dataKey="value"
                                             nameKey="name"
-                                            outerRadius={100}
+                                            outerRadius={120}
                                             fill="#f50c2f"
                                             label
                                         >

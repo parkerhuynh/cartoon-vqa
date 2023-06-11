@@ -45,6 +45,11 @@ def convert_string_to_list_of_dicts(json_string):
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {str(e)}")
 
+def convert_numeric_columns_to_integer(data):
+    numeric_columns = data.select_dtypes(include=['int', 'float']).columns
+    data[numeric_columns] = data[numeric_columns].astype(int)
+    return data
+
 def triple_dataset_generation():
     columns = ['HITId', 'HITTypeId', 'Title', 'Description', 'Keywords',  'Reward', 'CreationTime', 'MaxAssignments', 'RequesterAnnotation', 'AssignmentDurationInSeconds', 
            'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime','SubmitTime',
@@ -164,21 +169,17 @@ def topic_processing(topic):
         return "reasoning"
     else:
         return topic
-def cumulative(data_count):
-    data = []
-    for i in range(3, -1, -1):
-        count = 0
-        for j in data_count:
-            if j["option"] == i:
-                count += 1
-                if i == 3:
-                    data.append(j['count'])
-                else:
-                    data.append(j['count'] + data[len(data)-1])
-                break
-        if count == 0:
-            if i == 3:
-                data.append(0)       
+
+def get_counts(data, column_name, values):
+    result = []
+    for value in values:
+        count = (data[column_name] == value).sum()
+        result.append({"name": value, "count": int(count)})
+    return result
+
+def convert_numeric_columns_to_integer(data):
+    numeric_columns = data.select_dtypes(include=['int', 'float']).columns
+    data[numeric_columns] = data[numeric_columns].astype(int)
     return data
 
 @app.route('/get_images', methods=['GET', "POST"])
@@ -598,113 +599,70 @@ def get_triple_summary(filter_status):
     mturk_data = pd.read_csv("mturk_result.csv")
     mturk_data = mturk_data[["AssignmentId", "AssignmentStatus"]]
     triples = pd.merge(triples, mturk_data, left_on='assignment_id', right_on='AssignmentId').drop("AssignmentId", axis = 1)
+
+    triples = triples.drop(["assignment_id"], axis=1)
     del mturk_data
     triples.loc[triples['AssignmentStatus'] == "Submitted", 'AssignmentStatus'] = "Reviewing"
-    status_count = triples.AssignmentStatus.value_counts()
-    status_count = status_count.reset_index()
-    status_count.columns = ["status", "count"]
-    status_count = status_count.to_dict("records")
-    status_key = ["Approved", "Rejected", "Reviewing"]
-    for key in status_key:
-        count = 0
-        for i in status_count:
-            if key == i['status']:
-                count += 1
-                break
-        if count == 0:
-            status_count.append({'status': key, "count": 0})
-
-    if filter_status.lower() in ["reviewing", "approved", "rejected"]:
-        triples = triples[triples["AssignmentStatus"] == filter_status]
-
-    if len(triples) !=0:
-
-        triples = triples.drop(["assignment_id"], axis=1)
-        base_data = pd.read_csv("data_final.csv")
-        base_data =  base_data[["id", "Topic"]]
-        triples = pd.merge(triples, base_data, on='id')
-        del base_data
-        #############################
-        triples["FirstWord"] = triples["Question"].apply(lambda x: x.split(" ")[0])
-        triples["FirstWord"] = triples["FirstWord"].map(first_word_process)
-        first_word_count = triples["FirstWord"].value_counts()
-        first_word_count = first_word_count.reset_index()
-        first_word_count.columns = ["FirstWord", "count"]
-        first_word_count = first_word_count.to_dict('records')
-
-        #############################
-        triples["Topic"] = triples["Topic"].apply(lambda x: x.replace(".", "").lower())
-        topic_count = triples["Topic"].map(topic_processing).value_counts()
-        topic_count = topic_count.reset_index()
-        topic_count.columns = ["topic", "count"]
-        topic_count = topic_count.to_dict('records')
-        ##############################
-        score_dict = {
+    score_dict = {
             1: "Correct",
             0.75: "Partially Correct",
             0.5: "Ambiguous",
             0.25: "Partially Incorrect",
             0: "Incorrect"
         }
-        triples["value_category"] = triples["value"].map(score_dict)
-        category_count = triples["value_category"].value_counts()
-        category_count = category_count.reset_index()
-        category_count.columns = ["category", "count"]
-        category_count = category_count.to_dict("records")
+    triples["value_category"] = triples["value"].map(score_dict)
+    triples = convert_numeric_columns_to_integer(triples)
+    status_count = get_counts(triples, "AssignmentStatus", ["Approved", "Rejected", "Reviewing"])
+    status_count
 
-        ###########################
+    if filter_status.lower() in ["reviewing", "approved", "rejected"]:
+        triples = triples[triples["AssignmentStatus"] == filter_status]
+
+    if len(triples) > 0:
+        base_data = pd.read_csv("data_final.csv")
+        base_data =  base_data[["id", "Topic"]]
+        triples = pd.merge(triples, base_data, on='id')
+        #########################
+        del base_data
+        
+        ########################################
+        triples["FirstWord"] = triples["Question"].apply(lambda x: x.split(" ")[0])
+        triples["FirstWord"] = triples["FirstWord"].map(first_word_process)
+        first_word_count = triples["FirstWord"].value_counts()
+        first_word_count = first_word_count.reset_index()
+        first_word_count.columns = ["FirstWord", "count"]
+        first_word_count = first_word_count.to_dict('records')
+        
+        #####################################
+        triples["Topic"] = triples["Topic"].apply(lambda x: x.replace(".", "").lower())
+        topic_count = triples["Topic"].map(topic_processing).value_counts()
+        topic_count = topic_count.reset_index()
+        topic_count.columns = ["topic", "count"]
+        topic_count = topic_count.to_dict('records')
+        
+        ##############################
+        
+        category_count = get_counts(triples, "value_category", ["Incorrect", "Partially Incorrect", "Ambiguous", "Partially Correct", "Correct"])
+        
+        ###################################
         pivot_df = triples[["id", "value_category"]].pivot_table(index='id', columns='value_category', aggfunc=len, fill_value=0)
         pivot_df = pivot_df.reset_index()
         pivot_df = pivot_df.drop(["id"], axis = 1)
-        if len(pivot_df) == 0:
-            cumulative_list = []
-        ambiguous_count = pivot_df.Ambiguous.value_counts()
-        ambiguous_count = ambiguous_count.reset_index()
-        ambiguous_count.columns = ["option", "count"]
-        ambiguous_count = ambiguous_count.to_dict("records")
-
-
-        ##########################
-        correct_count = pivot_df.Correct.value_counts()
-        correct_count = correct_count.reset_index()
-        correct_count.columns = ["option", "count"]
-        correct_count = correct_count.to_dict("records")
-
-        ########################
-        incorrect_count = pivot_df.Incorrect.value_counts()
-        incorrect_count = incorrect_count.reset_index()
-        incorrect_count.columns = ["option", "count"]
-        incorrect_count = incorrect_count.to_dict("records")
-
-        ########################
-        partially_correct = pivot_df["Partially Correct"].value_counts()
-        partially_correct = partially_correct.reset_index()
-        partially_correct.columns = ["option", "count"]
-        partially_correct = partially_correct.to_dict("records")
-
-        ########################
-        partially_incorrect = pivot_df["Partially Incorrect"].value_counts()
-        partially_incorrect = partially_incorrect.reset_index()
-        partially_incorrect.columns = ["option", "count"]
-        partially_incorrect = partially_incorrect.to_dict("records")
-
-        ########################
-        cumulative_list = []
-        incorrect_cumulative = cumulative(incorrect_count)
-        partially_incorrect_cumulative = cumulative(partially_incorrect)
-        ambiguous_cumulative = cumulative(ambiguous_count)
-        partially_correct_cumulative = cumulative(partially_correct)
-        correct_cumulative = cumulative(correct_count)
-        name_keys = ["3 Workers", "2 Workers", "1 Workers", "Total", ]
-        for i, key in enumerate(name_keys):
-            cumulative_data = {}
-            cumulative_data["name"] = key
-            cumulative_data["Incorrect"] = incorrect_cumulative[i]
-            cumulative_data["Partially Incorrect"] = partially_incorrect_cumulative[i]
-            cumulative_data["Ambiguous"] = ambiguous_cumulative[i]
-            cumulative_data["Partially Correct"] = partially_correct_cumulative[i]
-            cumulative_data["Correct"] = correct_cumulative[i]
-            cumulative_list.append(cumulative_data)
+        values_list = list(score_dict.values())
+        for value in values_list:
+            if value not in list(pivot_df.columns):
+                pivot_df[value] = 0
+        number_worker_keys = ["Total", "1 Worker", "2 Workers", "3 Workers"]
+        cumulative_results = []
+        for number_worker in range(3 ,-1, -1):
+            item = {}
+            for value in values_list:
+                item["name"] = number_worker_keys[number_worker]
+                count = len(pivot_df[pivot_df[value]>=number_worker])
+                item[value] = int(count)
+            cumulative_results.append(item)
+        
+        ######################################
         answer_list = triples["Answer"].value_counts()
         answer_list = answer_list.reset_index()
         answer_list.columns = ["Answer", "Count"]
@@ -713,14 +671,15 @@ def get_triple_summary(filter_status):
         first_word_count = []
         topic_count = []
         category_count = []
-        cumulative_list = []
+        cumulative_results = []
         answer_list = []
+        
     results = {
         "statusCount": status_count,
         "firstWordCount": first_word_count,
         "topicCount":topic_count,
         "categoryCount": category_count,
-        "cumulative_data": cumulative_list,
+        "cumulative_data": cumulative_results,
         "answerList": answer_list[:50]
     }
     return results

@@ -25,7 +25,7 @@ function WorkerProfile() {
 
     const handlePie = (assigments) => {
         const data = [
-            { AssignmentStatus: 'Submitted', count: 0 },
+            { AssignmentStatus: 'Reviewing', count: 0 },
             { AssignmentStatus: 'Approved', count: 0 },
             { AssignmentStatus: 'Rejected', count: 0 },
         ];
@@ -364,7 +364,7 @@ function WorkerProfile() {
                                         <label></label>
                                         <select value={statusFilter} onChange={(e) => handleStatusFilter(e.target.value)}>
                                             <option value="All">All</option>
-                                            <option value="Submitted">Submitted</option>
+                                            <option value="Submitted">Reviewing</option>
                                             <option value="Approved">Approved</option>
                                             <option value="Rejected">Rejected</option>
                                         </select>

@@ -20,7 +20,7 @@ function WorkerProfile() {
     const [dimmed, setDimmed] = useState(false);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    const [statusFilter, setStatusFilter] = useState('All');
+    const [statusFilter, setStatusFilter] = useState('Submitted');
 
 
     const handlePie = (assigments) => {

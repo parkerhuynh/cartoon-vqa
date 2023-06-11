@@ -32,6 +32,16 @@ const FileUploadForm = () => {
     });
   };
 
+  const handleResultDownload = () => {
+    axios.get('/download-data/mturk_result').then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'mturk_result.csv');
+      document.body.appendChild(link);
+      link.click();
+    });
+  }; 
   const handleSubmit = async (event) => {
     event.preventDefault();
     
@@ -99,7 +109,7 @@ const FileUploadForm = () => {
             <div class="col-4"></div>
             <div class="col-4">
               <h3 class="mb-4">Download MTURK batch</h3>
-              <button type="button" class="btn btn-success" onClick={handleBatchDownload}>Download Data</button>
+              <button type="button" class="btn btn-success" onClick={handleBatchDownload}>Download Mturk Batch</button>
             </div>
             <div class="col-4"></div>
         </div>
@@ -107,8 +117,16 @@ const FileUploadForm = () => {
         <div class="row mt-5">
             <div class="col-4"></div>
             <div class="col-4">
+              <h3 class="mb-4">Download MTURK Result</h3>
+              <button type="button" class="btn btn-success" onClick={handleResultDownload}>Download Mturk Result</button>
+            </div>
+            <div class="col-4"></div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-4"></div>
+            <div class="col-4">
               <h3 class="mb-4">Download MTURK Decision</h3>
-              <button type="button" class="btn btn-success" onClick={handleDecisionDownload}>Download Data</button>
+              <button type="button" class="btn btn-success" onClick={handleDecisionDownload}>Download MTURK Decision</button>
             </div>
             <div class="col-4"></div>
         </div>

@@ -272,6 +272,10 @@ def download_data(dataname):
         sleep(4)
         file_path = 'decision.csv'
         return send_file(file_path, as_attachment=True)
+    elif dataname =="mturk_result":
+        file_path = 'mturk_result.csv'
+        return send_file(file_path, as_attachment=True)
+
         
 
 

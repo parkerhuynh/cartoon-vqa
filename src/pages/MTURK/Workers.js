@@ -24,7 +24,6 @@ function ImageGrid() {
   const [sortOrder, setSortOrder] = useState('asc');
   const [dimmed, setDimmed] = useState(false);
 
-
   const handlePie = (workers) => {
     const data = [
       { workerStatus: 'Reviewing', count: 0 },
@@ -291,12 +290,12 @@ function ImageGrid() {
                   <h7 ><b>Review Processing</b></h7>
                   <div style={{ "display": "flex", "justify-content": "center" }}>
 
-                    <PieChart width={400} height={PIESIZE}>
+                    <PieChart width={450} height={350}>
                       <Pie
                         data={pieChart}
                         dataKey="count"
                         nameKey="workerStatus"
-                        outerRadius={PIESIZE * (1.2 / 4)}
+                        outerRadius={120}
                         fill="#f50c2f"
                         label
                       >

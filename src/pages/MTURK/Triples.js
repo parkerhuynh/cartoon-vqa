@@ -246,11 +246,14 @@ function ImageGrid() {
                                     <YAxis />
                                     <Tooltip />
                                     <Legend />
-                                    <Line type="monotone" dataKey="Incorrect" stroke="#F80505" />
-                                    <Line type="monotone" dataKey="Partially Incorrect" stroke="#F86205" />
-                                    <Line type="monotone" dataKey="Ambiguous" stroke="#F8A705" />
-                                    <Line type="monotone" dataKey="Partially Correct" stroke="#9BF805" />
-                                    <Line type="monotone" dataKey="Correct" stroke="#3DF805" />
+                                    <Line type="monotone" dataKey="Incorrect & Partially Incorrect" stroke="#FF0101" />
+                                    <Line type="monotone" dataKey="Incorrect" stroke="#FF8700" />
+                                    <Line type="monotone" dataKey="Partially Incorrect" stroke="#000000" />
+                                    <Line type="monotone" dataKey="Ambiguous" stroke="#0068FF" />
+                                    <Line type="monotone" dataKey="Partially Correct" stroke="#FF00FB" />
+                                    <Line type="monotone" dataKey="Correct" stroke="#00E8FF" />
+                                    <Line type="monotone" dataKey="Correct & Partially Correct" stroke="#3DF805" />
+                                    
                                 </LineChart>
                             </ResponsiveContainer>
                         </div>

@@ -656,6 +656,9 @@ def get_triple_summary(filter_status):
         for value in values_list:
             if value not in list(pivot_df.columns):
                 pivot_df[value] = 0
+        pivot_df["Incorrect & Partially Incorrect"] = pivot_df["Incorrect"] + pivot_df["Partially Incorrect"]
+        pivot_df["Correct & Partially Correct"] = pivot_df["Correct"] + pivot_df["Partially Correct"]
+        values_list = values_list + ["Incorrect & Partially Incorrect", "Correct & Partially Correct"]
         number_worker_keys = ["Total", "1 Worker", "2 Workers", "3 Workers"]
         cumulative_results = []
         for number_worker in range(3 ,-1, -1):

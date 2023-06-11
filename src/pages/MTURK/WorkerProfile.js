@@ -156,10 +156,12 @@ function WorkerProfile() {
             .then(() => {
                 console.log("Done!")
             })
-            .finally(() => {
+            .then(() => {
                 setDimmed(false)
             })
-
+            .finally(() =>
+                window.close()
+            )
 
         const updatedData = assigments.map(item => ({
             ...item,
@@ -177,9 +179,12 @@ function WorkerProfile() {
             .then(() => {
                 console.log("Done!")
             })
-            .finally(() => {
+            .then(() => {
                 setDimmed(false)
             })
+            .finally(()=> (
+                window.close()
+            ))
         const updatedData = assigments.map(item => ({
             ...item,
             AssignmentStatus: 'Approved',

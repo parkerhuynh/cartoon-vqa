@@ -430,9 +430,6 @@ function ImageGrid() {
                       <th scope="col" >#</th>
                       <th scope="col" onClick={() => handleSort('WorkerID')}>Worker ID  {sortColumn === 'WorkerID' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                       <th scope="col" onClick={() => handleSort('Count')}>Count  {sortColumn === 'Count' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
-                      <th scope="col">Reviewed</th>
-                      <th scope="col">Approved</th>
-                      <th scope="col">Rejected</th>
                       <th scope="col" onClick={() => handleSort('WorkTimeInSeconds')}>Avg. Time  {sortColumn === 'WorkTimeInSeconds' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
 
                       <th scope="col" onClick={() => handleSort('Approval Rate')}>Approval Rate {sortColumn === 'Approval Rate' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
@@ -446,11 +443,8 @@ function ImageGrid() {
                         <td onClick={() => handletableClick(row.WorkerId)}>{row.id}</td>
                         <td onClick={() => handletableClick(row.WorkerId)}>{row.WorkerId}</td>
                         <td onClick={() => handletableClick(row.WorkerId)}>{row.count}</td>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{row["Approved"] + row["Rejected"]}</td>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{row["Approved"]}</td>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{row["Rejected"]}</td>
                         <td onClick={() => handletableClick(row.WorkerId)}>{row.WorkTimeInSeconds}</td>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{Math.floor(row["Approval Rate"])}</td>
+                        <td onClick={() => handletableClick(row.WorkerId)}>{Math.floor((row["Approved"]/(row["Approved"] + row["Rejected"])*100))} [{row["Approved"]}/{row["Approved"] + row["Rejected"]}]</td>
                         <td>
                           {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
                             type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}

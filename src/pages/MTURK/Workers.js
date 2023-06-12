@@ -80,10 +80,7 @@ function ImageGrid() {
   };
   const handleBarClick = (data) => {
     const workerId = data["WorkerId"];
-    window.location.href = `/profile/${workerId}`;
-  };
-  const handletableClick = (workerId) => {
-    window.location.href = `/profile/${workerId}`;
+    window.open(`/profile/${workerId}`, '_blank');
   };
 
   const handleSearch = (event) => {

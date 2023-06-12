@@ -23,7 +23,7 @@ function ImageGrid() {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
   const [dimmed, setDimmed] = useState(false);
-  const [Analysis, SetAnalysis] = useState(true);
+  const [analysis, SetAnalysis] = useState(true);
 
   const handlePie = (workers) => {
     const data = [
@@ -249,15 +249,36 @@ function ImageGrid() {
   const PIECOLORS = ['#3B71CA', '#14A44D', '#DC4C64'];
   const PIESIZE = 250;
 
+  const handleToggleVisibility = () => {
+    SetAnalysis(!analysis);
+  };
+
+
 
   return (
     <>
-
       <div class="container mt-2">
-        <h1 class="text-center m-2"> Workers</h1>
+        <div class="row">
+          <div class="col-4"></div>
+          <div class="col-4"><h1 class="text-center"> Workers</h1></div>
+          <div class="col-4 text-right">
+              <div>
+              {analysis ? (
+                <button class="btn btn-outline-primary" onClick={handleToggleVisibility}>Workers</button>
+              ):(
+                <button class="btn btn-outline-info" onClick={handleToggleVisibility}>Analysis</button>
+              )}
+              
+            </div>
+          </div>
+        </div>
+        
+        
         {loading ? (<p class="text-center"> Loading ...</p>) : (
-          <div className={dimmed ? 'dimmed-screen' : ''}>
-            <div class="container" >
+
+          <div className={dimmed ? 'dimmed-screen' : ''}> 
+            {analysis ? (
+            <div class="container">
               <div class="row">
                 <div class="col-6">
                   <h2 class="text-info mt-3">Summary Information</h2>
@@ -352,7 +373,6 @@ function ImageGrid() {
                   </ResponsiveContainer>
                 </div>
               </div>
-
               <div class="row">
                 <div>
                   <div class="row my-3">
@@ -395,7 +415,6 @@ function ImageGrid() {
                 </div>
 
               </div>
-
               <div class="row">
                 <h4 class="px-5">List of {filteredcoloreddangerWorkers.length} Dangerous Workers</h4>
                 <ResponsiveContainer width="100%" height={400}>
@@ -409,7 +428,10 @@ function ImageGrid() {
                 </ResponsiveContainer>
                 <h6 class="px-5">People who pose a threat are those who possess the ability to deceive by consistently selecting a single option for all the answers in a series of exercises.</h6>
               </div>
-              <div class="row my-5">
+              
+              
+            </div>): (<div class="container">
+              <div class="row">
                 <h2 class="text-info mt-3">List of {filteredWorker.length} Workers</h2>
                 <div class="row">
                   <div class="col-10">
@@ -464,9 +486,8 @@ function ImageGrid() {
                 </table>
 
               </div>
-            </div>
+            </div>)}
           </div>
-
         )}
 
       </div>

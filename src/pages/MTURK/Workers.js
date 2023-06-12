@@ -16,7 +16,7 @@ function ImageGrid() {
   const [filteredWorkers, setFilteredWorkers] = useState([]);
   const [pieChart, setPieChart] = useState([]);
 
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('Reviewing');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [numberWoker, SetNumberWoker] = useState(50);
@@ -78,10 +78,10 @@ function ImageGrid() {
   };
   const handleBarClick = (data) => {
     const workerId = data["WorkerId"];
-    window.open(`/profile/${workerId}`, '_blank');
+    window.location.href = `/profile/${workerId}`;
   };
   const handletableClick = (workerId) => {
-    window.open(`/profile/${workerId}`, '_blank');
+    window.location.href = `/profile/${workerId}`;
   };
 
   const handleSearch = (event) => {

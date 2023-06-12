@@ -23,6 +23,7 @@ function ImageGrid() {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
   const [dimmed, setDimmed] = useState(false);
+  const [Analysis, SetAnalysis] = useState(true);
 
   const handlePie = (workers) => {
     const data = [

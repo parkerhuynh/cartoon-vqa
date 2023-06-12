@@ -215,6 +215,8 @@ function ImageGrid() {
       return "#14A44D"
     } else if (data.Rejected === data.count) {
       return "#DC4C64"
+    } else if ((data.Rejected + data.Approved) === data.count) {
+      return "0000"
     } else {
       return "#3B71CA"
     }

@@ -339,8 +339,11 @@ function ImageGrid() {
               <div class="row my-3">
                 <div>
                   <div class="row">
-                    <div class="col-11 px-5">
+                    <div class="col-10 px-5">
                       <h4>Top {numberWoker} Hardest Workers</h4>
+                    </div>
+                    <div class="col-1">
+                    <button type="button" class="btn btn-outline-dark" onClick={() => handleSort('cont')}>Sort</button>
                     </div>
                     <div class="col-1 px-4">
                       <div className="form-group">
@@ -380,8 +383,11 @@ function ImageGrid() {
               <div class="row">
                 <div>
                   <div class="row my-3">
-                    <div class="col-11 px-5">
+                    <div class="col-10 px-5">
                       <h4>Avg. Working time per Asgmt Top {numberWoker} Hardest Workers</h4>
+                    </div>
+                    <div class="col-1">
+                    <button type="button" class="btn btn-outline-dark" onClick={() => handleSort('WorkTimeInSeconds')}>Sort</button>
                     </div>
                     <div class="col-1 ps-4">
                       <div className="form-group">
@@ -433,6 +439,51 @@ function ImageGrid() {
                 <h6 class="px-5">People who pose a threat are those who possess the ability to deceive by consistently selecting a single option for all the answers in a series of exercises.</h6>
               </div>
               <div class="row">
+                <div>
+                  <div class="row my-3">
+                    <div class="col-10 px-5">
+                      <h4>Avg. Value of Top {numberWoker} Hardest Workers</h4>
+                    </div>
+                    <div class="col-1">
+                    <button type="button" class="btn btn-outline-dark" onClick={() => handleSort('value')}>Sort</button>
+                    </div>
+                    <div class="col-1 ps-4">
+                      <div className="form-group">
+                        <select
+                          className="form-control"
+                          id="people-select"
+                          value={numberWoker}
+                          onChange={handleNumberWorker}
+                        >
+                          <option value="10">10</option>
+                          <option value="20">20</option>
+                          <option value="30">30</option>
+                          <option value="40">40</option>
+                          <option value="50">50</option>
+                          <option value="60">60</option>
+                          <option value="70">70</option>
+                          <option value="80">80</option>
+                          <option value="90">90</option>
+                          <option value="100">100</option>
+                        </select>
+                      </div>
+                    </div>
+
+                  </div>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={formattedTimeData.slice(0, numberWoker)}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="WorkerId" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value"
+                        onClick={handleBarClick} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+              </div>
+              <div class="row">
               <Plot
                         data={[
                             {
@@ -461,6 +512,7 @@ function ImageGrid() {
                   <div class="col-10">
                     <input type="text" class="form-control" value={searchQuery} onChange={handleSearch} placeholder="Search worker..." />
                   </div>
+    
                   <div class="col-2">
                     <div>
                       <select class="form-control text-center btn btn-outline-info" value={statusFilter} onChange={(e) => handleStatusFilter(e.target.value)}>

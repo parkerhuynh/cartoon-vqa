@@ -29,7 +29,6 @@ function ImageGrid() {
     const binSize = Math.ceil((Math.max(...working_time) - Math.min(...working_time)) / numBins);
     const histogramData = [];
     let minValue = Math.min(...working_time);
-    console.log(WorkerWorkingTime)
 
     const handleNumberWorker = (event) => {
         const value = event.target.value
@@ -76,6 +75,7 @@ function ImageGrid() {
           </BarChart>
         </ResponsiveContainer>
       );
+    console.log(working_time)
     return (
         <>
             <div class="container mb-5">

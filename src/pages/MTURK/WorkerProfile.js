@@ -193,6 +193,9 @@ function WorkerProfile() {
         setFilterAssignement(updatedData)
         handlePie(updatedData)
     };
+    const handleWorkers = () => {
+        window.location.href = `/workers`;
+    };
 
 
     return (
@@ -260,9 +263,11 @@ function WorkerProfile() {
                                     </tbody>
                                 </table>
                                 <div class="row text-center">
-                                    <div class="col-6"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-success"
+                                    <div class="col-4"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-info"
+                                        onClick={() => handleWorkers()}>Workers</button></div>
+                                    <div class="col-4"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-success"
                                         onClick={() => handleApproveAll()}>Approve All</button></div>
-                                    <div class="col-6"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-danger"
+                                    <div class="col-4"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-danger"
                                         onClick={() => handleRejectAll()}>Reject All</button></div>
                                 </div>
                             </div>

@@ -187,6 +187,8 @@ function ImageGrid() {
       } else if (column === 'WorkTimeInSeconds') {
         // Sort by Working time
         return new Date(a.WorkTimeInSeconds) - new Date(b.WorkTimeInSeconds);
+      } else if (column === 'value') {
+        return a.value - b.value;
       }
     })
 
@@ -431,7 +433,7 @@ function ImageGrid() {
                       <th scope="col" onClick={() => handleSort('WorkerID')}>Worker ID  {sortColumn === 'WorkerID' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                       <th scope="col" onClick={() => handleSort('Count')}>Count  {sortColumn === 'Count' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                       <th scope="col" onClick={() => handleSort('WorkTimeInSeconds')}>Avg. Time  {sortColumn === 'WorkTimeInSeconds' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
-
+                      <th scope="col" onClick={() => handleSort('value')}>Avg. Value  {sortColumn === 'value' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                       <th scope="col" onClick={() => handleSort('Approval Rate')}>Approval Rate {sortColumn === 'Approval Rate' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                       <th scope="col">Approve</th>
                       <th scope="col">Reject</th>
@@ -444,6 +446,7 @@ function ImageGrid() {
                         <td onClick={() => handletableClick(row.WorkerId)}>{row.WorkerId}</td>
                         <td onClick={() => handletableClick(row.WorkerId)}>{row.count}</td>
                         <td onClick={() => handletableClick(row.WorkerId)}>{row.WorkTimeInSeconds}</td>
+                        <td onClick={() => handletableClick(row.WorkerId)}>{row.value.toFixed(2)}</td>
                         <td onClick={() => handletableClick(row.WorkerId)}>{Math.floor((row["Approved"]/(row["Approved"] + row["Rejected"])*100))} [{row["Approved"]}/{row["Approved"] + row["Rejected"]}]</td>
                         <td>
                           {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}

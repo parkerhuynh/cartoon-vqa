@@ -470,7 +470,7 @@ def get_workers():
     workers_data["Approval Rate"] = workers_data.apply(lambda row: calculate_rate(row['Approved'], row['Rejected']), axis=1)
     numeric_cols = workers_data.select_dtypes(include=['float64', 'int64']).columns
     workers_data[numeric_cols] = workers_data[numeric_cols].astype(int)
-    workers_data = workers_data.to_dict(orient='records')
+
 
     mturk_data = pd.read_csv("Triples_data.csv")
     mturk_data = mturk_data[["worker_id", "id", "value", "assignment_id"]]
@@ -481,6 +481,11 @@ def get_workers():
     danger_worker.columns = ['WorkerId', 'count']
     danger_worker = danger_worker.to_dict(orient='records')
 
+    value_mean = mturk_data.groupby('worker_id')['value'].mean()
+    value_mean = value_mean.reset_index()
+    workers_data = pd.merge(workers_data, value_mean, left_on='WorkerId', right_on="worker_id")
+
+    workers_data = workers_data.to_dict(orient='records')
     summary = [
         {"id":1, "name":"Number of Worker", "value":len(workers)},
         {"id":2, "name":"Avg. Asgmts. per Worker", "value":int(workers["count"].mean())},

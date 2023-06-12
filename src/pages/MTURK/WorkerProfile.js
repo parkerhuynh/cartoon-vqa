@@ -160,7 +160,7 @@ function WorkerProfile() {
                 setDimmed(false)
             })
             .finally(() =>
-                window.close()
+                window.location.href = `/workers/`
             )
 
         const updatedData = assigments.map(item => ({
@@ -183,7 +183,7 @@ function WorkerProfile() {
                 setDimmed(false)
             })
             .finally(()=> (
-                window.close()
+                window.location.href = `/workers/`
             ))
         const updatedData = assigments.map(item => ({
             ...item,

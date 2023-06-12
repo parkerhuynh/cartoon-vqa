@@ -4,6 +4,7 @@ import 'katex/dist/katex.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form } from 'react-bootstrap';
 import '../../App.css';
+import Plot from 'react-plotly.js';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
 
@@ -201,6 +202,7 @@ function ImageGrid() {
 
     setFilteredWorkers(sorted);
   };
+  
   const getFontColor = (rate) => {
     if (rate === 'Not Review') {
       return 'black';
@@ -253,8 +255,11 @@ function ImageGrid() {
     SetAnalysis(!analysis);
   };
 
-
-
+  const box_data = []
+  for (let i = 0; i < filteredWorker.length; i++) {
+    box_data.push(filteredWorker[i].value.toFixed(2))
+  }
+  console.log(filteredWorker)
   return (
     <>
       <div class="container mt-2">
@@ -428,9 +433,29 @@ function ImageGrid() {
                 </ResponsiveContainer>
                 <h6 class="px-5">People who pose a threat are those who possess the ability to deceive by consistently selecting a single option for all the answers in a series of exercises.</h6>
               </div>
-              
-              
-            </div>): (<div class="container">
+              <div class="row">
+              <Plot
+                        data={[
+                            {
+                            y: box_data,
+                            type: 'box',
+                            name: 'value',
+                            boxmean: true, // Display mean line inside the box
+                            marker: {color: "#14A44D"
+                            }
+                        }
+                        ]}
+                        layout={{
+                            width: 800,
+                            height: 600,
+                        }}
+                        />
+
+              </div>
+                
+            </div>
+            ): (
+            <div class="container">
               <div class="row">
                 <h2 class="text-info mt-3">List of {filteredWorker.length} Workers</h2>
                 <div class="row">

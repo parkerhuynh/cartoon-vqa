@@ -17,7 +17,7 @@ function ImageGrid() {
   const [filteredWorkers, setFilteredWorkers] = useState([]);
   const [pieChart, setPieChart] = useState([]);
 
-  const [statusFilter, setStatusFilter] = useState('Reviewing');
+  const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [numberWoker, SetNumberWoker] = useState(50);

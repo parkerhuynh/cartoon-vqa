@@ -259,7 +259,6 @@ function ImageGrid() {
   for (let i = 0; i < filteredWorker.length; i++) {
     box_data.push(filteredWorker[i].value.toFixed(2))
   }
-  console.log(filteredWorker)
   return (
     <>
       <div class="container mt-2">

@@ -6,7 +6,7 @@ import { Button, Form } from 'react-bootstrap';
 import '../../App.css';
 import Plot from 'react-plotly.js';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
-
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 
 
@@ -205,7 +205,7 @@ function ImageGrid() {
   
   const getFontColor = (rate) => {
     if (rate === 'Not Review') {
-      return 'black';
+      return 'blue';
     } else if (rate < 75) {
       return 'red';
     } else {
@@ -260,7 +260,6 @@ function ImageGrid() {
     box_data.push(filteredWorker[i].value.toFixed(2))
   }
   return (
-    <>
       <div class="container mt-2">
         <div class="row">
           <div class="col-4"></div>
@@ -541,12 +540,23 @@ function ImageGrid() {
                   <tbody>
                     {filteredWorker.map((row) => (
                       <tr key={row.id} style={{ color: getFontColor(row["Approval Rate"]) }}>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{row.id}</td>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{row.WorkerId}</td>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{row.count}</td>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{row.WorkTimeInSeconds}</td>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{row.value.toFixed(2)}</td>
-                        <td onClick={() => handletableClick(row.WorkerId)}>{Math.floor((row["Approved"]/(row["Approved"] + row["Rejected"])*100))} [{row["Approved"]}/{row["Approved"] + row["Rejected"]}]</td>
+                        <td>
+                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.id}</Link></td>
+                        <td >
+                          <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.WorkerId}</Link>
+                        </td>
+                        <td>
+                          <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.count}</Link>
+                          </td>
+                        <td>
+                          <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.WorkTimeInSeconds}</Link>
+                          </td>
+                        <td>
+                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{row.value.toFixed(2)}</Link>
+                          </td>
+                        <td>
+                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{Math.floor((row["Approved"]/(row["Approved"] + row["Rejected"])*100))} [{row["Approved"]}/{row["Approved"] + row["Rejected"]}]</Link>
+                          </td>
                         <td>
                           {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
                             type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
@@ -560,15 +570,12 @@ function ImageGrid() {
                     ))}
                   </tbody>
                 </table>
-
               </div>
             </div>)}
           </div>
         )}
 
       </div>
-
-    </>
   );
 }
 

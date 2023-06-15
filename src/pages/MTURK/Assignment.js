@@ -59,7 +59,8 @@ function WorkerProfile() {
         {loading ? (<p class="text-center"> Loading ...</p>) : (
             
             <div class="container" className={dimmed ? 'dimmed-screen' : ''}>
-                <h1 class="text-center text-info mt-3">{assignment_id}</h1>
+                <h2 class="text-center text-danger mt-3">WORKER ID: {images[0].worker_id}</h2>
+                <h1 class="text-center text-info mt-3">ASSIGNMENT ID:{assignment_id}</h1>
                 <div class="row mt-5">
                     <div class="col-4"></div>
                     <div class="col-2">

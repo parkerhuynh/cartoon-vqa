@@ -188,7 +188,8 @@ function ImageGrid() {
         return new Date(a.WorkTimeInSeconds) - new Date(b.WorkTimeInSeconds);
       } else if (column === 'value') {
         return a.value - b.value;
-      }
+      } else if (column === 'HistoricalRate') {}
+        return a.WorkerId.localeCompare(b.WorkerId);
     })
 
 
@@ -216,7 +217,7 @@ function ImageGrid() {
     } else if (data.Rejected === data.count) {
       return "#DC4C64"
     } else if ((data.Rejected + data.Approved) === data.count) {
-      return "0000"
+      return "#B833FF"
     } else {
       return "#3B71CA"
     }
@@ -251,13 +252,15 @@ function ImageGrid() {
   const PIESIZE = 250;
 
   const handleToggleVisibility = () => {
-    SetAnalysis(!analysis);
+    window.location.href = `/workerlist/`
+    
   };
 
   const box_data = []
   for (let i = 0; i < filteredWorker.length; i++) {
     box_data.push(filteredWorker[i].value.toFixed(2))
   }
+  console.log(filteredWorker)
   return (
       <div class="container mt-2">
         <div class="row">
@@ -265,11 +268,7 @@ function ImageGrid() {
           <div class="col-4"><h1 class="text-center"> Workers</h1></div>
           <div class="col-4 text-right">
               <div>
-              {analysis ? (
                 <button class="btn btn-outline-primary" onClick={handleToggleVisibility}>Workers</button>
-              ):(
-                <button class="btn btn-outline-info" onClick={handleToggleVisibility}>Analysis</button>
-              )}
               
             </div>
           </div>
@@ -279,7 +278,6 @@ function ImageGrid() {
         {loading ? (<p class="text-center"> Loading ...</p>) : (
 
           <div className={dimmed ? 'dimmed-screen' : ''}> 
-            {analysis ? (
             <div class="container">
               <div class="row">
                 <div class="col-6">
@@ -502,75 +500,6 @@ function ImageGrid() {
               </div>
                 
             </div>
-            ): (
-            <div class="container">
-              <div class="row">
-                <h2 class="text-info mt-3">List of {filteredWorker.length} Workers</h2>
-                <div class="row">
-                  <div class="col-10">
-                    <input type="text" class="form-control" value={searchQuery} onChange={handleSearch} placeholder="Search worker..." />
-                  </div>
-    
-                  <div class="col-2">
-                    <div>
-                      <select class="form-control text-center btn btn-outline-info" value={statusFilter} onChange={(e) => handleStatusFilter(e.target.value)}>
-                        <option value="All">All</option>
-                        <option value="Submitted">Reviewing</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Rejected">Rejected</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col" >#</th>
-                      <th scope="col" onClick={() => handleSort('WorkerID')}>Worker ID  {sortColumn === 'WorkerID' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
-                      <th scope="col" onClick={() => handleSort('Count')}>Count  {sortColumn === 'Count' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
-                      <th scope="col" onClick={() => handleSort('WorkTimeInSeconds')}>Avg. Time  {sortColumn === 'WorkTimeInSeconds' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
-                      <th scope="col" onClick={() => handleSort('value')}>Avg. Value  {sortColumn === 'value' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
-                      <th scope="col" onClick={() => handleSort('Approval Rate')}>Approval Rate {sortColumn === 'Approval Rate' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
-                      <th scope="col">Approve</th>
-                      <th scope="col">Reject</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredWorker.map((row) => (
-                      <tr key={row.id} style={{ color: getFontColor(row["Approval Rate"]) }}>
-                        <td>
-                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.id}</Link></td>
-                        <td >
-                          <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.WorkerId}</Link>
-                        </td>
-                        <td>
-                          <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.count}</Link>
-                          </td>
-                        <td>
-                          <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.WorkTimeInSeconds}</Link>
-                          </td>
-                        <td>
-                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{row.value.toFixed(2)}</Link>
-                          </td>
-                        <td>
-                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{Math.floor((row["Approved"]/(row["Approved"] + row["Rejected"])*100))} [{row["Approved"]}/{row["Approved"] + row["Rejected"]}]</Link>
-                          </td>
-                        <td>
-                          {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
-                            type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
-                        </td>
-                        <td>
-                          {row.Rejected === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
-                            type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectAll(row.WorkerId)}></button>)}
-                        </td>
-
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>)}
           </div>
         )}
 

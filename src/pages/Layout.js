@@ -37,9 +37,8 @@ const Layout = () => {
                 id="nav-dropdown-dark-example"
                 title="MTURK"
                 menuVariant="dark"
-              ><NavDropdown.Divider />
-
-                <NavDropdown.Item href="/workers">Workers</NavDropdown.Item>
+                class="text-center"
+              >                <NavDropdown.Item href="/workers">Workers</NavDropdown.Item>
                 <NavDropdown.Item href="/assignments">Assignments</NavDropdown.Item>
                 <NavDropdown.Item href="/triples">Triples</NavDropdown.Item>
                 <NavDropdown.Item href="/searching">Searching</NavDropdown.Item>

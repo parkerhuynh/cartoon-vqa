@@ -71,6 +71,16 @@ const FileUploadForm = () => {
       setLoading(false);
     }
   };
+  const handleBannedWorkerDownload = () => {
+    axios.get('/download-data/banned_workers').then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'banned_workers.csv');
+      document.body.appendChild(link);
+      link.click();
+    });
+  }; 
   
 
   return (
@@ -108,6 +118,21 @@ const FileUploadForm = () => {
         <div class="row mt-5">
             <div class="col-4"></div>
             <div class="col-4">
+              <h3 class="mb-4">Upload MTURK Worker</h3>
+                <form onSubmit={handleSubmit}>
+                    <input type="file" onChange={e => handleFileChange("mturk_worker.csv", e)}  />
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Uploading...' : 'Upload'}
+                    </button>
+                    {uploadStatus === 'success' && <p>File uploaded successfully!</p>}
+                    {uploadStatus === 'error' && <p>Error uploading file.</p>}
+                </form>
+            </div>
+            <div class="col-4"></div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-4"></div>
+            <div class="col-4">
               <h3 class="mb-4">Download MTURK batch</h3>
               <button type="button" class="btn btn-success" onClick={handleBatchDownload}>Download Mturk Batch</button>
             </div>
@@ -127,6 +152,14 @@ const FileUploadForm = () => {
             <div class="col-4">
               <h3 class="mb-4">Download MTURK Decision</h3>
               <button type="button" class="btn btn-success" onClick={handleDecisionDownload}>Download MTURK Decision</button>
+            </div>
+            <div class="col-4"></div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-4"></div>
+            <div class="col-4">
+              <h3 class="mb-4">Download Banned Workers</h3>
+              <button type="button" class="btn btn-success" onClick={handleBannedWorkerDownload}>Download Banned Workers</button>
             </div>
             <div class="col-4"></div>
         </div>

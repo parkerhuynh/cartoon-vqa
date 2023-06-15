@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form } from 'react-bootstrap';
 import '../../App.css';
 import ClipLoader from "react-spinners/ClipLoader";
-
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 function WorkerProfile() {
     const { worker_id } = useParams();
@@ -160,7 +160,8 @@ function WorkerProfile() {
                 setDimmed(false)
             })
             .finally(() =>
-                window.location.href = `/workers/`
+               //window.location.href = `/workers/`\
+               window.close()
             )
 
         const updatedData = assigments.map(item => ({
@@ -183,7 +184,8 @@ function WorkerProfile() {
                 setDimmed(false)
             })
             .finally(()=> (
-                window.location.href = `/workers/`
+                //window.location.href = `/workers/`
+                window.close()
             ))
         const updatedData = assigments.map(item => ({
             ...item,
@@ -393,7 +395,7 @@ function WorkerProfile() {
                                     {filteredAssignment.map((row) => (
                                         <tr key={row.id} style={{ color: getFontColor(row.AssignmentStatus) }}>
                                             <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.id}</td>
-                                            <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.AssignmentId}</td>
+                                            <td ><Link to={`/assignment/${row.AssignmentId}`} style={{ textDecoration: 'inherit'}} >{row.AssignmentId}</Link></td>
                                             <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.SubmitTime}</td>
                                             <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.WorkTimeInSeconds}</td>
                                             <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.AssignmentStatus}</td>

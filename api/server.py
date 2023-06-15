@@ -275,6 +275,27 @@ def download_data(dataname):
     elif dataname =="mturk_result":
         file_path = 'mturk_result.csv'
         return send_file(file_path, as_attachment=True)
+    elif dataname =="banned_workers":
+        worker_list = pd.read_csv("mturk_worker.csv")
+
+        mturk_result = pd.read_csv("mturk_result.csv")
+        mturk_result.loc[mturk_result['AssignmentStatus'] == "Submitted", 'AssignmentStatus'] = "Approved"
+        mturk_result = mturk_result[["WorkerId", "AssignmentStatus"]]
+        pivot_df = mturk_result.pivot_table(index='WorkerId', columns='AssignmentStatus', aggfunc=len, fill_value=0)
+        pivot_df["Approval Rate"] = pivot_df["Approved"] / (pivot_df["Approved"] +  pivot_df["Rejected"])
+        worker = pivot_df[pivot_df["Approval Rate"] < 0.75]
+        worker_ban_list = list(worker.index)
+        
+        worker_list.loc[worker_list['Worker ID'].isin(worker_ban_list), "UPDATE BlockStatus"] = "Block"
+        message = "Based on the results of your work, we find that you did not do a good job. so we will ban you from participating in our next tast."
+        worker_list.loc[worker_list['Worker ID'].isin(worker_ban_list), "BlockReason"] = message
+        worker_list.to_csv("banned_workers.csv", index=False)
+        sleep(5)
+        file_path = 'banned_workers.csv'
+        return send_file(file_path, as_attachment=True)
+
+
+
 
         
 
@@ -379,6 +400,7 @@ def upload_file(file_name):
     if file_name == "mturk_result.csv":
         sleep(5)
         triple_dataset_generation()
+    
     return 'File uploaded successfully'
 
 @app.route('/working_time/', methods=['POST','GET'])
@@ -448,6 +470,7 @@ def calculate_rate(approved, rejected):
 def get_workers():
     mturk_data = pd.read_csv("mturk_result.csv")
     mturk_data = mturk_data[["WorkerId", "SubmitTime","AssignmentStatus","AssignmentId", "WorkTimeInSeconds", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate", "Approve", "Reject"]]
+    historical_rate = mturk_data[["WorkerId", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate"]].drop_duplicates()
     counts = mturk_data.groupby(["WorkerId", "AssignmentStatus"]).size().reset_index(name='count')
     pivot_table = counts.pivot(index="WorkerId", columns="AssignmentStatus", values='count').reset_index()
     head_list = ['WorkerId', 'Submitted', 'Rejected', 'Approved']
@@ -464,6 +487,7 @@ def get_workers():
 
     workers = pd.merge(worker_counts, average_working_time, on='WorkerId')
     workers = pd.merge(workers, pivot_table,  on='WorkerId')
+    workers =  pd.merge(workers, historical_rate,  on='WorkerId')
     workers["id"] = workers.index
 
     workers_data = workers.sort_values("count",  ascending=False)
@@ -695,5 +719,15 @@ def get_triple_summary(filter_status):
         "answerList": answer_list[:50]
     }
     return results
+
+@app.route('/get_hit/<hit_id>', methods=['POST','GET'])
+def get_hit(hit_id):
+    try:
+        mturk_data = pd.read_csv("mturk_result.csv")
+        hits = mturk_data[mturk_data["HITId"] == hit_id][["HITId", "WorkerId", "AssignmentId"]]
+        hits = hits.to_dict("records")
+        return hits
+    except:
+        return []
 if __name__ == "__main__":
     app.run(debug=True, port=8080)

@@ -264,7 +264,7 @@ def download_data(dataname):
         return send_file(file_path, as_attachment=True)
     elif dataname == "mturk_decision":
         decision = pd.read_csv("mturk_result.csv")
-        message = "It is crucial to emphasize that the data in question concerns children, and any inaccuracies have the potential to affect their cognitive development. Consequently, we have determined that it is necessary to reject all of your submissions."
+        message = "It is crucial to emphasize that the data in question concerns children, and any inaccuracies have the potential to affect their cognitive development. Consequently, we have determined that it is necessary to reject your HIT."
         decision.loc[decision["AssignmentStatus"] == "Approved", 'Approve'] = "x"
         decision.loc[decision["AssignmentStatus"] == "Rejected", 'Reject'] = message
         decision["AssignmentStatus"] = "Submitted"

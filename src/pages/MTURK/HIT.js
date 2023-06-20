@@ -41,6 +41,7 @@ function WorkerProfile() {
         window.location.href = `/assignment/${assignemtId}`;
     };
     
+    
 
     return (
         <>

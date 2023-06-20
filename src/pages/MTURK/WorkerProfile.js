@@ -196,7 +196,8 @@ function WorkerProfile() {
         handlePie(updatedData)
     };
     const handleWorkers = () => {
-        window.location.href = `/workers`;
+        //window.location.href = `/workers`;
+        window.close()
     };
 
 
@@ -392,9 +393,9 @@ function WorkerProfile() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredAssignment.map((row) => (
-                                        <tr key={row.id} style={{ color: getFontColor(row.AssignmentStatus) }}>
-                                            <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.id}</td>
+                                    {Object.entries(filteredAssignment).map(([key, row]) => (
+                                        <tr key={key} style={{ color: getFontColor(row.AssignmentStatus) }}>
+                                            <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{key}</td>
                                             <td ><Link to={`/assignment/${row.AssignmentId}`} style={{ textDecoration: 'inherit'}} >{row.AssignmentId}</Link></td>
                                             <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.SubmitTime}</td>
                                             <td onClick={() => handleAssigmentClick(row.AssignmentId)}>{row.WorkTimeInSeconds}</td>

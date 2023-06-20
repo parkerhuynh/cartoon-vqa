@@ -262,6 +262,7 @@ function ImageGrid() {
   }
   console.log(filteredWorker)
   return (
+    <div className={dimmed ? 'dimmed-screen' : ''}>
       <div class="container mt-2">
         <div class="row">
           <div class="col-4"></div>
@@ -345,8 +346,10 @@ function ImageGrid() {
               </table>
             </div>
           </div>
+
         )}
 
+      </div>
       </div>
   );
 }

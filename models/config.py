@@ -17,10 +17,12 @@ model_config = {
         "dense_hidden_size": 128
     },
     "SAN": {
+        "visual_embedding": 512, 
         "num_attention_layer": 2,
-        "rnn_embedding_size": 64,
-        "word_embedding_size": 32,
+        "rnn_embedding_size": 512,
+        "question_embedding":512, 
+        "word_embedding_size": 300,
         "rnn_layers": 1,
-        "dense_hidden_size": 64
+        "dense_hidden_size": 512
     }
 }

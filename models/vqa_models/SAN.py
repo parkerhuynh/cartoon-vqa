@@ -27,7 +27,7 @@ class ImageEncoder(nn.Module):
 
 class QuestionEncoder(nn.Module):
 
-    def __init__(self, question_vocab_size, word_embed_size, embed_size, num_layers, hidden_size):
+    def __init__(self, question_vocab_size, word_embed_size, rnn_embed_size, num_layers, hidden_size):
         """
         Extract question featues:
             - step 1: using word2vec
@@ -36,8 +36,8 @@ class QuestionEncoder(nn.Module):
         super(QuestionEncoder, self).__init__()
         self.word2vec = nn.Embedding(question_vocab_size, word_embed_size)
         self.tanh = nn.Tanh()
-        self.lstm = nn.LSTM(word_embed_size, hidden_size, num_layers)
-        self.fc = nn.Linear(2*num_layers*hidden_size, embed_size)
+        self.lstm = nn.LSTM(word_embed_size, rnn_embed_size, num_layers)
+        self.fc = nn.Linear(2*num_layers*rnn_embed_size, hidden_size)
 
     def forward(self, question):
 
@@ -84,8 +84,13 @@ class SANModel(nn.Module):
         super(SANModel, self).__init__()
         self.num_attention_layer = 2
         self.num_mlp_layer = 1
-        self.img_encoder = ImageEncoder(model_config["dense_hidden_size"])
-        self.qst_encoder = QuestionEncoder(question_vocab_size,model_config["word_embedding_size"], model_config["rnn_embedding_size"], model_config["rnn_layers"], model_config["dense_hidden_size"])
+        self.img_encoder = ImageEncoder(model_config["visual_embedding"])
+        self.qst_encoder = QuestionEncoder(
+            question_vocab_size = question_vocab_size,
+            word_embed_size = model_config["word_embedding_size"],
+            rnn_embed_size = model_config["rnn_embedding_size"],
+            num_layers = model_config["rnn_layers"],
+            hidden_size = model_config["question_embedding"])
 
         self.san = nn.ModuleList([Attention(512, model_config["dense_hidden_size"])]*self.num_attention_layer)
         self.tanh = nn.Tanh()

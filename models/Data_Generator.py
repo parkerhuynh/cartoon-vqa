@@ -152,12 +152,6 @@ class DataSet(Data.Dataset):
             transform = self.transform
             image = Image.open(img_path).convert('RGB')
             image = transform(image)
-        else:
-            # Load the run data from list
-            ques = self.ques_list[idx]
-            # Process question
-            ques_ix_iter = proc_ques(ques, self.token_to_ix, self.MAX_TOKEN)
-
 
         return ques_ix_iter, \
                ans_iter, \

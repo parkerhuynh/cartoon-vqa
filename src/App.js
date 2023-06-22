@@ -23,6 +23,7 @@ import Triple from "./pages/MTURK/Triple"
 import Assigments from "./pages/MTURK/Assignments"
 import Triples from "./pages/MTURK/Triples"
 import WorkerList from "./pages/MTURK/worker_list"
+import Notes from "./pages/MTURK/Notes"
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 
@@ -53,6 +54,7 @@ function App() {
           <Route path="assignments" element={<Assigments />} />
           <Route path="triples" element={<Triples />} />
           <Route path="workerlist" element={<WorkerList />} />
+          <Route path="notes" element={<Notes />} />
           
           {/*
           <Route path="qa" element={<QA />} />

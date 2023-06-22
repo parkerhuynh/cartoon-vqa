@@ -13,6 +13,7 @@ import re
 from collections import Counter
 import ast
 from time import sleep
+import random
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -760,9 +761,9 @@ def approve_all_worker_rest():
 @app.route('/next_assignment/<worker_id>', methods=['POST','GET'])
 def next_assignment(worker_id):
     mturk_data = pd.read_csv("mturk_result.csv")
-    submit_assignments = list(mturk_data[(mturk_data["WorkerId"] == worker_id)&(mturk_data["AssignmentStatus"] == "Submitted")]["AssignmentId"])
+    submit_assignments = list(mturk_data[(mturk_data["WorkerId"] == worker_id)&(mturk_data["AssignmentStatus"] == "Submitted")].sort_values("SubmitTime")["AssignmentId"])
     if len(submit_assignments) > 0:
-        next_assigment = submit_assignments[0]
+        next_assigment = random.choice(submit_assignments)
         return next_assigment
     else:
         return ''

@@ -41,7 +41,7 @@ function WorkerProfile() {
             if (responseData !== "") {
                 window.location.href = `/assignment/${responseData}`
             } else {
-                window.location.href = `/profile/${images[0].worker_id}`
+                window.location.href = `/profile/${worker_id}`
             }
         })
     };
@@ -54,10 +54,15 @@ function WorkerProfile() {
             if (responseData !== "") {
                 window.location.href = `/assignment/${responseData}`
             } else {
-                window.location.href = `/profile/${images[0].worker_id}`
+                window.location.href = `/profile/${worker_id}`
             }
         })
     };
+
+    const handleWorkerProfile = (worker_id) => {
+        window.location.href = `/profile/${worker_id}`
+    };
+
     return (
         <>
         <h3 class="text-center text-danger mt-3">Assignment Review</h3>
@@ -67,7 +72,11 @@ function WorkerProfile() {
                 <h2 class="text-center text-danger mt-3">WORKER ID: {images[0].worker_id}</h2>
                 <h1 class="text-center text-info mt-3">ASSIGNMENT ID:{assignment_id}</h1>
                 <div class="row mt-5">
-                    <div class="col-4"></div>
+                    <div class="col-3"></div>
+                    <div class="col-2">
+                        <button style={{width: "130px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-info" onClick={() => handleWorkerProfile(images[0].worker_id)}>Profile</button>
+                    </div>
                     <div class="col-2">
                         <button style={{width: "130px", height:"35px"}} type="button" 
                         class="btn btn-sm btn-success" onClick={() => handleApproveClick(assignment_id, images[0].worker_id)}>Approve</button>
@@ -76,7 +85,7 @@ function WorkerProfile() {
                         <button style={{width: "130px", height:"35px"}} type="button" 
                         class="btn btn-sm btn-danger" onClick={() => handleRejectClick(assignment_id, images[0].worker_id)} >Reject</button>
                     </div>
-                    <div class="col-4"></div>
+                    <div class="col-3"></div>
                 </div>
                 
                 <div class="row mt-3">

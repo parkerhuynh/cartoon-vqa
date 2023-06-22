@@ -32,27 +32,37 @@ function WorkerProfile() {
         window.open(`/triple/${tripleId}`, '_blank')
       };
     
-      const handleRejectClick  = (assignemtId, worker_id) => {
+    const handleRejectClick  = (assignemtId, worker_id) => {
         setDimmed(true);
         axios.post('/reject_assignment/' + assignemtId)
-        .then(() => {
-            console.log("Done!")
+        .then(async() => {
+            const response = await axios.get('/next_assignment/' + worker_id);
+            const responseData = response.data;
+            if (responseData !== "") {
+                window.location.href = `/assignment/${responseData}`
+            } else {
+                window.location.href = `/profile/${worker_id}`
+            }
         })
-        .finally(() => {
-            window.location.href = `/profile/${worker_id}`
-        })
-
     };
     const handleApproveClick  = (assignemtId, worker_id) => {
         setDimmed(true);
         axios.post('/approve_assignment/' + assignemtId)
-        .then(() => {
-            console.log("Done!")
-        })
-        .finally(() => {
-            window.location.href = `/profile/${worker_id}`
+        .then(async() => {
+            const response = await axios.get('/next_assignment/' + worker_id);
+            const responseData = response.data;
+            if (responseData !== "") {
+                window.location.href = `/assignment/${responseData}`
+            } else {
+                window.location.href = `/profile/${worker_id}`
+            }
         })
     };
+
+    const handleWorkerProfile = (worker_id) => {
+        window.location.href = `/profile/${worker_id}`
+    };
+
     return (
         <>
         <h3 class="text-center text-danger mt-3">Assignment Review</h3>
@@ -62,7 +72,11 @@ function WorkerProfile() {
                 <h2 class="text-center text-danger mt-3">WORKER ID: {images[0].worker_id}</h2>
                 <h1 class="text-center text-info mt-3">ASSIGNMENT ID:{assignment_id}</h1>
                 <div class="row mt-5">
-                    <div class="col-4"></div>
+                    <div class="col-3"></div>
+                    <div class="col-2">
+                        <button style={{width: "130px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-info" onClick={() => handleWorkerProfile(images[0].worker_id)}>Profile</button>
+                    </div>
                     <div class="col-2">
                         <button style={{width: "130px", height:"35px"}} type="button" 
                         class="btn btn-sm btn-success" onClick={() => handleApproveClick(assignment_id, images[0].worker_id)}>Approve</button>
@@ -71,7 +85,7 @@ function WorkerProfile() {
                         <button style={{width: "130px", height:"35px"}} type="button" 
                         class="btn btn-sm btn-danger" onClick={() => handleRejectClick(assignment_id, images[0].worker_id)} >Reject</button>
                     </div>
-                    <div class="col-4"></div>
+                    <div class="col-3"></div>
                 </div>
                 
                 <div class="row mt-3">

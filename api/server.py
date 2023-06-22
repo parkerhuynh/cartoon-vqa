@@ -547,6 +547,11 @@ def get_triple(triple_id):
         assignments = mturk_data[mask]
         assignments = assignments.reset_index()
         assignments["index"] = assignments.index
+        A_id = list(assignments["assignment_id"])
+
+        status_assignments = pd.read_csv("mturk_result.csv")
+        status_assignments = status_assignments[status_assignments["AssignmentId"].isin(A_id)][["AssignmentId", "AssignmentStatus"]]
+        assignments = pd.merge(assignments, status_assignments, left_on='assignment_id', right_on='AssignmentId')
         assignments = assignments.to_dict(orient='records')
         results = {
             "triple": triple,
@@ -729,5 +734,40 @@ def get_hit(hit_id):
         return hits
     except:
         return []
+    
+
+@app.route('/approve_worker_rest/<worker_id>', methods=['POST','GET'])
+def approve_worker_rest(worker_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[(mturk_data['WorkerId'] == worker_id)&(mturk_data['AssignmentStatus'] == "Submitted"), 'AssignmentStatus'] = "Approved"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
+
+@app.route('/reject_worker_rest/<worker_id>', methods=['POST','GET'])
+def reject_worker_rest(worker_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[(mturk_data['WorkerId'] == worker_id)&(mturk_data['AssignmentStatus'] == "Submitted"), 'AssignmentStatus'] = "Rejected"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
+
+@app.route('/approve_all_worker_rest', methods=['POST','GET'])
+def approve_all_worker_rest():
+    mturk_data = pd.read_csv("mturk_result.csv")
+    mturk_data.loc[(mturk_data['AssignmentStatus'] == "Submitted"), 'AssignmentStatus'] = "Approved"
+    mturk_data.to_csv('mturk_result.csv', index=False)
+    return []
+
+@app.route('/next_assignment/<worker_id>', methods=['POST','GET'])
+def next_assignment(worker_id):
+    mturk_data = pd.read_csv("mturk_result.csv")
+    submit_assignments = list(mturk_data[(mturk_data["WorkerId"] == worker_id)&(mturk_data["AssignmentStatus"] == "Submitted")]["AssignmentId"])
+    if len(submit_assignments) > 0:
+        next_assigment = submit_assignments[0]
+        return next_assigment
+    else:
+        return ''
+    
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=8080)

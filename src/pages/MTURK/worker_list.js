@@ -188,8 +188,8 @@ function ImageGrid() {
         return new Date(a.WorkTimeInSeconds) - new Date(b.WorkTimeInSeconds);
       } else if (column === 'value') {
         return a.value - b.value;
-      } else if (column === 'HistoricalRate') {}
-        return a.WorkerId.localeCompare(b.WorkerId);
+      } else if (column === 'HistoricalRate') { }
+      return a.WorkerId.localeCompare(b.WorkerId);
     })
 
 
@@ -200,7 +200,7 @@ function ImageGrid() {
 
     setFilteredWorkers(sorted);
   };
-  
+
   const getFontColor = (rate) => {
     if (rate === 'Not Review') {
       return 'blue';
@@ -253,14 +253,27 @@ function ImageGrid() {
 
   const handleToggleVisibility = () => {
     window.location.href = `/workers/`
-    
+
   };
 
   const box_data = []
   for (let i = 0; i < filteredWorker.length; i++) {
     box_data.push(filteredWorker[i].value.toFixed(2))
   }
-  console.log(filteredWorker)
+  const handleApproveAllRest = () => {
+    setDimmed(true);
+    axios.post('/approve_all_worker_rest')
+      .then(() => {
+        console.log("Done!")
+      })
+      .then(() => {
+        setDimmed(false)
+      })
+      .finally(() => (
+        window.location.reload()
+      ))
+  };
+
   return (
     <div className={dimmed ? 'dimmed-screen' : ''}>
       <div class="container mt-2">
@@ -268,27 +281,27 @@ function ImageGrid() {
           <div class="col-4"></div>
           <div class="col-4"><h1 class="text-center"> Workers</h1></div>
           <div class="col-4 text-right">
-              <div>
-                <button class="btn btn-outline-primary" onClick={handleToggleVisibility}>Visualization</button>
-              
+            <div>
+              <button class="btn btn-outline-primary" onClick={handleToggleVisibility}>Visualization</button>
+
             </div>
           </div>
         </div>
-        
-        
+
+
         {loading ? (<p class="text-center"> Loading ...</p>) : (
-            <div class="container">
+          <div class="container">
             <div class="row">
               <h2 class="text-info mt-3">List of {filteredWorker.length} Workers</h2>
               <div class="row">
                 <div class="col-10">
                   <input type="text" class="form-control" value={searchQuery} onChange={handleSearch} placeholder="Search worker..." />
                 </div>
-  
+
                 <div class="col-2">
                   <div>
                     <select class="form-control text-center btn btn-outline-info" value={statusFilter} onChange={(e) => handleStatusFilter(e.target.value)}>
-                      
+
                       <option value="Submitted">Reviewing</option>
                       <option value="Approved">Approved</option>
                       <option value="Rejected">Rejected</option>
@@ -297,6 +310,12 @@ function ImageGrid() {
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="row ">
+              <div class="col-9"></div>
+              <div class="col-3 text-center"><button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAllRest()}></button></div>
+            </div>
+            <div class="row">
 
               <table class="table">
                 <thead>
@@ -315,22 +334,22 @@ function ImageGrid() {
                   {filteredWorker.map((row) => (
                     <tr key={row.id} style={{ color: getFontColor(row["Approval Rate"]) }}>
                       <td>
-                      <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.id}</Link></td>
+                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{row.id}</Link></td>
                       <td >
-                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.WorkerId}</Link>
+                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{row.WorkerId}</Link>
                       </td>
                       <td>
-                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.count}</Link>
-                        </td>
+                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{row.count}</Link>
+                      </td>
                       <td>
-                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{row.WorkTimeInSeconds}</Link>
-                        </td>
+                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{row.WorkTimeInSeconds}</Link>
+                      </td>
                       <td>
-                      <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{row.value.toFixed(2)}</Link>
-                        </td>
+                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{row.value.toFixed(2)}</Link>
+                      </td>
                       <td>
-                      <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit'}} >{Math.floor((row["Approved"]/(row["Approved"] + row["Rejected"])*100))} [{row["Approved"]}/{row["Approved"] + row["Rejected"]}]</Link>
-                        </td>
+                        <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{Math.floor((row["Approved"] / (row["Approved"] + row["Rejected"]) * 100))} [{row["Approved"]}/{row["Approved"] + row["Rejected"]}]</Link>
+                      </td>
                       <td>
                         {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
                           type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
@@ -350,7 +369,7 @@ function ImageGrid() {
         )}
 
       </div>
-      </div>
+    </div>
   );
 }
 

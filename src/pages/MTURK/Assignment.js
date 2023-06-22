@@ -32,25 +32,30 @@ function WorkerProfile() {
         window.open(`/triple/${tripleId}`, '_blank')
       };
     
-      const handleRejectClick  = (assignemtId, worker_id) => {
+    const handleRejectClick  = (assignemtId, worker_id) => {
         setDimmed(true);
         axios.post('/reject_assignment/' + assignemtId)
-        .then(() => {
-            console.log("Done!")
+        .then(async() => {
+            const response = await axios.get('/next_assignment/' + worker_id);
+            const responseData = response.data;
+            if (responseData !== "") {
+                window.location.href = `/assignment/${responseData}`
+            } else {
+                window.location.href = `/profile/${images[0].worker_id}`
+            }
         })
-        .finally(() => {
-            window.location.href = `/profile/${worker_id}`
-        })
-
     };
     const handleApproveClick  = (assignemtId, worker_id) => {
         setDimmed(true);
         axios.post('/approve_assignment/' + assignemtId)
-        .then(() => {
-            console.log("Done!")
-        })
-        .finally(() => {
-            window.location.href = `/profile/${worker_id}`
+        .then(async() => {
+            const response = await axios.get('/next_assignment/' + worker_id);
+            const responseData = response.data;
+            if (responseData !== "") {
+                window.location.href = `/assignment/${responseData}`
+            } else {
+                window.location.href = `/profile/${images[0].worker_id}`
+            }
         })
     };
     return (

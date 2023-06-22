@@ -5,14 +5,14 @@ import 'katex/dist/katex.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form } from 'react-bootstrap';
 import '../../App.css';
-
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 function WorkerProfile() {
     const { triple_id } = useParams();
     const [triple, setTriple] = useState({});
     const [loading, setLoading] = useState(true);
     const [assigments, setAssigments] = useState([]);
-
+    const [dimmed, setDimmed] = useState(false);
     useEffect(() => {
         fetchData(triple);
     }, []);
@@ -37,7 +37,56 @@ function WorkerProfile() {
     const handleAssignmentClick = (assignemtId) => {
         window.location.href = `/assignment/${assignemtId}`;
     };
+    const getFontColor = (status) => {
+        if (status === 'Submitted') {
+          return 'blue';
+        } else if (status === 'Rejected') {
+          return 'red';
+        } else {
+          return 'green';
+        }
+      };
+    const handleRejectClick = (assignemtId) => {
+        setDimmed(true);
+        axios.post('/reject_assignment/' + assignemtId)
+            .then(() => {
+                console.log("Done!")
+            })
+            .finally(() => {
+                setDimmed(false)
+            })
+        const updatedData = assigments.map(item => {
+            if (item.assignment_id === assignemtId) {
+                return {
+                    ...item,
+                    AssignmentStatus: 'Rejected',
+                };
+            }
+            return item;
+        });
+        setAssigments(updatedData)
+    };
+    const handleApproveClick = (assignemtId) => {
+        setDimmed(true);
+        axios.post('/approve_assignment/' + assignemtId)
+            .then(() => {
+                console.log("Done!")
+            })
+            .finally(() => {
+                setDimmed(false)
+            })
 
+        const updatedData = assigments.map(item => {
+            if (item.assignment_id === assignemtId) {
+                return {
+                    ...item,
+                    AssignmentStatus: 'Approved',
+                };
+            }
+            return item;
+        });
+        setAssigments(updatedData)
+    };
 
     return (
         <>
@@ -71,20 +120,30 @@ function WorkerProfile() {
                                             <th scope="col" >Worker ID</th>
                                             <th scope="col" >Assingment ID</th>
                                             <th scope="col" >Answer</th>
+                                            <th scope="col" >Approve</th>
+                                            <th scope="col" >Reject</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {assigments.map((row) => (
                                             <tr key={row.index}>
-                                                <td >{row.index}</td>
-                                                <td onClick={() => handleWorkerClick(row.worker_id)}>{row.worker_id}</td>
-                                                <td onClick={() => handleAssignmentClick(row.assignment_id)}>{row.assignment_id}</td>
+                                                <td style={{ color: getFontColor(row["AssignmentStatus"]) }}>{row.index}</td>
+                                                <td><Link to={`/profile/${row.worker_id}`} style={{color: getFontColor(row["AssignmentStatus"]), textDecoration: 'inherit'}} >{row.worker_id}</Link></td>
+                                                <td><Link to={`/assignment/${row.assignment_id}`} style={{color: getFontColor(row["AssignmentStatus"]), textDecoration: 'inherit'}} >{row.assignment_id}</Link></td>
                                                 <td>
                                                     {row.incorrect == 1 ? (<div class="text-center text-danger"><b>Incorrect</b></div>) : (null)}
                                                     {row.partially_incorrect == 1 ? (<div class="text-center text-danger"><b>Partially Incorrect</b></div>) : (null)}
                                                     {row.ambiguous == 1 ? (<div class="text-center text-danger"><b>Ambiguous</b></div>) : (null)}
                                                     {row.partially_correct == 1 ? (<div class="text-center text-success"><b>Partially Correct</b></div>) : (null)}
                                                     {row.correct == 1 ? (<div class="text-center text-success"><b>Correct</b></div>) : (null)}
+                                                </td>
+                                                <td>
+                                                    {row["AssignmentStatus"] != "Approved" ? (<button style={{ width: "70px", height: "15px" }}
+                                                type="button" class="btn btn-sm btn-success" onClick={() => handleApproveClick(row.assignment_id)}></button>) : (null)}
+                                                </td>
+                                                <td>
+                                                    {row["AssignmentStatus"] != "Rejected" ? (<button style={{ width: "70px", height: "15px" }}
+                                                type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectClick(row.assignment_id)} ></button>) : (null)}
                                                 </td>
                                             </tr>
                                         ))}

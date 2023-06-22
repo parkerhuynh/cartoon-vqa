@@ -42,6 +42,7 @@ const Layout = () => {
                 <NavDropdown.Item href="/assignments">Assignments</NavDropdown.Item>
                 <NavDropdown.Item href="/triples">Triples</NavDropdown.Item>
                 <NavDropdown.Item href="/searching">Searching</NavDropdown.Item>
+                <NavDropdown.Item href="/notes">Notes</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="/working_analysis">Working Time Analysis</NavDropdown.Item>
               <NavDropdown.Item href="/mturk_uploading">Upload & Download</NavDropdown.Item>

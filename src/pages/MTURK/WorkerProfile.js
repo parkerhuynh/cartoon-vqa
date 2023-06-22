@@ -156,19 +156,10 @@ const handleRejectAll = () => {
         .then(() => {
             console.log("Done!")
         })
-        .then(() => {
-            setDimmed(false)
-        })
         .finally(() =>
-            //window.location.href = `/workers/`\
-            window.close()
+            window.location.href = `/workerlist/`
+            //window.close()
         )
-
-    const updatedData = assigments.map(item => ({
-        ...item,
-        AssignmentStatus: 'Rejected',
-    }));
-
 };
 
 const handleApproveAll = () => {
@@ -177,20 +168,13 @@ const handleApproveAll = () => {
         .then(() => {
             console.log("Done!")
         })
-        .then(() => {
-            setDimmed(false)
-        })
-        .finally(() => (
-            //window.location.href = `/workers/`
-            window.close()
-        ))
-    const updatedData = assigments.map(item => ({
-        ...item,
-        AssignmentStatus: 'Approved',
-    }));
+        .finally(() =>
+            window.location.href = `/workerlist/`
+            //window.close()
+        )
 };
 const handleWorkers = () => {
-    window.location.href = `/workers`;
+    window.location.href = `/workerlist/`
     //window.close()
 };
 

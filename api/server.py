@@ -2,21 +2,20 @@
 from flask import Flask, request, jsonify, make_response, send_file
 import json
 import pandas as pd
-import pymysql.cursors
-from utils import connect_to_mysql
+#from utils import connect_to_mysql
 import numpy as np
 import base64
 import json
 import os
-import openai
 import re
 from collections import Counter
 import ast
 from time import sleep
 import random
+import os
 
 app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+#openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def extract_data(result):
     ids = []
@@ -64,6 +63,13 @@ def triple_dataset_generation():
     mturk_data = pd.read_csv("mturk_result.csv")
     mturk_data.columns = columns
     mturk_data["index"]  = mturk_data.index
+
+    workers = mturk_data["WorkerId"].value_counts()
+    workers = workers.reset_index()
+    workers["reviewed"] = "no"
+    workers = workers[["WorkerId", "reviewed"]]
+    workers.to_csv("worker_review_process.csv", index=False)
+
     mturk_data = mturk_data[["WorkerId", "AssignmentId", "HITId", "Answer.taskAnswers"]]
     result_dic = {
         "worker_id": [],
@@ -129,8 +135,6 @@ def mturk_batch_generation():
     new_A = pd.DataFrame(new_A)
     new_A.to_csv("mturk_batch.csv", index=False)
 
-    
-        
 
 def get_img_pth(img_id):
     img_dic = "../images/"
@@ -438,6 +442,8 @@ def get_worker_profile(worker_id):
     worker_profile = worker_profile.fillna(0)
     worker_profile = worker_profile.reset_index(drop=True)
     worker_profile["id"] = worker_profile.index
+    reviewing = pd.read_csv("worker_review_process.csv")
+    reviewing = reviewing[reviewing["WorkerId"] == worker_id]["reviewed"].values[0]
     
     summary = [
         {"id":1, "feature": "Avg. Time", "value": int(worker_profile["WorkTimeInSeconds"].mean())},
@@ -457,8 +463,10 @@ def get_worker_profile(worker_id):
             {"name": "Approved", "value": week_approval_complete},
             {"name": "reject", "value": week_approval_all - week_approval_complete}
         ],
-        "summary": summary
+        "summary": summary,
+        "Reviewed": reviewing
     }
+    
     return result
 
 def calculate_rate(approved, rejected):
@@ -509,7 +517,8 @@ def get_workers():
     value_mean = mturk_data.groupby('worker_id')['value'].mean()
     value_mean = value_mean.reset_index()
     workers_data = pd.merge(workers_data, value_mean, left_on='WorkerId', right_on="worker_id")
-
+    workers_review = pd.read_csv("worker_review_process.csv")
+    workers_data = pd.merge(workers_data, workers_review, on='WorkerId')
     workers_data = workers_data.to_dict(orient='records')
     summary = [
         {"id":1, "name":"Number of Worker", "value":len(workers)},
@@ -767,7 +776,46 @@ def next_assignment(worker_id):
         return next_assigment
     else:
         return ''
+
+@app.route('/save_notes/<action>/<worker_id>/<status>', methods=['POST','GET'])
+def save_notes(action, worker_id, status):
+    file_path = 'save_notes.csv'
+    if os.path.exists(file_path):
+        notes = pd.read_csv(file_path)
+        new_row = {'worker_id': worker_id, 'status': status}
+        if action == "load":
+            return notes.to_dict("records")
+        elif action == "add":
+            workers = list(notes[notes["status"] == status]["worker_id"])
+            if worker_id not in workers:
+                notes = notes.append(new_row, ignore_index=True)
+                notes.to_csv(file_path, index = False)
+            return []
+        else:
+            notes = notes[notes["worker_id"] != worker_id]
+            notes.to_csv(file_path, index = False)
+            return []
+    else:
+        if action == "load":
+            return jsonify([])
+        elif action == "add":
+            notes = pd.DataFrame({
+                'worker_id': [worker_id], 'status': [status]
+            })
+            notes.to_csv(file_path, index = False)
+            return []
+        else:
+            return []
+
+@app.route('/reviewing_check/<worker_id>/<action>', methods=['POST','GET'])
+def reviewing_check(worker_id, action):
+    workers = pd.read_csv("worker_review_process.csv")
+    workers.loc[workers["WorkerId"] == worker_id, 'reviewed'] = action
+    workers.to_csv("worker_review_process.csv", index = False)
+    return []
     
+
+
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@ from collections import Counter
 import ast
 from time import sleep
 import random
+import os
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -767,7 +768,37 @@ def next_assignment(worker_id):
         return next_assigment
     else:
         return ''
-    
+
+@app.route('/save_notes/<action>/<worker_id>/<status>', methods=['POST','GET'])
+def save_notes(action, worker_id, status):
+    file_path = 'save_notes.csv'
+    if os.path.exists(file_path):
+        notes = pd.read_csv(file_path)
+        new_row = {'worker_id': worker_id, 'status': status}
+        if action == "load":
+            return notes.to_dict("records")
+        elif action == "add":
+            workers = list(notes[notes["status"] == status]["worker_id"])
+            if worker_id not in workers:
+                notes = notes.append(new_row, ignore_index=True)
+                notes.to_csv(file_path, index = False)
+            return []
+        else:
+            notes = notes[notes["worker_id"] != worker_id]
+            notes.to_csv(file_path, index = False)
+            return []
+    else:
+        if action == "load":
+            return jsonify([])
+        elif action == "add":
+            notes = pd.DataFrame({
+                'worker_id': [worker_id], 'status': [status]
+            })
+            notes.to_csv(file_path, index = False)
+            return []
+        else:
+            return []
+
 
 
 if __name__ == "__main__":

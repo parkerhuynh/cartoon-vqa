@@ -274,6 +274,47 @@ function ImageGrid() {
       ))
   };
 
+  const handleCheck = (worker_id, action) => {
+    setDimmed(true);
+    axios.post('/reviewing_check/' + worker_id + "/" + action)
+      .then(() => {
+        console.log("Done!")
+      })
+      .finally(() => {
+        setDimmed(false)
+      });
+    const updatedData = filteredWorkers.map(item => {
+      if (item.WorkerId === worker_id) {
+        item.reviewed = "yes";
+        return item
+      }
+      return item;
+    });
+    setFilteredWorkers(updatedData)
+    setWorkers(updatedData)
+    setDimmed(false)
+  };
+  const handleUncheck = (worker_id, action) => {
+    setDimmed(true);
+    axios.post('/reviewing_check/' + worker_id + "/" + action)
+      .then(() => {
+        console.log("Done!")
+      })
+      .finally(() => {
+        setDimmed(false)
+      });
+    const updatedData = filteredWorkers.map(item => {
+      if (item.WorkerId === worker_id) {
+        item.reviewed = "no";
+        return item
+      }
+      return item;
+    });
+    setFilteredWorkers(updatedData)
+    setWorkers(updatedData)
+    setDimmed(false)
+  };
+
   return (
     <div className={dimmed ? 'dimmed-screen' : ''}>
       <div class="container mt-2">
@@ -311,10 +352,12 @@ function ImageGrid() {
                 </div>
               </div>
             </div>
-            <div class="row ">
-              <div class="col-9"></div>
-              <div class="col-3 text-center"><button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAllRest()}></button></div>
-            </div>
+            {/* 
+<div class="row ">
+<div class="col-9"></div>
+<div class="col-3 text-center"><button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAllRest()}></button></div>
+</div>
+*/}
             <div class="row">
 
               <table class="table">
@@ -326,8 +369,11 @@ function ImageGrid() {
                     <th scope="col" onClick={() => handleSort('WorkTimeInSeconds')}>Avg. Time  {sortColumn === 'WorkTimeInSeconds' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                     <th scope="col" onClick={() => handleSort('value')}>Avg. Value  {sortColumn === 'value' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                     <th scope="col" onClick={() => handleSort('Approval Rate')}>Approval Rate {sortColumn === 'Approval Rate' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
-                    <th scope="col">Approve</th>
-                    <th scope="col">Reject</th>
+                    <th scope="col">Review Status</th>
+                    {/* 
+<th scope="col">Approve</th>
+<th scope="col">Reject</th>
+*/}
                   </tr>
                 </thead>
                 <tbody>
@@ -351,13 +397,21 @@ function ImageGrid() {
                         <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{Math.floor((row["Approved"] / (row["Approved"] + row["Rejected"]) * 100))} [{row["Approved"]}/{row["Approved"] + row["Rejected"]}]</Link>
                       </td>
                       <td>
-                        {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
-                          type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
+                        {row.reviewed === "no" ? (
+                          <button style={{ width: "80px" }} type="button" class="btn btn-outline-primary" onClick={() => handleCheck(row.WorkerId, "yes")}></button>
+                        ) : (<button style={{ width: "80px" }} type="button" class="btn btn-primary" onClick={() => handleUncheck(row.WorkerId, "no")}></button>)}
                       </td>
-                      <td>
-                        {row.Rejected === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
-                          type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectAll(row.WorkerId)}></button>)}
-                      </td>
+
+                      {/* 
+<td>
+{row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
+type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
+</td>
+<td>
+{row.Rejected === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
+type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectAll(row.WorkerId)}></button>)}
+</td>
+*/}
 
                     </tr>
                   ))}

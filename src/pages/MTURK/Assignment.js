@@ -62,6 +62,23 @@ function WorkerProfile() {
     const handleWorkerProfile = (worker_id) => {
         window.location.href = `/profile/${worker_id}`
     };
+    const handleWorkers = () => {
+        window.location.href = `/workerlist/`
+        //window.close()
+    };
+    const handleCheck = () => {
+        setDimmed(true);
+        axios.post('/reviewing_check/' + images[0].worker_id + "/yes")
+          .then(() => {
+            console.log("Done!")
+          })
+          .then(() => {
+            setDimmed(false)
+          })
+          .finally(()=>{
+            handleWorkers()
+          })
+      };
 
     return (
         <>
@@ -72,20 +89,29 @@ function WorkerProfile() {
                 <h2 class="text-center text-danger mt-3">WORKER ID: {images[0].worker_id}</h2>
                 <h1 class="text-center text-info mt-3">ASSIGNMENT ID:{assignment_id}</h1>
                 <div class="row mt-5">
-                    <div class="col-3"></div>
-                    <div class="col-2">
+                    <div class="col-4"></div>
+                    <div class="col-1">
                         <button style={{width: "130px", height:"35px"}} type="button" 
                         class="btn btn-sm btn-info" onClick={() => handleWorkerProfile(images[0].worker_id)}>Profile</button>
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                         <button style={{width: "130px", height:"35px"}} type="button" 
                         class="btn btn-sm btn-success" onClick={() => handleApproveClick(assignment_id, images[0].worker_id)}>Approve</button>
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                         <button style={{width: "130px", height:"35px"}} type="button" 
                         class="btn btn-sm btn-danger" onClick={() => handleRejectClick(assignment_id, images[0].worker_id)} >Reject</button>
                     </div>
-                    <div class="col-3"></div>
+                    <div class="col-1"></div>
+                    <div class="col-2">
+                        <button style={{ width: "300px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-warning" onClick={() =>handleCheck()} >Finish reviewing the worker!</button>
+                    </div>
+                    <div class="col-1">
+                        <button style={{width: "130px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-secondary" onClick={() =>handleWorkers()} >Workers</button>
+                    </div>
+                    <div class="col-1"></div>
                 </div>
                 
                 <div class="row mt-3">
@@ -121,15 +147,28 @@ function WorkerProfile() {
                 </div>
                 <div class="row mt-5">
                     <div class="col-4"></div>
-                    <div class="col-2">
+                    <div class="col-1">
+                        <button style={{width: "130px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-info" onClick={() => handleWorkerProfile(images[0].worker_id)}>Profile</button>
+                    </div>
+                    <div class="col-1">
                         <button style={{width: "130px", height:"35px"}} type="button" 
                         class="btn btn-sm btn-success" onClick={() => handleApproveClick(assignment_id, images[0].worker_id)}>Approve</button>
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                         <button style={{width: "130px", height:"35px"}} type="button" 
                         class="btn btn-sm btn-danger" onClick={() => handleRejectClick(assignment_id, images[0].worker_id)} >Reject</button>
                     </div>
-                    <div class="col-4"></div>
+                    <div class="col-1"></div>
+                    <div class="col-2">
+                        <button style={{ width: "300px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-warning" onClick={() =>handleCheck()} >Finish reviewing the worker!</button>
+                    </div>
+                    <div class="col-1">
+                        <button style={{width: "130px", height:"35px"}} type="button" 
+                        class="btn btn-sm btn-secondary" onClick={() =>handleWorkers()} >Workers</button>
+                    </div>
+                    <div class="col-1"></div>
                 </div>
             
             </div>

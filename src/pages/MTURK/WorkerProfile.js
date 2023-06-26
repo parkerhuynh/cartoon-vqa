@@ -329,13 +329,10 @@ function WorkerProfile() {
                                         ) : (<button style={{ width: "120px" }} type="button" class="btn btn-primary" onClick={() => handleUncheck("no")}>Reviewed</button>)}
 
                                     </div>
-
-                                    {/* 
-<div class="col-4"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-success"
-onClick={() => handleApproveAll()}>Approve All</button></div>
-<div class="col-4"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-danger"
-onClick={() => handleRejectAll()}>Reject All</button></div>
-*/}
+                                    <div class="col-4"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-success"
+                                    onClick={() => handleApproveAll()}>Approve All</button></div>
+                                    <div class="col-4"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-danger"
+                                    onClick={() => handleRejectAll()}>Reject All</button></div>
                                 </div>
                             </div>
                             <div class="col-8" style={{ display: 'flex', justifyContent: 'space-around' }}>
@@ -443,13 +440,11 @@ onClick={() => handleRejectAll()}>Reject All</button></div>
                                     </div>
                                 </div>
                             </div>
-                            {/* 
-<div class="row ">
-<div class="col-10"></div>
-<div class="col-1 text-center"><button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-success"  onClick={() => handleApproveRest()}></button></div>
-<div class="col-1 text-center"><button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectRest()}></button></div>
-</div>
-*/}
+                            <div class="row ">
+                                <div class="col-10"></div>
+                                <div class="col-1 text-center"><button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-success"  onClick={() => handleApproveRest()}></button></div>
+                                <div class="col-1 text-center"><button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectRest()}></button></div>
+                            </div>
                             <div class="row">
                                 <table className="table">
                                     <thead>

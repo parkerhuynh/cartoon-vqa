@@ -321,17 +321,17 @@ function WorkerProfile() {
                                     </tbody>
                                 </table>
                                 <div class="row text-center">
-                                    <div class="col-4"><button style={{ width: "120px" }} type="button" class="btn  btn-info"
+                                    <div class="col-3"><button style={{ width: "120px" }} type="button" class="btn  btn-info"
                                         onClick={() => handleWorkers()}>Workers</button></div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         {reviewing === "no" ? (
-                                            <button style={{ width: "120px" }} type="button" class="btn btn-outline-primary" onClick={() => handleCheck("yes")}>Done!</button>
-                                        ) : (<button style={{ width: "120px" }} type="button" class="btn btn-primary" onClick={() => handleUncheck("no")}>Reviewed</button>)}
+                                            <button style={{ width: "120px" }} type="button" class="btn btn-sm btn-outline-primary" onClick={() => handleCheck("yes")}>Done!</button>
+                                        ) : (<button style={{ width: "120px" }} type="button" class="btn btn-sm btn-primary" onClick={() => handleUncheck("no")}>Reviewed</button>)}
 
                                     </div>
-                                    <div class="col-4"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-success"
+                                    <div class="col-3"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-success"
                                     onClick={() => handleApproveAll()}>Approve All</button></div>
-                                    <div class="col-4"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-danger"
+                                    <div class="col-3"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-danger"
                                     onClick={() => handleRejectAll()}>Reject All</button></div>
                                 </div>
                             </div>

@@ -370,10 +370,8 @@ function ImageGrid() {
                     <th scope="col" onClick={() => handleSort('value')}>Avg. Value  {sortColumn === 'value' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                     <th scope="col" onClick={() => handleSort('Approval Rate')}>Approval Rate {sortColumn === 'Approval Rate' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                     <th scope="col">Review Status</th>
-                    {/* 
-<th scope="col">Approve</th>
-<th scope="col">Reject</th>
-*/}
+                    <th scope="col">Approve</th>
+                    <th scope="col">Reject</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -401,18 +399,14 @@ function ImageGrid() {
                           <button style={{ width: "80px" }} type="button" class="btn btn-outline-primary" onClick={() => handleCheck(row.WorkerId, "yes")}></button>
                         ) : (<button style={{ width: "80px" }} type="button" class="btn btn-primary" onClick={() => handleUncheck(row.WorkerId, "no")}></button>)}
                       </td>
-
-                      {/* 
-<td>
-{row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
-type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
-</td>
-<td>
-{row.Rejected === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
-type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectAll(row.WorkerId)}></button>)}
-</td>
-*/}
-
+                      <td>
+                      {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
+                      type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
+                      </td>
+                      <td>
+                      {row.Rejected === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
+                      type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectAll(row.WorkerId)}></button>)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

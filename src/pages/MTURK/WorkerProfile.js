@@ -321,7 +321,7 @@ function WorkerProfile() {
                                     </tbody>
                                 </table>
                                 <div class="row text-center">
-                                    <div class="col-3"><button style={{ width: "120px" }} type="button" class="btn  btn-info"
+                                    <div class="col-3"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-info"
                                         onClick={() => handleWorkers()}>Workers</button></div>
                                     <div class="col-3">
                                         {reviewing === "no" ? (

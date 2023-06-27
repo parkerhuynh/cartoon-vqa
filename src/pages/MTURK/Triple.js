@@ -91,7 +91,7 @@ function WorkerProfile() {
     return (
         <>
             {loading ? (<h3 class="text-center">Loading ....</h3>) : (
-                <>
+                <><div className={dimmed ? 'dimmed-screen' : ''}>
                     <div class="container my-5">
                         <h3 class="text-center">Triple ID</h3>
                         <h2 class="text-center text-info">{triple_id}</h2>
@@ -152,6 +152,7 @@ function WorkerProfile() {
                             </div>
                             <div class="col-3"></div>
                         </div>
+                    </div>
                     </div>
                 </>
 

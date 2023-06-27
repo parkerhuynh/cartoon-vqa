@@ -109,10 +109,10 @@ function WorkerProfile() {
                             <div class="col-4"></div>
                         </div>
                     </div>
-                    <div class="container">
+                    <div className={dimmed ? 'dimmed-screen' : ''}>
                         <div class="row">
                             <div class="col-3"></div>
-                            <div class="col-6"  className={dimmed ? 'dimmed-screen' : ''}>
+                            <div class="col-6" >
                                 <table class="table">
                                     <thead>
                                         <tr class="text-center">

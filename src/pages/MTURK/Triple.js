@@ -93,7 +93,6 @@ function WorkerProfile() {
             {loading ? (<h3 class="text-center">Loading ....</h3>) : (
                 <>
                     <div class="container my-5">
-                        <div className={dimmed ? 'dimmed-screen' : ''}>
                         <h3 class="text-center">Triple ID</h3>
                         <h2 class="text-center text-info">{triple_id}</h2>
                         <div class="row">
@@ -113,7 +112,7 @@ function WorkerProfile() {
                     <div class="container">
                         <div class="row">
                             <div class="col-3"></div>
-                            <div class="col-6">
+                            <div class="col-6"  className={dimmed ? 'dimmed-screen' : ''}>
                                 <table class="table">
                                     <thead>
                                         <tr class="text-center">
@@ -153,7 +152,6 @@ function WorkerProfile() {
                             </div>
                             <div class="col-3"></div>
                         </div>
-                    </div>
                     </div>
                     </>
             

@@ -445,9 +445,10 @@ function WorkerProfile() {
                                 </div>
                             </div>
                             <div class="row ">
-                                <div class="col-10"></div>
+                                <div class="col-5"></div>
                                 <div class="col-1 text-center"><button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-success" onClick={() => handleApproveRest()}></button></div>
                                 <div class="col-1 text-center"><button style={{ width: "70px", height: "15px" }} type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectRest()}></button></div>
+                                <div class="col-5"></div>
                             </div>
                             <div class="row">
                                 <table className="table">
@@ -455,9 +456,9 @@ function WorkerProfile() {
                                         <tr>
                                             <th>id</th>
                                             <th>Assignment ID</th>
-                                            <th>Submit Time</th>
-                                            <th>Work Time In Seconds</th>
-                                            <th>Assignment Status</th>
+                                            <th>Time</th>
+                                            <th>Work Time</th>
+                                            <th>Status</th>
                                             <th>Approve</th>
                                             <th>Reject</th>
                                         </tr>

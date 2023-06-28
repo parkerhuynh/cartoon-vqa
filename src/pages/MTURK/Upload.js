@@ -130,6 +130,7 @@ const FileUploadForm = () => {
             </div>
             <div class="col-4"></div>
         </div>
+        {/*
         <div class="row mt-5">
             <div class="col-4"></div>
             <div class="col-4">
@@ -138,6 +139,7 @@ const FileUploadForm = () => {
             </div>
             <div class="col-4"></div>
         </div>
+        
 
         <div class="row mt-5">
             <div class="col-4"></div>
@@ -163,6 +165,7 @@ const FileUploadForm = () => {
             </div>
             <div class="col-4"></div>
         </div>
+        */}
     </div>
     
   );

@@ -111,7 +111,7 @@ function ImageGrid() {
 
   const handleApproveAll = (worker_id) => {
     setDimmed(true);
-    axios.post('/approve_worker/' + worker_id)
+    axios.post('/approve_worker_rest/' + worker_id)
       .then(() => {
         console.log("Done!")
       })
@@ -134,7 +134,8 @@ function ImageGrid() {
   };
   const handleRejectAll = (worker_id) => {
     setDimmed(true);
-    axios.post('/reject_worker/' + worker_id)
+    
+    axios.post('/reject_worker_rest/' + worker_id)
       .then(() => {
         console.log("Done!")
       })

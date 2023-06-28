@@ -85,7 +85,7 @@ function WorkerProfile() {
         }
     };
     const handleSearch = (event) => {
-        const query = event.target.value;
+        const query = event.target.value.replace(/\s/g, '');
         setSearchQuery(query);
         const filtered = assigments.filter((assigment) =>
             assigment.AssignmentId.toLowerCase().includes(query.toLowerCase())

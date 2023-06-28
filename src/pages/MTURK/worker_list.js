@@ -84,7 +84,7 @@ function ImageGrid() {
   };
 
   const handleSearch = (event) => {
-    const query = event.target.value;
+    const query = event.target.value.replace(/\s/g, '');
     setSearchQuery(query);
 
     const filtered = workers.filter((worker) =>

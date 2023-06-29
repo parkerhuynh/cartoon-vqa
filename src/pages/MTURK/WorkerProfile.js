@@ -255,6 +255,16 @@ function WorkerProfile() {
             })
 
     };
+    const handleworkerhits = (worker_id) => {
+        axios.get('/download-data/' + worker_id).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', worker_id + '.csv');
+          document.body.appendChild(link);
+          link.click();
+        });
+      }; 
 
     return (
         <div>
@@ -335,6 +345,13 @@ function WorkerProfile() {
                                         onClick={() => handleApproveAll()}>Approve All</button></div>
                                     <div class="col-6"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-danger"
                                         onClick={() => handleRejectAll()}>Reject All</button></div>
+
+                                </div>
+
+                                <div class="row text-center mt-5">
+                                    <div class="col-6"><button style={{ width: "120px" }} type="button" class="btn btn-sm btn-warning"
+                                        onClick={() => handleworkerhits(worker_id)}>Download Worker Hits</button></div>
+
 
                                 </div>
 

@@ -298,6 +298,14 @@ def download_data(dataname):
         sleep(5)
         file_path = 'banned_workers.csv'
         return send_file(file_path, as_attachment=True)
+    else:
+        worker_list = pd.read_csv('mturk_result.csv')
+        worker_list = worker_list[worker_list["WorkerId"] == dataname]
+        worker_list.to_csv(f'{dataname}.csv', index=False)
+        file_path = f'{dataname}.csv'
+        
+
+        return send_file(file_path, as_attachment=True)
 
 
 

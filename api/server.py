@@ -796,7 +796,8 @@ def save_notes(action, worker_id, status):
         elif action == "add":
             workers = list(notes[notes["status"] == status]["worker_id"])
             if worker_id not in workers:
-                notes = notes.append(new_row, ignore_index=True)
+                print(notes)
+                notes = pd.concat([notes, pd.DataFrame([new_row])], ignore_index=True)
                 notes.to_csv(file_path, index = False)
             return []
         else:

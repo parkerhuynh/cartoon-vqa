@@ -17,7 +17,7 @@ function ImageGrid() {
   const [filteredWorkers, setFilteredWorkers] = useState([]);
   const [pieChart, setPieChart] = useState([]);
 
-  const [statusFilter, setStatusFilter] = useState('Reviewing');
+  const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [numberWoker, SetNumberWoker] = useState(50);
@@ -274,7 +274,7 @@ function ImageGrid() {
         window.location.reload()
       ))
   };
-
+  console.log(workers)
   const handleCheck = (worker_id, action) => {
     setDimmed(true);
     axios.post('/reviewing_check/' + worker_id + "/" + action)
@@ -370,9 +370,11 @@ function ImageGrid() {
                     <th scope="col" onClick={() => handleSort('WorkTimeInSeconds')}>Avg. Time  {sortColumn === 'WorkTimeInSeconds' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                     <th scope="col" onClick={() => handleSort('value')}>Avg. Value  {sortColumn === 'value' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
                     <th scope="col" onClick={() => handleSort('Approval Rate')}>Approval Rate {sortColumn === 'Approval Rate' && <span>{sortOrder === 'asc' ? '^' : 'v'}</span>}</th>
+                    {/* 
                     <th scope="col">Review Status</th>
                     <th scope="col">Approve</th>
                     <th scope="col">Reject</th>
+                    */}
                   </tr>
                 </thead>
                 <tbody>
@@ -395,12 +397,14 @@ function ImageGrid() {
                       <td>
                         <Link to={`/profile/${row.WorkerId}`} style={{ color: getFontColor(row["Approval Rate"]), textDecoration: 'inherit' }} >{Math.floor((row["Approved"] / (row["Approved"] + row["Rejected"]) * 100))} [{row["Approved"]}/{row["Approved"] + row["Rejected"]}]</Link>
                       </td>
+                      {/*
                       <td>
                         {row.reviewed === "no" ? (
                           <button style={{ width: "80px" }} type="button" class="btn btn-outline-primary" onClick={() => handleCheck(row.WorkerId, "yes")}></button>
                         ) : (<button style={{ width: "80px" }} type="button" class="btn btn-primary" onClick={() => handleUncheck(row.WorkerId, "no")}></button>)}
                       </td>
                       <td>
+                       
                       {row.Approved === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
                       type="button" class="btn btn-sm btn-success" onClick={() => handleApproveAll(row.WorkerId)}></button>)}
                       </td>
@@ -408,6 +412,7 @@ function ImageGrid() {
                       {row.Rejected === row.count ? (null) : (<button style={{ width: "70px", height: "15px" }}
                       type="button" class="btn btn-sm btn-danger" onClick={() => handleRejectAll(row.WorkerId)}></button>)}
                       </td>
+                      */}
                     </tr>
                   ))}
                 </tbody>

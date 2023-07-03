@@ -1,61 +1,61 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { PieChart, Pie, Cell, Legend } from 'recharts';
+import React from 'react';
 
-function WorkerProfile() {
-    const { worker_id } = useParams();
-    const [profileData, setProfileData] = useState({});
-    useEffect(() => {
-        axios.get('/get_worker_profile/' + worker_id).then(res => {
-            setProfileData(res.data);
-        });
-    }, {});
-    if (profileData == {}) {
-        return (
-            <div> Loading..</div>
-        )
-    } else {
-        const lifedata = profileData["30AprovalRate"]
-        const PIECOLORS = ['#0088FE', '#FF8042'];
-        console.log()
-        const PIESIZE = "100px";
-        return (
-            <>
-                <div class="container">
-                    <div class="row mt-4">
-                        <div class="col-4 ms-5 ml-5">
-                            <h5>Profile of worker ID </h5>
-                            <h1 class="text-info"> {worker_id}</h1>
-                        </div>
-                        <div class="col-8 ms-5 ml-5"></div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-4 ms-5 ml-5">
-                        </div>
-                        <div class="col-8 ms-5 ml-5">
-                        <PieChart width={400} height={400}>
-                            <Pie
-                            data={lifedata}
-                            dataKey="value"
-                            nameKey="name"
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={80}
-                            fill="#8884d8"
-                            label
-                            >
-                            {lifedata.map((entry, index) => (
-                                <Cell key={index} fill={PIECOLORS[index % PIECOLORS.length]} />
-                            ))}
-                            </Pie>
-                            <Legend />
-                        </PieChart>
-                        </div>
-                    </div>
-                </div>
-            </>
-    );
-}
-}
-export default WorkerProfile;
+import { PieChart, Pie, Cell, Legend, Tooltip } from 'recharts';
+
+const NestedPieChart = () => {
+    const data = [
+        { name: 'Category A', value: 100, children: [
+          { name: 'Subcategory 1', value: 50 },
+          { name: 'Subcategory 2', value: 30 },
+          { name: 'Subcategory 3', value: 20 },
+        ]},
+        { name: 'Category B', value: 200, children: [
+          { name: 'Subcategory 4', value: 100 },
+          { name: 'Subcategory 5', value: 50 },
+          { name: 'Subcategory 6', value: 50 },
+        ]},
+        // Add more categories and subcategories as needed
+      ];
+
+      const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
+  return (
+    <PieChart width={400} height={400}>
+      <Pie
+        data={data}
+        dataKey="value"
+        nameKey="name"
+        cx="50%"
+        cy="50%"
+        outerRadius={80}
+        innerRadius={40}
+        fill="#8884d8"
+      >
+        {data.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+        ))}
+      </Pie>
+      <Pie
+        data={data.flatMap((entry) => entry.children)}
+        dataKey="value"
+        nameKey="name"
+        cx="50%"
+        cy="50%"
+        innerRadius={80}
+        outerRadius={120}
+        fill="#82ca9d"
+        label
+      >
+        {data.flatMap((entry, index) =>
+          entry.children.map((child, childIndex) => (
+            <Cell key={`cell-${index}-${childIndex}`} fill={COLORS[childIndex % COLORS.length]} />
+          ))
+        )}
+      </Pie>
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  );
+};
+
+export default NestedPieChart;

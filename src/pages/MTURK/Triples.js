@@ -18,7 +18,11 @@ function ImageGrid() {
     const [status, getStatus] = useState([]);
     const [topics, getTopic] = useState([]);
     const [firstWords, getFirstWords] = useState([]);
+
     const [statusFilter, setStatusFilter] = useState('All');
+    const [tripleFilter, settripleFilter] = useState('All');
+    const [atLeast, setAtLeast] = useState('0');
+
 
     const sortStatusData = (status) => {
         const sortedData = [...status].sort((a, b) =>  a.name.localeCompare(b.name));
@@ -32,10 +36,12 @@ function ImageGrid() {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('/get_triple_summary/all');
+            
+            const response = await axios.get('/get_triple_summary/'+statusFilter+'/all/0');
             const responseData = response.data;
             console.log(responseData)
             getSummary(responseData)
+            
             getStatus(responseData.statusCount)
             sortStatusData(responseData.statusCount)
             getCategories(responseData.categoryCount)
@@ -47,14 +53,18 @@ function ImageGrid() {
             setLoading(false);
         }
     };
-    const handleStatusFilter = async (value) => {
-        setStatusFilter(value);
+    const handleStatusFilter = (value) => {
+        setStatusFilter(value)
+        
+        //submit(statusFilter, tripleFilter, atLeast)
+    }
+    const submit = async () => {
+        console.log(statusFilter)
         try {
             setLoading(true);
-            const response = await axios.get('/get_triple_summary/' + value);
+            const response = await axios.get('/get_triple_summary/' + statusFilter + "/" + tripleFilter + "/" + atLeast);
             const responseData = response.data;
             getSummary(responseData)
-            getStatus(responseData.statusCount)
             sortStatusData(responseData.statusCount)
             getCategories(responseData.categoryCount)
             getTopic(responseData.topicCount)
@@ -79,7 +89,7 @@ function ImageGrid() {
     }
     let firstword_sum = 0
     for (let i = 0; i < firstWords.length; i++) {
-        firstword_sum += firstWords[i].count
+        firstword_sum += firstWords[i].value
     }
 
     return (
@@ -144,24 +154,20 @@ function ImageGrid() {
                                     <tr class="text-danger">
                                         <td scope="col">5</td>
                                         <td scope="col">Rejected Answers</td>
-                                        <td scope="col">{status[2].count.toLocaleString()}</td>
-                                        <td scope="col">{Math.round((status[2].count / 314892) * 100)}%</td>
+                                        <td scope="col">{status[1].count.toLocaleString()}</td>
+                                        <td scope="col">{Math.round((status[1].count / 314892) * 100)}%</td>
                                     </tr>
                                     <tr class="text-primary">
                                         <td scope="col">6</td>
                                         <td scope="col">Revewing Answers</td>
-                                        <td scope="col">{status[1].count.toLocaleString()}</td>
-                                        <td scope="col">{Math.round((status[1].count / 314892) * 100)}%</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="col">7</td>
-                                        <td scope="col">Remaining Answers</td>
-                                        <td scope="col">{(314892 - (status[0].count + status[1].count)).toLocaleString()}</td>
-                                        <td scope="col">{Math.round(((314892 - (status[0].count + status[1].count)) / 314892) * 100)}%</td>
+                                        <td scope="col">{status[2].count.toLocaleString()}</td>
+                                        <td scope="col">{Math.round((status[2].count / 314892) * 100)}%</td>
                                     </tr>
                                 </tbody>
                             </table>
+
                             <div>
+                                <h6>Set Assignment Status</h6>
                                 <select class="form-control text-center" value={statusFilter} onChange={(e) => handleStatusFilter(e.target.value)} >
                                 <option value="All">All</option>
                                 <option class="text-primary" value="Reviewing">Reviewing</option>
@@ -169,6 +175,34 @@ function ImageGrid() {
                                 <option class="text-danger" value="Rejected">Rejected</option>
                                 </select>
                             </div>
+                            <div class="mt-3">
+                                <h6>Set Triple Value</h6>
+                                <select class="form-control text-center" value={tripleFilter} onChange={(e) => settripleFilter(e.target.value)} >
+                                <option value="All">All</option>
+                                <option class="text-primary" value="Correct">Correct</option>
+                                <option class="text-primary" value="Partially Correct">Partially Correct</option>
+                                <option class="text-primary" value="Correct & Partially Correct">Correct & Partially Correct</option>
+                                <option class="text-warning" value="Ambiguous">Ambiguous</option>
+                                <option class="text-danger" value="Partially Incorrect">Partially Incorrect</option>
+                                <option class="text-danger" value="Incorrect">Incorrect</option>
+                                <option class="text-danger" value="Incorrect & Partially Incorrect">Incorrect & Partially Incorrect</option>
+                                </select>
+                            </div>
+                            <div class="mt-3">
+                            <h6>Set At Least Worker Value</h6>
+                                <select class="form-control text-center" value={atLeast} onChange={(e) => setAtLeast(e.target.value)} >
+                                <option value="0">0</option>
+                                <option class="text-primary" value="1">1</option>
+                                <option class="text-primary" value="2">2</option>
+                                <option class="text-primary" value="3">3</option>
+                                </select>
+
+                            </div>
+                            
+                            <div class="mt-3">
+                                <button class="btn  btn-success" onClick={submit}>Submit</button>
+                            </div>
+                            
                         </div>
                         <div class="col-6" style={{ "display": "flex", "justify-content": "center" }}>
                             <PieChart width={450} height={450}>
@@ -261,6 +295,7 @@ function ImageGrid() {
                             <h7 >Cumulative Chart of The Number of Worker with The Same Answer.</h7>
                         </div>
                     </div>
+
                     <div class="row m-2 my-5">
                         <h3 class="mx-5 text-info">Question Analysis 1</h3>
                         <div class="col-6 ps-5">
@@ -309,26 +344,6 @@ function ImageGrid() {
                     </div>
                     <div class="row m-2 my-5">
                         <h3 class="mx-5 text-info">Question Analysis 2</h3>
-                        <div class="col-6 mt-5" style={{ "display": "flex", "justify-content": "center" }}>
-                            <div>
-                            <PieChart width={450} height={400}>
-                                <Pie
-                                    data={firstWords}
-                                    dataKey="count"
-                                    nameKey="FirstWord"
-                                    outerRadius={100}
-                                    fill="F87F05"
-                                    label
-                                >
-                                    {firstWords.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                                    ))}
-                                </Pie>
-
-                                <Legend />
-                            </PieChart>
-                            </div>
-                        </div>
                         <div class="col-6 ps-5">
                             <table class="table">
                                 <thead>
@@ -344,9 +359,9 @@ function ImageGrid() {
                                     {Object.entries(firstWords).map(([key, word]) => (
                                         <tr>
                                             <td>{key}</td>
-                                            <td>{word.FirstWord}</td>
-                                            <td>{word.count}</td>
-                                            <td>{Math.round((word.count/firstword_sum)*100)}%</td>
+                                            <td>{word.name}</td>
+                                            <td>{word.value}</td>
+                                            <td>{Math.round((word.value/firstword_sum)*100)}%</td>
 
                                         </tr>
                                     ))}
@@ -354,8 +369,46 @@ function ImageGrid() {
                             </table>
                         </div>
                         
+                        
 
                     </div>
+                    <div class="row">
+                        <PieChart width={1200} height={1000}>
+                        <Pie
+                            data={firstWords}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={200}
+                            innerRadius={40}
+                            fill="#8884d8"
+                        >
+                            {firstWords.map((entry, index) => (
+                            <Cell key={`cell-${index}`} />
+                            ))}
+                        </Pie>
+                        <Pie
+                            data={firstWords.flatMap((entry) => entry.children)}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={200}
+                            outerRadius={400}
+                            fill="#82ca9d"
+                            label
+                        >
+                            {firstWords.flatMap((entry, index) =>
+                            entry.children.map((child, childIndex) => (
+                                <Cell key={`cell-${index}-${childIndex}`} />
+                            ))
+                            )}
+                        </Pie>
+                        <Tooltip />
+s
+                        </PieChart>
+                        </div>
                     <div class="row m-2 my-5">
                     <h3 class="mx-5 text-info">Answer Analysis</h3>
                     <ResponsiveContainer width="95%" height={400}>

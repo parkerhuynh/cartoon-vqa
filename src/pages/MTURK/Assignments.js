@@ -65,42 +65,35 @@ function ImageGrid() {
                                                 <td>Total Assigments</td>
                                                 <td>26241</td>
                                                 <td>100%</td>
-                                                <td>{Math.floor(26241*0.05)} USD</td>
+                                                <td>{Math.floor(26241*0.06)} USD</td>
                                             </tr>
                                             <tr class="text-warning">
                                                 <td>2</td>
                                                 <td>Received Assigments</td>
                                                 <td>{sum}</td>
                                                 <td>{Math.round((sum/26241)*100)} %</td>
-                                                <td>{Math.floor(sum*0.05)} USD</td>
+                                                <td>{Math.floor(sum*0.06)} USD</td>
                                             </tr>
                                             <tr class="text-success">
                                                 <td>3</td>
                                                 <td>Approved Assigments</td>
                                                 <td>{status[0].value}</td>
                                                 <td>{Math.round((status[0].value/26241)*100)}%</td>
-                                                <td>{Math.floor(status[0].value*0.05)} USD</td>
+                                                <td>{Math.floor(status[0].value*0.06)} USD</td>
                                             </tr>
                                             <tr class="text-danger">
                                                 <td>4</td>
                                                 <td>Rejected Assigments</td>
                                                 <td>{status[1].value}</td>
                                                 <td>{Math.round((status[1].value/26241)*100)}%</td>
-                                                <td>{Math.floor(status[1].value*0.05)} USD</td>
+                                                <td>{Math.floor(status[1].value*0.06)} USD</td>
                                             </tr>
                                             <tr class="text-primary">
                                                 <td>5</td>
                                                 <td>Reviewing Assignments</td>
                                                 <td>{status[2].value}</td>
                                                 <td>{Math.round((status[2].value/26241)*100)}%</td>
-                                                <td>{Math.floor(status[2].value*0.05)} USD</td>
-                                            </tr>
-                                            <tr class="text-info">
-                                                <td>6</td>
-                                                <td>Remaining Assigments</td>
-                                                <td>{26241 - status[0].value}</td>
-                                                <td>{Math.round(((26241 - status[0].value)/26241)*100)}%</td>
-                                                <td>{Math.floor((26241 - status[0].value)*0.05)} USD</td>
+                                                <td>{Math.floor(status[2].value*0.06)} USD</td>
                                             </tr>
                                         </tbody>
                                     </table>

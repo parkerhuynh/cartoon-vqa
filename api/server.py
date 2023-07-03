@@ -52,14 +52,14 @@ def convert_numeric_columns_to_integer(data):
 
 def triple_dataset_generation():
     columns = ['HITId', 'HITTypeId', 'Title', 'Description', 'Keywords',  'Reward', 'CreationTime', 'MaxAssignments', 'RequesterAnnotation', 'AssignmentDurationInSeconds', 
-           'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime','SubmitTime',
-           'AutoApprovalTime', 'ApprovalTime', 'RejectionTime', 'RequesterFeedback', 'WorkTimeInSeconds', 'LifetimeApprovalRate', 'Last30DaysApprovalRate', 
-           'Last7DaysApprovalRate', 'Input.id1', 'Input.id2', 'Input.id3', 'Input.id4', 'Input.id5', 'Input.id6', 'Input.id7', 'Input.id8', 'Input.id9', 'Input.id10', 
-           'Input.id11', 'Input.id12', 'Input.img_url1', 'Input.img_url2', 'Input.img_url3', 'Input.img_url4', 'Input.img_url5', 'Input.img_url6', 'Input.img_url7',
-           'Input.img_url8', 'Input.img_url9', 'Input.img_url10', 'Input.img_url11', 'Input.img_url12', 'Input.question1', 'Input.question2', 'Input.question3',
-           'Input.question4', 'Input.question5', 'Input.question6', 'Input.question7', 'Input.question8', 'Input.question9', 'Input.question10', 'Input.question11',
-           'Input.question12', 'Input.answer1', 'Input.answer2', 'Input.answer3', 'Input.answer4', 'Input.answer5', 'Input.answer6', 'Input.answer7', 'Input.answer8',
-           'Input.answer9', 'Input.answer10', 'Input.answer11', 'Input.answer12', 'Answer.taskAnswers', 'Approve', 'Reject']
+       'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime','SubmitTime',
+       'AutoApprovalTime', 'ApprovalTime', 'RejectionTime', 'RequesterFeedback', 'WorkTimeInSeconds', 'LifetimeApprovalRate', 'Last30DaysApprovalRate', 
+       'Last7DaysApprovalRate', 'Input.id1', 'Input.id2', 'Input.id3', 'Input.id4', 'Input.id5', 'Input.id6', 'Input.id7', 'Input.id8', 'Input.id9', 'Input.id10', 
+       'Input.id11', 'Input.id12', 'Input.img_url1', 'Input.img_url2', 'Input.img_url3', 'Input.img_url4', 'Input.img_url5', 'Input.img_url6', 'Input.img_url7',
+       'Input.img_url8', 'Input.img_url9', 'Input.img_url10', 'Input.img_url11', 'Input.img_url12', 'Input.question1', 'Input.question2', 'Input.question3',
+       'Input.question4', 'Input.question5', 'Input.question6', 'Input.question7', 'Input.question8', 'Input.question9', 'Input.question10', 'Input.question11',
+       'Input.question12', 'Input.answer1', 'Input.answer2', 'Input.answer3', 'Input.answer4', 'Input.answer5', 'Input.answer6', 'Input.answer7', 'Input.answer8',
+       'Input.answer9', 'Input.answer10', 'Input.answer11', 'Input.answer12', 'Answer.taskAnswers', 'Approve', 'Reject']
     mturk_data = pd.read_csv("mturk_result.csv")
     mturk_data.columns = columns
     mturk_data["index"]  = mturk_data.index
@@ -70,7 +70,7 @@ def triple_dataset_generation():
     workers = workers[["WorkerId", "reviewed"]]
     workers.to_csv("worker_review_process.csv", index=False)
 
-    mturk_data = mturk_data[["WorkerId", "AssignmentId", "HITId", "Answer.taskAnswers"]]
+    mturk_data = mturk_data[["WorkerId", "AssignmentId", "HITId", "Answer.taskAnswers", "AssignmentStatus"]]
     result_dic = {
         "worker_id": [],
         "assignment_id": [],
@@ -81,13 +81,14 @@ def triple_dataset_generation():
         "ambiguous":[],
         "partially_correct":[],
         "correct": [],
+        "assignment_status": []
     }
     for i in range(len(mturk_data)):
         row = mturk_data.iloc[i]
-        WorkerId, AssignmentId, HITId, Answer_taskAnswers = row
+        WorkerId, AssignmentId, HITId, Answer_taskAnswers, AssignmentStatus= row
         results = convert_string_to_list_of_dicts(Answer_taskAnswers)
         ids, incorrect, partially_incorrect, ambiguous, partially_correct, correct = extract_data(results)
-        
+
         result_dic["worker_id"] += [WorkerId]*len(ids)
         result_dic["assignment_id"] += [AssignmentId]*len(ids)
         result_dic["hit_id"] += [HITId]*len(ids)
@@ -97,10 +98,30 @@ def triple_dataset_generation():
         result_dic["ambiguous"] += ambiguous
         result_dic["partially_correct"] += partially_correct
         result_dic["correct"] += correct
+        result_dic["assignment_status"] += [AssignmentStatus]*len(ids)
     data = pd.DataFrame(result_dic)
     full_base_data = pd.read_csv("data_final.csv")
     full_base_data = full_base_data[["id","Img path", "Question", "Answer"]]
     mturk_data = data.merge(full_base_data, on="id", how="left")
+    mturk_data['value'] = mturk_data['incorrect']*0 + mturk_data['partially_incorrect']*1/4 + mturk_data['ambiguous']*2/4 + mturk_data['partially_correct']*3/4 + mturk_data['correct']*4/4
+
+    mturk_data["FirstWord"] = mturk_data["Question"].apply(lambda x: x.split(" ")[0])
+    mturk_data["FirstWord"] = mturk_data["FirstWord"].map(first_word_process)
+    mturk_data["FirstWord"] = mturk_data["Question"].apply(lambda x: x.split(" ")[0])
+    mturk_data["FirstWord"] = mturk_data["FirstWord"].map(first_word_process)
+    mturk_data["SecondWord"] = mturk_data["Question"].apply(lambda x: x.split(" ")[1])
+    
+    valid_first_words = ["what", "is/are", "how","who", "can", "do/did/does", "which", "when"]
+    mturk_data = mturk_data[mturk_data["FirstWord"].isin(valid_first_words)]
+
+    base_data = pd.read_csv("data_final.csv")
+    base_data =  base_data[["id", "Topic"]]
+
+    mturk_data = pd.merge(mturk_data, base_data, on='id')
+    invalid_topic = ["identification", "person recognition", "object detection/spatial", "relative position", "emotions", "semantic", "objective understanding", "position and object detection", "spatial position", "category classification", "object detection/naming", "associative"]
+    mturk_data["Topic"] = mturk_data["Topic"].apply(lambda x: x.replace(".", "").lower())
+    mturk_data["Topic"] = mturk_data["Topic"].map(topic_processing)
+    mturk_data = mturk_data[~mturk_data["Topic"].isin(invalid_topic)]
     mturk_data['value'] = mturk_data['incorrect']*0 + mturk_data['partially_incorrect']*1/4 + mturk_data['ambiguous']*2/4 + mturk_data['partially_correct']*3/4 + mturk_data['correct']*4/4
     mturk_data.to_csv("Triples_data.csv", index=False)
 
@@ -149,7 +170,7 @@ def image_uri(filename):
 def first_word_process(word):
     if word in ["is", "are", "was"]:
         return "is/are"
-    elif word in ["what", "what's"]:
+    elif word in ["what", "what's", "what’s"]:
         return "what"
     elif word in ["do", "did", "does"]:
         return "do/did/does"
@@ -165,13 +186,18 @@ def topic_processing(topic):
                 "object detection/ spatial", "definition", "open-end", "object detection/position",
                 "attribution classification", ]:
         return "object recognition"
-    elif topic in ["yes/no question", "fact checking"]:
-        return "yes/no"
+    elif topic in ["yes/no question", "fact checking", "yes/no", "yes/no questions", "boolean questioning"]:
+        return "object recognition"
     elif topic in ["spatial recognition", "position", "positon", "attribtue classification", "positional",
                   "attribute classification/spatial", "direction", "position/ spatial", "distance"]:
         return "spatial"
-    elif topic in ["time", "weather", "emotion recognition", "facial recognition", "emotional recognition"]:
+    elif topic in ["time", "weather", "emotion recognition", "facial recognition", "emotional recognition", "spatial reasoning"]:
         return "reasoning"
+    elif topic in ["attribute classification/color recognition", "attribute classification, hair", "attribute classification, color",
+                  "attribute classification/", "object detection/ attribute classification"]:
+        return "attribute classification"
+    elif topic in ["counting/object detection"]:
+        return "counting"
     else:
         return topic
 
@@ -487,7 +513,6 @@ def calculate_rate(approved, rejected):
 def get_workers():
     mturk_data = pd.read_csv("mturk_result.csv")
     mturk_data = mturk_data[["WorkerId", "SubmitTime","AssignmentStatus","AssignmentId", "WorkTimeInSeconds", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate", "Approve", "Reject"]]
-    historical_rate = mturk_data[["WorkerId", "LifetimeApprovalRate", "Last30DaysApprovalRate", "Last7DaysApprovalRate"]].drop_duplicates()
     counts = mturk_data.groupby(["WorkerId", "AssignmentStatus"]).size().reset_index(name='count')
     pivot_table = counts.pivot(index="WorkerId", columns="AssignmentStatus", values='count').reset_index()
     head_list = ['WorkerId', 'Submitted', 'Rejected', 'Approved']
@@ -504,7 +529,7 @@ def get_workers():
 
     workers = pd.merge(worker_counts, average_working_time, on='WorkerId')
     workers = pd.merge(workers, pivot_table,  on='WorkerId')
-    workers =  pd.merge(workers, historical_rate,  on='WorkerId')
+
     workers["id"] = workers.index
 
     workers_data = workers.sort_values("count",  ascending=False)
@@ -648,17 +673,11 @@ def get_assignments():
     }
     return results
 
-@app.route('/get_triple_summary/<filter_status>', methods=['POST','GET'])
-def get_triple_summary(filter_status):
+@app.route('/get_triple_summary/<filter_status>/<value>/<at_least>', methods=['POST','GET'])
+def get_triple_summary(filter_status, value, at_least):
     triples = pd.read_csv("Triples_data.csv")
-    triples = triples[["assignment_id", "id", "value", "Question", "Answer"]]
-    mturk_data = pd.read_csv("mturk_result.csv")
-    mturk_data = mturk_data[["AssignmentId", "AssignmentStatus"]]
-    triples = pd.merge(triples, mturk_data, left_on='assignment_id', right_on='AssignmentId').drop("AssignmentId", axis = 1)
-
     triples = triples.drop(["assignment_id"], axis=1)
-    del mturk_data
-    triples.loc[triples['AssignmentStatus'] == "Submitted", 'AssignmentStatus'] = "Reviewing"
+    triples.loc[triples['assignment_status'] == "Submitted", 'assignment_status'] = "Reviewing"
     score_dict = {
             1: "Correct",
             0.75: "Partially Correct",
@@ -668,51 +687,26 @@ def get_triple_summary(filter_status):
         }
     triples["value_category"] = triples["value"].map(score_dict)
     triples = convert_numeric_columns_to_integer(triples)
-    status_count = get_counts(triples, "AssignmentStatus", ["Approved", "Rejected", "Reviewing"])
-    status_count
+    status_count = get_counts(triples, "assignment_status", ["Approved", "Rejected", "Reviewing"])
+
 
     if filter_status.lower() in ["reviewing", "approved", "rejected"]:
-        triples = triples[triples["AssignmentStatus"] == filter_status]
-
-    if len(triples) > 0:
-        base_data = pd.read_csv("data_final.csv")
-        base_data =  base_data[["id", "Topic"]]
-        triples = pd.merge(triples, base_data, on='id')
-        #########################
-        del base_data
-        
-        ########################################
-        triples["FirstWord"] = triples["Question"].apply(lambda x: x.split(" ")[0])
-        triples["FirstWord"] = triples["FirstWord"].map(first_word_process)
-        first_word_count = triples["FirstWord"].value_counts()
-        first_word_count = first_word_count.reset_index()
-        first_word_count.columns = ["FirstWord", "count"]
-        first_word_count = first_word_count.to_dict('records')
-        
-        #####################################
-        triples["Topic"] = triples["Topic"].apply(lambda x: x.replace(".", "").lower())
-        topic_count = triples["Topic"].map(topic_processing).value_counts()
-        topic_count = topic_count.reset_index()
-        topic_count.columns = ["topic", "count"]
-        topic_count = topic_count.to_dict('records')
-        
-        ##############################
-        
+        triples = triples[triples["assignment_status"] == filter_status]
+    if len(triples) > 0:    
         category_count = get_counts(triples, "value_category", ["Incorrect", "Partially Incorrect", "Ambiguous", "Partially Correct", "Correct"])
-        
-        ###################################
-        pivot_df = triples[["id", "value_category"]].pivot_table(index='id', columns='value_category', aggfunc=len, fill_value=0)
+
+        pivot_df = triples[["id", "FirstWord", "SecondWord", "value_category", "Img path", "Topic", "Answer"]].pivot_table(index=['id',"FirstWord", 'SecondWord', "Img path","Topic", "Answer"], columns='value_category', aggfunc=len, fill_value=0)
+        del triples
         pivot_df = pivot_df.reset_index()
-        pivot_df = pivot_df.drop(["id"], axis = 1)
-        values_list = list(score_dict.values())
-        for value in values_list:
-            if value not in list(pivot_df.columns):
-                pivot_df[value] = 0
         pivot_df["Incorrect & Partially Incorrect"] = pivot_df["Incorrect"] + pivot_df["Partially Incorrect"]
         pivot_df["Correct & Partially Correct"] = pivot_df["Correct"] + pivot_df["Partially Correct"]
-        values_list = values_list + ["Incorrect & Partially Incorrect", "Correct & Partially Correct"]
+
+        if value  != "all":
+            pivot_df = pivot_df[pivot_df[value] >= int(at_least)]
+
         number_worker_keys = ["Total", "1 Worker", "2 Workers", "3 Workers"]
         cumulative_results = []
+        values_list =   ["Correct", "Partially Correct", "Ambiguous", "Partially Incorrect", "Incorrect", "Incorrect & Partially Incorrect", "Correct & Partially Correct"]
         for number_worker in range(3 ,-1, -1):
             item = {}
             for value in values_list:
@@ -720,9 +714,45 @@ def get_triple_summary(filter_status):
                 count = len(pivot_df[pivot_df[value]>=number_worker])
                 item[value] = int(count)
             cumulative_results.append(item)
-        
-        ######################################
-        answer_list = triples["Answer"].value_counts()
+
+        nest_data = pivot_df.groupby('FirstWord')['SecondWord'].value_counts()
+        palette = ['#ff5733', '#33ff57', '#5733ff', '#ff33b0', '#33b0ff', '#b0ff33', '#33ffb0']
+
+# Convert to the desired format with contrasting colors
+        result = []
+        for (first_word, second_word), count in nest_data.items():
+            if first_word not in {item['name'] for item in result}:
+                color_index = len(result) % len(palette)
+                color_code = palette[color_index]
+                result.append({
+                    'name': first_word,
+                    'value': count,
+                    'fill': color_code,
+                    'children': [{'name': second_word, 'value': count, 'fill': color_code}]
+                })
+            else:
+                for item in result:
+                    if item['name'] == first_word:
+                        item['value'] += count
+                        item['children'].append({'name': second_word, 'value': count, 'fill': item['fill']})
+                        break
+
+        # Drop children with count less than 10% of the parent count
+        for item in result:
+            parent_count = item['value']
+            dropped_children = [child for child in item['children'] if child['value'] < 0.1 * parent_count]
+            dropped_value = sum(child['value'] for child in dropped_children)
+            item['children'] = [child for child in item['children'] if child['value'] >= 0.1 * parent_count]
+            if dropped_value > 0:
+                item['children'].append({'name': 'Other', 'value': dropped_value, 'fill': item['fill']})
+
+
+        topic_count = pivot_df["Topic"].value_counts()
+        topic_count = topic_count.reset_index()
+        topic_count.columns = ["topic", "count"]
+        topic_count = topic_count.to_dict('records')
+
+        answer_list = pivot_df["Answer"].value_counts()
         answer_list = answer_list.reset_index()
         answer_list.columns = ["Answer", "Count"]
         answer_list = answer_list.to_dict("records")
@@ -732,15 +762,14 @@ def get_triple_summary(filter_status):
         category_count = []
         cumulative_results = []
         answer_list = []
-        
     results = {
-        "statusCount": status_count,
-        "firstWordCount": first_word_count,
-        "topicCount":topic_count,
-        "categoryCount": category_count,
-        "cumulative_data": cumulative_results,
-        "answerList": answer_list[:50]
-    }
+            "statusCount": status_count,
+            "firstWordCount": result,
+            "topicCount":topic_count,
+            "categoryCount": category_count,
+            "cumulative_data": cumulative_results,
+            "answerList": answer_list[:50]
+        }
     return results
 
 @app.route('/get_hit/<hit_id>', methods=['POST','GET'])

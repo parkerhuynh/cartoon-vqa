@@ -701,8 +701,7 @@ def get_triple_summary(filter_status, value, at_least):
         pivot_df["Incorrect & Partially Incorrect"] = pivot_df["Incorrect"] + pivot_df["Partially Incorrect"]
         pivot_df["Correct & Partially Correct"] = pivot_df["Correct"] + pivot_df["Partially Correct"]
 
-        if value  != "all":
-            pivot_df = pivot_df[pivot_df[value] >= int(at_least)]
+        
 
         number_worker_keys = ["Total", "1 Worker", "2 Workers", "3 Workers"]
         cumulative_results = []
@@ -714,6 +713,8 @@ def get_triple_summary(filter_status, value, at_least):
                 count = len(pivot_df[pivot_df[value]>=number_worker])
                 item[value] = int(count)
             cumulative_results.append(item)
+        if value  != "all":
+            pivot_df = pivot_df[pivot_df[value] >= int(at_least)]
 
         nest_data = pivot_df.groupby('FirstWord')['SecondWord'].value_counts()
         palette = ['#ff5733', '#33ff57', '#5733ff', '#ff33b0', '#33b0ff', '#b0ff33', '#33ffb0']

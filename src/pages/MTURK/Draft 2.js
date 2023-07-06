@@ -4,7 +4,7 @@ import 'katex/dist/katex.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form } from 'react-bootstrap';
 import '../../App.css';
-import { PieChart, Pie, Cell, Legend, LineChart, Tooltip, CartesianGrid, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { PieChart, Pie, Cell, Legend, LineChart, Tooltip, CartesianGrid, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar,  Label, LabelList } from 'recharts';
 import ClipLoader from "react-spinners/ClipLoader";
 import chroma from 'chroma-js';
 
@@ -39,7 +39,6 @@ function ImageGrid() {
             
             const response = await axios.get('/get_triple_summary/'+statusFilter+'/all/0');
             const responseData = response.data;
-            console.log(responseData)
             getSummary(responseData)
             
             getStatus(responseData.statusCount)
@@ -59,7 +58,6 @@ function ImageGrid() {
         //submit(statusFilter, tripleFilter, atLeast)
     }
     const submit = async () => {
-        console.log(statusFilter)
         try {
             setLoading(true);
             const response = await axios.get('/get_triple_summary/' + statusFilter + "/" + tripleFilter + "/" + atLeast);
@@ -91,7 +89,7 @@ function ImageGrid() {
     for (let i = 0; i < firstWords.length; i++) {
         firstword_sum += firstWords[i].value
     }
-
+    
     return (
         <>
             {loading ? (
@@ -344,26 +342,6 @@ function ImageGrid() {
                     </div>
                     <div class="row m-2 my-5">
                         <h3 class="mx-5 text-info">Question Analysis 2</h3>
-                        <div class="col-6 mt-5" style={{ "display": "flex", "justify-content": "center" }}>
-                            <div>
-                            <PieChart width={450} height={400}>
-                                <Pie
-                                    data={firstWords}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    outerRadius={100}
-                                    fill="F87F05"
-                                    label
-                                >
-                                    {firstWords.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                                    ))}
-                                </Pie>
-
-                                <Legend />
-                            </PieChart>
-                            </div>
-                        </div>
                         <div class="col-6 ps-5">
                             <table class="table">
                                 <thead>
@@ -389,8 +367,65 @@ function ImageGrid() {
                             </table>
                         </div>
                         
+                        
 
                     </div>
+                    <div class="row" style={{ "display": "flex", "justify-content": "center" }}>
+                        <PieChart width={1200} height={1000}>
+                        <Pie
+                            data={firstWords}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={150}
+                            innerRadius={80}
+                            label={false}
+                        >
+                             <LabelList dataKey="name" position="inside" fill="#ffffff" fontSize={12} angle={-45}/>
+                        </Pie>
+                        <Pie
+                            data={firstWords.flatMap((entry) => entry.children)}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={150}
+                            outerRadius={250}
+                            label={false}
+                            
+                        >
+
+                            <LabelList dataKey="name" position="inside" fill="#ffffff"  fontSize={12}/>
+                        </Pie>
+                        <Pie
+                            data={firstWords.flatMap((entry1) => entry1.children).flatMap((entry2) => entry2.children)}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={250}
+                            outerRadius={350}
+                            label={false}
+                        >
+
+                            <LabelList dataKey="name" position="inside" fill="#ffffff"  fontSize={12}/>
+                        </Pie>
+                        <Pie
+                            data={firstWords.flatMap((entry1) => entry1.children).flatMap((entry2) => entry2.children).flatMap((entry3) => entry3.children)}
+                            dataKey="value" 
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={350}
+                            outerRadius={450}
+                            label={false}
+                        >
+                            <LabelList dataKey="name" position="inside" fill="#ffffff" fontSize={12}/>
+                        </Pie>
+                        <Tooltip />
+                        </PieChart>
+                        </div>
                     <div class="row m-2 my-5">
                     <h3 class="mx-5 text-info">Answer Analysis</h3>
                     <ResponsiveContainer width="95%" height={400}>

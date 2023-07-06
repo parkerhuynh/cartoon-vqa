@@ -49,17 +49,46 @@ def convert_numeric_columns_to_integer(data):
     numeric_columns = data.select_dtypes(include=['int', 'float']).columns
     data[numeric_columns] = data[numeric_columns].astype(int)
     return data
+def fourword(question):
+    question = question.split(" ")
+    if len(question) > 4:
+        return question[3]
+    else:
+        return "none"
+def fourword(question):
+    question = question.split(" ")
+    if len(question) > 4:
+        return question[3]
+    else:
+        return "none"
+def fifword(question):
+    question = question.split(" ")
+    if len(question) > 5:
+        return question[4]
+    else:
+        return "none"
+
+def question_processing(question):
+    remove_words = [" of the first description", " in the description", " of the second description", " on the second description", " in description 2",
+                " in the second description", " in the other description", " the same in both descriptions", " in description 1", " in both descriptions", 
+                " of description 1", " in the first description", " of description 2", " in one description", " in the 2nd description", " in the 1st description", " missing", " compared to description 1"]
+    replace_words = [" the description mention", " the second description mention", " of the other description"]
+    for word in remove_words:
+        question = question.replace(word, "")
+    for word in replace_words:
+        question = question.replace(word, "the image contains")
+    return question
 
 def triple_dataset_generation():
     columns = ['HITId', 'HITTypeId', 'Title', 'Description', 'Keywords',  'Reward', 'CreationTime', 'MaxAssignments', 'RequesterAnnotation', 'AssignmentDurationInSeconds', 
-       'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime','SubmitTime',
-       'AutoApprovalTime', 'ApprovalTime', 'RejectionTime', 'RequesterFeedback', 'WorkTimeInSeconds', 'LifetimeApprovalRate', 'Last30DaysApprovalRate', 
-       'Last7DaysApprovalRate', 'Input.id1', 'Input.id2', 'Input.id3', 'Input.id4', 'Input.id5', 'Input.id6', 'Input.id7', 'Input.id8', 'Input.id9', 'Input.id10', 
-       'Input.id11', 'Input.id12', 'Input.img_url1', 'Input.img_url2', 'Input.img_url3', 'Input.img_url4', 'Input.img_url5', 'Input.img_url6', 'Input.img_url7',
-       'Input.img_url8', 'Input.img_url9', 'Input.img_url10', 'Input.img_url11', 'Input.img_url12', 'Input.question1', 'Input.question2', 'Input.question3',
-       'Input.question4', 'Input.question5', 'Input.question6', 'Input.question7', 'Input.question8', 'Input.question9', 'Input.question10', 'Input.question11',
-       'Input.question12', 'Input.answer1', 'Input.answer2', 'Input.answer3', 'Input.answer4', 'Input.answer5', 'Input.answer6', 'Input.answer7', 'Input.answer8',
-       'Input.answer9', 'Input.answer10', 'Input.answer11', 'Input.answer12', 'Answer.taskAnswers', 'Approve', 'Reject']
+   'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime','SubmitTime',
+   'AutoApprovalTime', 'ApprovalTime', 'RejectionTime', 'RequesterFeedback', 'WorkTimeInSeconds', 'LifetimeApprovalRate', 'Last30DaysApprovalRate', 
+   'Last7DaysApprovalRate', 'Input.id1', 'Input.id2', 'Input.id3', 'Input.id4', 'Input.id5', 'Input.id6', 'Input.id7', 'Input.id8', 'Input.id9', 'Input.id10', 
+   'Input.id11', 'Input.id12', 'Input.img_url1', 'Input.img_url2', 'Input.img_url3', 'Input.img_url4', 'Input.img_url5', 'Input.img_url6', 'Input.img_url7',
+   'Input.img_url8', 'Input.img_url9', 'Input.img_url10', 'Input.img_url11', 'Input.img_url12', 'Input.question1', 'Input.question2', 'Input.question3',
+   'Input.question4', 'Input.question5', 'Input.question6', 'Input.question7', 'Input.question8', 'Input.question9', 'Input.question10', 'Input.question11',
+   'Input.question12', 'Input.answer1', 'Input.answer2', 'Input.answer3', 'Input.answer4', 'Input.answer5', 'Input.answer6', 'Input.answer7', 'Input.answer8',
+   'Input.answer9', 'Input.answer10', 'Input.answer11', 'Input.answer12', 'Answer.taskAnswers', 'Approve', 'Reject']
     mturk_data = pd.read_csv("mturk_result.csv")
     mturk_data.columns = columns
     mturk_data["index"]  = mturk_data.index
@@ -104,13 +133,25 @@ def triple_dataset_generation():
     full_base_data = full_base_data[["id","Img path", "Question", "Answer"]]
     mturk_data = data.merge(full_base_data, on="id", how="left")
     mturk_data['value'] = mturk_data['incorrect']*0 + mturk_data['partially_incorrect']*1/4 + mturk_data['ambiguous']*2/4 + mturk_data['partially_correct']*3/4 + mturk_data['correct']*4/4
+    # Filter the DataFrame to keep rows with values that have count greater than 1
+    value_counts = mturk_data['id'].value_counts()
 
+    # Get the values with count greater than 1
+    values_to_keep = value_counts[value_counts > 1].index
+    mturk_data = mturk_data[mturk_data['id'].isin(values_to_keep)]
+    mturk_data['Question'] = mturk_data['Question'].map(question_processing)
+    mturk_data = mturk_data[~mturk_data['Question'].str.contains('else', case=False)]
     mturk_data["FirstWord"] = mturk_data["Question"].apply(lambda x: x.split(" ")[0])
     mturk_data["FirstWord"] = mturk_data["FirstWord"].map(first_word_process)
     mturk_data["FirstWord"] = mturk_data["Question"].apply(lambda x: x.split(" ")[0])
     mturk_data["FirstWord"] = mturk_data["FirstWord"].map(first_word_process)
     mturk_data["SecondWord"] = mturk_data["Question"].apply(lambda x: x.split(" ")[1])
-    
+    mturk_data["ThirdWord"] = mturk_data["Question"].apply(lambda x: x.replace("?", "").split(" ")[2])
+    mturk_data["FourWord"] = mturk_data["Question"].map(fourword)
+    mturk_data["FifWord"] = mturk_data["Question"].map(fifword)
+    mturk_data["len ques"] = mturk_data["Question"].apply(lambda x: len(x.split(" ")))
+
+
     valid_first_words = ["what", "is/are", "how","who", "can", "do/did/does", "which", "when"]
     mturk_data = mturk_data[mturk_data["FirstWord"].isin(valid_first_words)]
 
@@ -123,6 +164,11 @@ def triple_dataset_generation():
     mturk_data["Topic"] = mturk_data["Topic"].map(topic_processing)
     mturk_data = mturk_data[~mturk_data["Topic"].isin(invalid_topic)]
     mturk_data['value'] = mturk_data['incorrect']*0 + mturk_data['partially_incorrect']*1/4 + mturk_data['ambiguous']*2/4 + mturk_data['partially_correct']*3/4 + mturk_data['correct']*4/4
+    mturk_data = mturk_data[mturk_data["assignment_status"] == "Approved"]
+    mturk_data = mturk_data.groupby('id').head(3)
+
+
+
     mturk_data.to_csv("Triples_data.csv", index=False)
 
 def mturk_batch_generation():
@@ -334,7 +380,54 @@ def download_data(dataname):
         return send_file(file_path, as_attachment=True)
 
 
+def add_color(result):
+    i = 0
+    level_1_colors = ["#1A5276", "#943126", "#117864", "#633974", "#935116", "#283747", "#9A7D0A"]
+    level_2_colors = ["#1F618D", "#B03A2E", "#148F77", "#76448A", "#AF601A", "#2E4053", "#B7950B"]
+    level_3_colors = ["#2471A3", "#CB4335", "#17A589", "#884EA0", "#CA6F1E", "#2E4053", "#D4AC0D"]
+    level_4_colors = ["#2471A3", "#CB4335", "#17A589", "#884EA0", "#CA6F1E", "#2E4053", "#D4AC0D"]
+    for level1 in range(len(result)):
+        if result[level1]["name"] != "":
+            result[level1]["fill"] = level_1_colors[i]
 
+        for level2 in range(len(result[level1]["children"])):
+            if result[level1]["children"][level2]["name"] != "":
+                result[level1]["children"][level2]["fill"] = level_2_colors[i]
+
+            if "children" not in result[level1]["children"][level2]:
+                result[level1]["children"][level2]["children"] = [{"name":"", "value": result[level1]["children"][-1]["value"], 'fill': "transparent"}]
+
+            for level3 in range(len(result[level1]["children"][level2]["children"])):
+                if result[level1]["children"][level2]["children"][level3]["name"] != "":
+                    result[level1]["children"][level2]["children"][level3]["fill"] = level_3_colors[i]
+
+                if  "children" not in result[level1]["children"][level2]["children"][level3]:
+                    result[level1]["children"][level2]["children"][level3]["children"] = [{"name":"", "value": result[level1]["children"][level2]["children"][-1]["value"], 'fill': "transparent"}]
+                
+                none_value = 0
+                check_empty = 0
+                for level4 in range(len(result[level1]["children"][level2]["children"][level3]["children"])):
+                    if result[level1]["children"][level2]["children"][level3]["children"][level4]["name"] == "none":
+                        none_value = result[level1]["children"][level2]["children"][level3]["children"][level4]["value"]
+                    
+                    elif result[level1]["children"][level2]["children"][level3]["children"][level4]["name"] == "":
+                        check_empty = 1
+                        result[level1]["children"][level2]["children"][level3]["children"][level4]["fill"] = "transparent"
+                        
+                        if none_value != 0:
+                            result[level1]["children"][level2]["children"][level3]["children"][level4]["value"] += none_value
+
+                    else:
+                        result[level1]["children"][level2]["children"][level3]["children"][level4]["fill"] = level_4_colors[i]
+                if none_value != 0:
+                    if check_empty == 0:
+                        result[level1]["children"][level2]["children"][level3]["children"].append({"name": "", "value": none_value, 'fill': "transparent"})
+                    result[level1]["children"][level2]["children"][level3]["children"] = [child  for child in result[level1]["children"][level2]["children"][level3]["children"] if child["name"] != "none"]
+                    
+                    
+                    
+        i+=1
+    return result
 
         
 
@@ -673,6 +766,104 @@ def get_assignments():
     }
     return results
 
+def process_node(node):
+    if 'children' in node:
+        processed_children = []
+        other_value = 0
+
+        for child in node['children']:
+            processed_child = process_node(child)
+            if processed_child['value'] < 500:
+                other_value += processed_child['value']
+            else:
+                processed_children.append(processed_child)
+
+        if other_value > 0:
+            processed_children.append({'name': '', 'value': other_value, 'children': [{'name': '', 'value': other_value, 'fill': "transparent"}], 'fill': "transparent"})
+
+        node['children'] = processed_children
+
+    return node
+def nest_pie_data(counts):
+# Create the nested dictionary
+    result = {'name': 'root', 'children': []}
+    for index, count in counts.items():
+        first_word, second_word, third_word, four_word = index
+
+        # Find the corresponding branch or create a new one
+        first_word_branch = next((child for child in result['children'] if child['name'] == first_word), None)
+        if first_word_branch is None:
+            first_word_branch = {'name': first_word, 'value': 0, 'children': []}
+            result['children'].append(first_word_branch)
+
+        second_word_branch = next((child for child in first_word_branch['children'] if child['name'] == second_word), None)
+        if second_word_branch is None:
+            second_word_branch = {'name': second_word, 'value': 0, 'children': []}
+            first_word_branch['children'].append(second_word_branch)
+
+        third_word_branch = next((child for child in second_word_branch['children'] if child['name'] == third_word), None)
+        if third_word_branch is None:
+            third_word_branch = {'name': third_word, 'value': 0, 'children': []}
+            second_word_branch['children'].append(third_word_branch)
+
+        # Add the final leaf node with the count value
+        leaf_node = {'name': four_word, 'value': count}
+        third_word_branch['children'].append(leaf_node)
+
+        # Update the value counts along the branches
+        first_word_branch['value'] += count
+        second_word_branch['value'] += count
+        third_word_branch['value'] += count
+    return process_node(result)["children"]
+
+def add_color(result):
+    i = 0
+    level_1_colors = ["#1A5276", "#943126", "#117864", "#633974", "#935116", "#283747", "#9A7D0A"]
+    level_2_colors = ["#1F618D", "#B03A2E", "#148F77", "#76448A", "#AF601A", "#2E4053", "#B7950B"]
+    level_3_colors = ["#2471A3", "#CB4335", "#17A589", "#884EA0", "#CA6F1E", "#2E4053", "#D4AC0D"]
+    level_4_colors = ["#2471A3", "#CB4335", "#17A589", "#884EA0", "#CA6F1E", "#2E4053", "#D4AC0D"]
+    for level1 in range(len(result)):
+        if result[level1]["name"] != "":
+            result[level1]["fill"] = level_1_colors[i]
+
+        for level2 in range(len(result[level1]["children"])):
+            if result[level1]["children"][level2]["name"] != "":
+                result[level1]["children"][level2]["fill"] = level_2_colors[i]
+
+            if "children" not in result[level1]["children"][level2]:
+                result[level1]["children"][level2]["children"] = [{"name":"", "value": result[level1]["children"][-1]["value"], 'fill': "transparent"}]
+
+            for level3 in range(len(result[level1]["children"][level2]["children"])):
+                if result[level1]["children"][level2]["children"][level3]["name"] != "":
+                    result[level1]["children"][level2]["children"][level3]["fill"] = level_3_colors[i]
+
+                if  "children" not in result[level1]["children"][level2]["children"][level3]:
+                    result[level1]["children"][level2]["children"][level3]["children"] = [{"name":"", "value": result[level1]["children"][level2]["children"][-1]["value"], 'fill': "transparent"}]
+                
+                none_value = 0
+                check_empty = 0
+                for level4 in range(len(result[level1]["children"][level2]["children"][level3]["children"])):
+                    if result[level1]["children"][level2]["children"][level3]["children"][level4]["name"] == "none":
+                        none_value = result[level1]["children"][level2]["children"][level3]["children"][level4]["value"]
+                    
+                    elif result[level1]["children"][level2]["children"][level3]["children"][level4]["name"] == "":
+                        check_empty = 1
+                        result[level1]["children"][level2]["children"][level3]["children"][level4]["fill"] = "transparent"
+                        
+                        if none_value != 0:
+                            result[level1]["children"][level2]["children"][level3]["children"][level4]["value"] += none_value
+
+                    else:
+                        result[level1]["children"][level2]["children"][level3]["children"][level4]["fill"] = level_4_colors[i]
+                if none_value != 0:
+                    if check_empty == 0:
+                        result[level1]["children"][level2]["children"][level3]["children"].append({"name": "", "value": none_value, 'fill': "transparent"})
+                    result[level1]["children"][level2]["children"][level3]["children"] = [child  for child in result[level1]["children"][level2]["children"][level3]["children"] if child["name"] != "none"]
+                    
+                    
+                    
+        i+=1
+    return result
 @app.route('/get_triple_summary/<filter_status>/<value>/<at_least>', methods=['POST','GET'])
 def get_triple_summary(filter_status, value, at_least):
     triples = pd.read_csv("Triples_data.csv")
@@ -695,7 +886,7 @@ def get_triple_summary(filter_status, value, at_least):
     if len(triples) > 0:    
         category_count = get_counts(triples, "value_category", ["Incorrect", "Partially Incorrect", "Ambiguous", "Partially Correct", "Correct"])
 
-        pivot_df = triples[["id", "FirstWord", "SecondWord", "value_category", "Img path", "Topic", "Answer"]].pivot_table(index=['id',"FirstWord", 'SecondWord', "Img path","Topic", "Answer"], columns='value_category', aggfunc=len, fill_value=0)
+        pivot_df = triples[["id", "FirstWord", "SecondWord", "value_category", "Img path", "Topic", "Answer", 'ThirdWord', 'FourWord', "len ques"]].pivot_table(index=['id',"FirstWord", 'SecondWord', "Img path","Topic", "Answer", 'ThirdWord', 'FourWord', "len ques"], columns='value_category', aggfunc=len, fill_value=0)
         del triples
         pivot_df = pivot_df.reset_index()
         pivot_df["Incorrect & Partially Incorrect"] = pivot_df["Incorrect"] + pivot_df["Partially Incorrect"]
@@ -715,37 +906,11 @@ def get_triple_summary(filter_status, value, at_least):
             cumulative_results.append(item)
         if value  != "all":
             pivot_df = pivot_df[pivot_df[value] >= int(at_least)]
+        
 
-        nest_data = pivot_df.groupby('FirstWord')['SecondWord'].value_counts()
-        palette = ['#ff5733', '#33ff57', '#5733ff', '#ff33b0', '#33b0ff', '#b0ff33', '#33ffb0']
-
-# Convert to the desired format with contrasting colors
-        result = []
-        for (first_word, second_word), count in nest_data.items():
-            if first_word not in {item['name'] for item in result}:
-                color_index = len(result) % len(palette)
-                color_code = palette[color_index]
-                result.append({
-                    'name': first_word,
-                    'value': count,
-                    'fill': color_code,
-                    'children': [{'name': second_word, 'value': count, 'fill': color_code}]
-                })
-            else:
-                for item in result:
-                    if item['name'] == first_word:
-                        item['value'] += count
-                        item['children'].append({'name': second_word, 'value': count, 'fill': item['fill']})
-                        break
-
-        # Drop children with count less than 10% of the parent count
-        for item in result:
-            parent_count = item['value']
-            dropped_children = [child for child in item['children'] if child['value'] < 0.1 * parent_count]
-            dropped_value = sum(child['value'] for child in dropped_children)
-            item['children'] = [child for child in item['children'] if child['value'] >= 0.1 * parent_count]
-            if dropped_value > 0:
-                item['children'].append({'name': 'Other', 'value': dropped_value, 'fill': item['fill']})
+        nest_data = pivot_df.groupby(['FirstWord', 'SecondWord', 'ThirdWord'])['FourWord'].value_counts()
+        result = nest_pie_data(nest_data)
+        result = add_color(result)
 
 
         topic_count = pivot_df["Topic"].value_counts()
@@ -757,19 +922,24 @@ def get_triple_summary(filter_status, value, at_least):
         answer_list = answer_list.reset_index()
         answer_list.columns = ["Answer", "Count"]
         answer_list = answer_list.to_dict("records")
+        len_ques = list(pivot_df["len ques"])
+
     else:
         first_word_count = []
         topic_count = []
         category_count = []
         cumulative_results = []
         answer_list = []
+        len_ques = []
+        result = []
     results = {
             "statusCount": status_count,
             "firstWordCount": result,
             "topicCount":topic_count,
             "categoryCount": category_count,
             "cumulative_data": cumulative_results,
-            "answerList": answer_list[:50]
+            "answerList": answer_list[:50],
+            "lenQues": len_ques
         }
     return results
 
